@@ -1,11 +1,17 @@
+// Copyright 2018 Serguei Kalentchouk, et al. All rights reserved.
+// Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 #include <maya/MFnPlugin.h>
 
+#include "Angle.h"
 #include "Trig.h"
 
 MStatus
 __unused initializePlugin(MObject pluginObj)
 {
     MFnPlugin pluginFn(pluginObj, "Serguei Kalentchouk, et al.", "0.0.1", "Any");
+    
+    pluginFn.registerNode(AddAngle::kTypeName, AddAngle::kTypeId, AddAngle::create, AddAngle::initialize);
+    pluginFn.registerNode(SubtractAngle::kTypeName, SubtractAngle::kTypeId, SubtractAngle::create, SubtractAngle::initialize);
     
     pluginFn.registerNode(Cos::kTypeName, Cos::kTypeId, Acos::create, Acos::initialize);
     pluginFn.registerNode(Sin::kTypeName, Sin::kTypeId, Sin::create, Sin::initialize);
@@ -21,6 +27,9 @@ MStatus
 __unused uninitializePlugin(MObject pluginObj)
 {
     MFnPlugin pluginFn(pluginObj);
+    
+    pluginFn.deregisterNode(AddAngle::kTypeId);
+    pluginFn.deregisterNode(SubtractAngle::kTypeId);
     
     pluginFn.deregisterNode(Cos::kTypeId);
     pluginFn.deregisterNode(Sin::kTypeId);

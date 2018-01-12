@@ -14,7 +14,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libc++")
 # Create target
 add_library(mayaMathNodes SHARED
     src/Plugin.cpp
-    src/Trig.h)
+    src/Trig.h src/Angle.h)
 
 include_directories(${MAYA_INCLUDE_DIR})
 link_directories(${MAYA_LIBRARY_DIR})
@@ -23,5 +23,4 @@ target_link_libraries(mayaMathNodes ${MAYA_LIBRARIES})
 set_target_properties(mayaMathNodes PROPERTIES
     COMPILE_DEFINITIONS "${MAYA_COMPILE_DEFINITIONS}"
     PREFIX ""
-    SUFFIX ${MAYA_PLUGIN_EXT}
-)
+    SUFFIX ${MAYA_PLUGIN_EXT})
