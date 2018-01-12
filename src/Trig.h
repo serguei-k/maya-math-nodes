@@ -10,6 +10,67 @@
 #include <maya/MFnUnitAttribute.h>
 #include <maya/MPxNode.h>
 
+#define TRIG_NODE(NodeName, NodeTypeId, TrigFuncPtr)                                        \
+    constexpr char name##NodeName[] = #NodeName;                                            \
+    class NodeName : public TrigNode<NodeName, name##NodeName, NodeTypeId, TrigFuncPtr> {}; // NOLINT
+
+template<class TClass, const char* TTypeName, int TTypeId, double (*TTrigFuncPtr)(double)>
+class TrigNode : public MPxNode
+{
+public:
+    static constexpr const char* kTypeName = TTypeName;
+    static constexpr int kTypeId = TTypeId;
+    
+    static void* create()
+    {
+        return new TClass();
+    }
+    
+    static MStatus initialize()
+    {
+        MFnEnumAttribute enumAttrFn;
+        MFnNumericAttribute numericAttrFn;
+        MFnUnitAttribute unitAttrFn;
+        
+        inputAttribute_ = unitAttrFn.create("input", "input", MAngle(0.0));
+        outputAttribute_ = numericAttrFn.create("output", "output", MFnNumericData::kDouble, 0.0);
+        
+        addAttribute(inputAttribute_);
+        addAttribute(outputAttribute_);
+        
+        attributeAffects(inputAttribute_, outputAttribute_);
+        
+        return MS::kSuccess;
+    }
+    
+    MStatus compute(const MPlug& plug, MDataBlock& dataBlock) override
+    {
+        if (plug == outputAttribute_)
+        {
+            MDataHandle inputAttrHandle = dataBlock.inputValue(inputAttribute_);
+            const MAngle inputAttrValue = inputAttrHandle.asAngle();
+            
+            MDataHandle outputAttrHandle = dataBlock.outputValue(outputAttribute_);
+            outputAttrHandle.setDouble(TTrigFuncPtr(inputAttrValue.asRadians()));
+            outputAttrHandle.setClean();
+            
+            return MS::kSuccess;
+        }
+        
+        return MS::kUnknownParameter;
+    }
+
+private:
+    static MObject inputAttribute_;
+    static MObject outputAttribute_;
+};
+
+template<class TClass, const char* TTypeName, int TTypeId, double (*TTrigFuncPtr)(double)>
+MObject TrigNode<TClass, TTypeName, TTypeId, TTrigFuncPtr>::inputAttribute_; // NOLINT
+
+template<class TClass, const char* TTypeName, int TTypeId, double (*TTrigFuncPtr)(double)>
+MObject TrigNode<TClass, TTypeName, TTypeId, TTrigFuncPtr>::outputAttribute_; // NOLINT
+
 #define TRIG_INVERSE_NODE(NodeName, NodeTypeId, TrigFuncPtr)                                        \
     constexpr char name##NodeName[] = #NodeName;                                                    \
     class NodeName : public TrigInverseNode<NodeName, name##NodeName, NodeTypeId, TrigFuncPtr> {}; // NOLINT
@@ -75,7 +136,11 @@ MObject TrigInverseNode<TClass, TTypeName, TTypeId, TTrigFuncPtr>::outputAttribu
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "TemplateArgumentsIssues"
-TRIG_INVERSE_NODE(Acos, 0001, &std::acos);
-TRIG_INVERSE_NODE(Asin, 0003, &std::asin);
-TRIG_INVERSE_NODE(Atan, 0002, &std::atan);
+// TODO: replace with real ids
+TRIG_NODE(Cos, 0001, &std::cos);
+TRIG_NODE(Sin, 0002, &std::sin);
+TRIG_NODE(Tan, 0003, &std::tan);
+TRIG_INVERSE_NODE(Acos, 0004, &std::acos);
+TRIG_INVERSE_NODE(Asin, 0005, &std::asin);
+TRIG_INVERSE_NODE(Atan, 0006, &std::atan);
 #pragma clang diagnostic pop
