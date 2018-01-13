@@ -11,6 +11,8 @@ __unused initializePlugin(MObject pluginObj)
     MFnPlugin pluginFn(pluginObj, "Serguei Kalentchouk, et al.", "0.0.1", "Any");
     
     pluginFn.registerNode(AddAngle::kTypeName, AddAngle::kTypeId, AddAngle::create, AddAngle::initialize);
+    pluginFn.registerNode(DivideAngle::kTypeName, DivideAngle::kTypeId, DivideAngle::create, DivideAngle::initialize);
+    pluginFn.registerNode(MultiplyAngle::kTypeName, MultiplyAngle::kTypeId, MultiplyAngle::create, MultiplyAngle::initialize);
     pluginFn.registerNode(SubtractAngle::kTypeName, SubtractAngle::kTypeId, SubtractAngle::create, SubtractAngle::initialize);
     
     pluginFn.registerNode(Cos::kTypeName, Cos::kTypeId, Acos::create, Acos::initialize);
@@ -29,6 +31,8 @@ __unused uninitializePlugin(MObject pluginObj)
     MFnPlugin pluginFn(pluginObj);
     
     pluginFn.deregisterNode(AddAngle::kTypeId);
+    pluginFn.deregisterNode(DivideAngle::kTypeId);
+    pluginFn.deregisterNode(MultiplyAngle::kTypeId);
     pluginFn.deregisterNode(SubtractAngle::kTypeId);
     
     pluginFn.deregisterNode(Cos::kTypeId);

@@ -31,6 +31,8 @@ public:
         MFnUnitAttribute unitAttrFn;
         
         inputAttribute_ = unitAttrFn.create("input", "input", MAngle(0.0));
+        unitAttrFn.setKeyable(true);
+        
         outputAttribute_ = numericAttrFn.create("output", "output", MFnNumericData::kDouble, 0.0);
         
         addAttribute(inputAttribute_);
@@ -69,6 +71,7 @@ MObject TrigNode<TClass, TTypeName, TTypeId, TTrigFuncPtr>::inputAttribute_; // 
 template<class TClass, const char* TTypeName, int TTypeId, double (*TTrigFuncPtr)(double)>
 MObject TrigNode<TClass, TTypeName, TTypeId, TTrigFuncPtr>::outputAttribute_; // NOLINT
 
+
 #define TRIG_INVERSE_NODE(NodeName, NodeTypeId, TrigFuncPtr)    \
     constexpr char name##NodeName[] = #NodeName;                \
     class NodeName : public TrigInverseNode<NodeName, name##NodeName, NodeTypeId, TrigFuncPtr> {}; // NOLINT
@@ -91,6 +94,8 @@ public:
         MFnUnitAttribute unitAttrFn;
         
         inputAttribute_ = numericAttrFn.create("input", "input", MFnNumericData::kDouble, 0.0);
+        numericAttrFn.setKeyable(true);
+        
         outputAttribute_ = unitAttrFn.create("output", "output", MAngle(0.0));
         
         addAttribute(inputAttribute_);
