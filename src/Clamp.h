@@ -4,24 +4,8 @@
 
 #include <algorithm>
 
+#include "MinMax.h"
 #include "Utils.h"
-
-namespace std
-{
-
-template <>
-inline const MAngle& max(const MAngle& a, const MAngle& b) // NOLINT
-{
-    return (a.asRadians() > b.asRadians()) ? a : b;
-}
-
-template <>
-inline const MAngle& min(const MAngle& a, const MAngle& b) // NOLINT
-{
-    return (a.asRadians() < b.asRadians()) ? a : b;
-}
-
-}
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
 class ClampNode : public BaseNode<TClass, TTypeName>

@@ -26,6 +26,12 @@ __unused initializePlugin(MObject pluginObj)
     Lerp::registerNode(pluginFn, ++typeId);
     LerpAngle::registerNode(pluginFn, ++typeId);
     LerpVector::registerNode(pluginFn, ++typeId);
+    Max::registerNode(pluginFn, ++typeId);
+    Min::registerNode(pluginFn, ++typeId);
+    MaxInt::registerNode(pluginFn, ++typeId);
+    MinInt::registerNode(pluginFn, ++typeId);
+    MaxAngle::registerNode(pluginFn, ++typeId);
+    MinAngle::registerNode(pluginFn, ++typeId);
     Sin::registerNode(pluginFn, ++typeId);
     Tan::registerNode(pluginFn, ++typeId);
     
@@ -48,6 +54,12 @@ __unused uninitializePlugin(MObject pluginObj)
     Lerp::deregisterNode(pluginFn);
     LerpAngle::deregisterNode(pluginFn);
     LerpVector::deregisterNode(pluginFn);
+    Max::deregisterNode(pluginFn);
+    Min::deregisterNode(pluginFn);
+    MaxInt::deregisterNode(pluginFn);
+    MinInt::deregisterNode(pluginFn);
+    MaxAngle::deregisterNode(pluginFn);
+    MinAngle::deregisterNode(pluginFn);
     Sin::deregisterNode(pluginFn);
     Tan::deregisterNode(pluginFn);
     
