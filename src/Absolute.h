@@ -2,15 +2,28 @@
 // Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 #pragma once
 
+#include <type_traits>
+
 #include "Utils.h"
 
 namespace std_ext
 {
-using namespace std;
 
-inline MAngle abs(const MAngle& angle)
+template <typename TType>
+inline typename std::enable_if<std::is_pod<TType>::value, TType>::type
+abs_t(TType value)
 {
-    return MAngle(std::abs(angle.asRadians()));
+    return std::abs(value);
+}
+
+template <typename TType>
+inline typename std::enable_if<!std::is_pod<TType>::value, TType>::type
+abs_t(const TType& value);
+
+template <>
+inline MAngle abs_t<MAngle>(const MAngle& value)
+{
+    return MAngle(std::abs(value.asRadians()));
 }
 
 }
@@ -37,10 +50,10 @@ public:
         if (plug == outputAttr_)
         {
             MDataHandle inputAttrHandle = dataBlock.inputValue(inputAttr_);
-            const auto inputAttrValue = getAttribute<TAttrType>(inputAttrHandle);
+            const TAttrType inputAttrValue = getAttribute<TAttrType>(inputAttrHandle);
             
             MDataHandle outputAttrHandle = dataBlock.outputValue(outputAttr_);
-            outputAttrHandle.set(std_ext::abs(inputAttrValue));
+            outputAttrHandle.set(std_ext::abs_t(inputAttrValue));
             outputAttrHandle.setClean();
             
             return MS::kSuccess;

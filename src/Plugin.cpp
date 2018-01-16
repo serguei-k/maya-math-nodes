@@ -3,6 +3,7 @@
 #include <maya/MFnPlugin.h>
 
 #include "Absolute.h"
+#include "Clamp.h"
 #include "Lerp.h"
 #include "Trig.h"
 
@@ -18,6 +19,9 @@ __unused initializePlugin(MObject pluginObj)
     AcosAngle::registerNode(pluginFn, ++typeId);
     AsinAngle::registerNode(pluginFn, ++typeId);
     AtanAngle::registerNode(pluginFn, ++typeId);
+    Clamp::registerNode(pluginFn, ++typeId);
+    ClampAngle::registerNode(pluginFn, ++typeId);
+    ClampInt::registerNode(pluginFn, ++typeId);
     Cos::registerNode(pluginFn, ++typeId);
     Lerp::registerNode(pluginFn, ++typeId);
     LerpAngle::registerNode(pluginFn, ++typeId);
@@ -37,6 +41,9 @@ __unused uninitializePlugin(MObject pluginObj)
     AcosAngle::deregisterNode(pluginFn);
     AsinAngle::deregisterNode(pluginFn);
     AtanAngle::deregisterNode(pluginFn);
+    Clamp::deregisterNode(pluginFn);
+    ClampAngle::deregisterNode(pluginFn);
+    ClampInt::deregisterNode(pluginFn);
     Cos::deregisterNode(pluginFn);
     Lerp::deregisterNode(pluginFn);
     LerpAngle::deregisterNode(pluginFn);

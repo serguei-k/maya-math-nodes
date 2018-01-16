@@ -17,10 +17,11 @@ set(CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libc++ ")
 # Create target
 add_library(mayaMathNodes SHARED
     src/Absolute.h
+    src/Clamp.h
     src/Lerp.h
     src/Plugin.cpp
     src/Trig.h
-    src/Utils.h src/Clamp.h)
+    src/Utils.h)
 
 include_directories(${MAYA_INCLUDE_DIR})
 link_directories(${MAYA_LIBRARY_DIR})
