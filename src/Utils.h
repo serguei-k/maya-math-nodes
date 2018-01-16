@@ -1,3 +1,5 @@
+// Copyright (c) 2018 Serguei Kalentchouk et al. All rights reserved.
+// Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 #pragma once
 
 #include <cmath>
@@ -76,6 +78,21 @@ template <>
 inline MVector getAttribute(const MDataHandle& handle)
 {
     return handle.asVector();
+}
+
+template <typename TInputType, typename TOutputType>
+inline TOutputType getAttribute(const MDataHandle& handle);
+
+template <>
+inline double getAttribute<MAngle, double>(const MDataHandle& handle)
+{
+    return handle.asAngle().asRadians();
+}
+
+template <>
+inline double getAttribute<double, double>(const MDataHandle& handle)
+{
+    return handle.asDouble();
 }
 
 // MAngle operator overloads

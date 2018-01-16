@@ -1,3 +1,6 @@
+# Copyright (c) 2018 Serguei Kalentchouk et al. All rights reserved.
+# Use of this source code is governed by an MIT license that can be found in the LICENSE file.
+
 # Define project
 cmake_minimum_required(VERSION 3.3)
 project(maya-math-nodes)
@@ -9,12 +12,15 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(Maya REQUIRED)
 
 # Set compile flags
-set(CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libc++")
+set(CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libc++ ")
 
 # Create target
 add_library(mayaMathNodes SHARED
+    src/Absolute.h
+    src/Lerp.h
     src/Plugin.cpp
-    src/Trig.h src/Angle.h)
+    src/Trig.h
+    src/Utils.h)
 
 include_directories(${MAYA_INCLUDE_DIR})
 link_directories(${MAYA_LIBRARY_DIR})

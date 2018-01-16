@@ -2,8 +2,6 @@
 // Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 #pragma once
 
-#include <maya/MGlobal.h>
-
 #include "Utils.h"
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
@@ -31,7 +29,6 @@ public:
     
     MStatus compute(const MPlug& plug, MDataBlock& dataBlock) override
     {
-        MGlobal::displayWarning(plug.name());
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
             MDataHandle inputAHandle = dataBlock.inputValue(inputAAttr_);
@@ -41,7 +38,7 @@ public:
             const TAttrType inputBValue = getAttribute<TAttrType>(inputBHandle);
             
             MDataHandle alphaHandle = dataBlock.inputValue(alphaAttr_);
-            const auto alphaValue = getAttribute<double>(alphaHandle);
+            const double alphaValue = getAttribute<double>(alphaHandle);
             
             MDataHandle outputHandle = dataBlock.outputValue(outputAttr_);
             outputHandle.set(TAttrType(inputAValue + alphaValue * (inputBValue - inputAValue)));
