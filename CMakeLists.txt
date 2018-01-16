@@ -20,6 +20,7 @@ add_library(mayaMathNodes SHARED
     src/Clamp.h
     src/Lerp.h
     src/MinMax.h
+    src/Multiply.h
     src/Plugin.cpp
     src/Trig.h
     src/Utils.h)

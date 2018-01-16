@@ -5,6 +5,7 @@
 #include "Absolute.h"
 #include "Clamp.h"
 #include "Lerp.h"
+#include "Multiply.h"
 #include "Trig.h"
 
 MStatus
@@ -32,6 +33,11 @@ __unused initializePlugin(MObject pluginObj)
     MinInt::registerNode(pluginFn, ++typeId);
     MaxAngle::registerNode(pluginFn, ++typeId);
     MinAngle::registerNode(pluginFn, ++typeId);
+    Multiply::registerNode(pluginFn, ++typeId);
+    MultiplyAngle::registerNode(pluginFn, ++typeId);
+    MultiplyByInt::registerNode(pluginFn, ++typeId);
+    MultiplyInt::registerNode(pluginFn, ++typeId);
+    MultiplyVector::registerNode(pluginFn, ++typeId);
     Sin::registerNode(pluginFn, ++typeId);
     Tan::registerNode(pluginFn, ++typeId);
     
@@ -60,6 +66,11 @@ __unused uninitializePlugin(MObject pluginObj)
     MinInt::deregisterNode(pluginFn);
     MaxAngle::deregisterNode(pluginFn);
     MinAngle::deregisterNode(pluginFn);
+    Multiply::deregisterNode(pluginFn);
+    MultiplyAngle::deregisterNode(pluginFn);
+    MultiplyByInt::deregisterNode(pluginFn);
+    MultiplyInt::deregisterNode(pluginFn);
+    MultiplyVector::deregisterNode(pluginFn);
     Sin::deregisterNode(pluginFn);
     Tan::deregisterNode(pluginFn);
     

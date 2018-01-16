@@ -106,9 +106,9 @@ MAngle operator-(const MAngle& a, const MAngle& b)
     return MAngle(a.asRadians() - b.asRadians());
 }
 
-MAngle operator*(double a, const MAngle& b)
+MAngle operator*(const MAngle& a, double b)
 {
-    return MAngle(a * b.asRadians());
+    return MAngle(a.asRadians() * b);
 }
 
 // Base node type definition used for all math nodes in this library

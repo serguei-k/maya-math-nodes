@@ -45,7 +45,7 @@ public:
             const double alphaValue = getAttribute<double>(alphaHandle);
             
             MDataHandle outputHandle = dataBlock.outputValue(outputAttr_);
-            outputHandle.set(TAttrType(inputAValue + alphaValue * (inputBValue - inputAValue)));
+            outputHandle.set(TAttrType(inputAValue + (inputBValue - inputAValue) * alphaValue));
             outputHandle.setClean();
             
             return MS::kSuccess;
