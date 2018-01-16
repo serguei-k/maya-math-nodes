@@ -15,8 +15,8 @@ inline MAngle abs(const MAngle& angle)
 
 }
 
-template<typename TAttrType, typename TClass, const char* TTypeName, int TTypeId>
-class AbsoluteNode : public BaseNode<TClass, TTypeName, TTypeId>
+template<typename TAttrType, typename TClass, const char* TTypeName>
+class AbsoluteNode : public BaseNode<TClass, TTypeName>
 {
 public:
     static MStatus initialize()
@@ -37,7 +37,7 @@ public:
         if (plug == outputAttr_)
         {
             MDataHandle inputAttrHandle = dataBlock.inputValue(inputAttr_);
-            const TAttrType inputAttrValue = getAttribute<TAttrType>(inputAttrHandle);
+            const auto inputAttrValue = getAttribute<TAttrType>(inputAttrHandle);
             
             MDataHandle outputAttrHandle = dataBlock.outputValue(outputAttr_);
             outputAttrHandle.set(std_ext::abs(inputAttrValue));
@@ -54,16 +54,16 @@ private:
     static MObject outputAttr_;
 };
 
-template<typename TAttrType, typename TClass, const char* TTypeName, int TTypeId>
-MObject AbsoluteNode<TAttrType, TClass, TTypeName, TTypeId>::inputAttr_; // NOLINT
+template<typename TAttrType, typename TClass, const char* TTypeName>
+MObject AbsoluteNode<TAttrType, TClass, TTypeName>::inputAttr_; // NOLINT
 
-template<typename TAttrType, typename TClass, const char* TTypeName, int TTypeId>
-MObject AbsoluteNode<TAttrType, TClass, TTypeName, TTypeId>::outputAttr_; // NOLINT
+template<typename TAttrType, typename TClass, const char* TTypeName>
+MObject AbsoluteNode<TAttrType, TClass, TTypeName>::outputAttr_; // NOLINT
 
-#define ABSOLUTE_NODE(AttrType, NodeName, NodeTypeId) \
-    constexpr char name##NodeName[] = #NodeName;      \
-    class NodeName : public AbsoluteNode<AttrType, NodeName, name##NodeName, NodeTypeId> {}; // NOLINT
+#define ABSOLUTE_NODE(AttrType, NodeName)        \
+    constexpr char name##NodeName[] = #NodeName; \
+    class NodeName : public AbsoluteNode<AttrType, NodeName, name##NodeName> {}; // NOLINT
 
-ABSOLUTE_NODE(double, Absolute, 1001);
-ABSOLUTE_NODE(int, AbsoluteInt, 1002);
-ABSOLUTE_NODE(MAngle, AbsoluteAngle, 1003);
+ABSOLUTE_NODE(double, Absolute);
+ABSOLUTE_NODE(int, AbsoluteInt);
+ABSOLUTE_NODE(MAngle, AbsoluteAngle);
