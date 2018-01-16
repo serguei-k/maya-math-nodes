@@ -20,7 +20,7 @@ add_library(mayaMathNodes SHARED
     src/Lerp.h
     src/Plugin.cpp
     src/Trig.h
-    src/Utils.h)
+    src/Utils.h src/Clamp.h)
 
 include_directories(${MAYA_INCLUDE_DIR})
 link_directories(${MAYA_LIBRARY_DIR})

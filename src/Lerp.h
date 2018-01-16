@@ -15,6 +15,10 @@ public:
         createAttribute(alphaAttr_, "alpha", 0.5);
         createAttribute(outputAttr_, "output", CastTo<TAttrType>(0.0), false);
         
+        MFnNumericAttribute attrFn(alphaAttr_);
+        attrFn.setMin(0.0);
+        attrFn.setMax(1.0);
+        
         MPxNode::addAttribute(inputAAttr_);
         MPxNode::addAttribute(inputBAttr_);
         MPxNode::addAttribute(alphaAttr_);

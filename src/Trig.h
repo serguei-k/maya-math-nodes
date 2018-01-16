@@ -4,7 +4,8 @@
 
 #include "Utils.h"
 
-template<typename TInputAttrType, typename TOutputAttrType, typename TClass, const char* TTypeName, double (*TTrigFuncPtr)(double)>
+template<typename TInputAttrType, typename TOutputAttrType, typename TClass,
+         const char* TTypeName, bool TSetLimits, double (*TTrigFuncPtr)(double)>
 class TrigNode : public BaseNode<TClass, TTypeName>
 {
 public:
@@ -12,6 +13,13 @@ public:
     {
         createAttribute(inputAttr_, "input", CastTo<TInputAttrType>(0.0));
         createAttribute(outputAttr_, "output", CastTo<TOutputAttrType>(0.0), false);
+        
+        if (TSetLimits)
+        {
+            MFnNumericAttribute attrFn(inputAttr_);
+            attrFn.setMin(-1.0);
+            attrFn.setMax(1.0);
+        }
         
         MPxNode::addAttribute(inputAttr_);
         MPxNode::addAttribute(outputAttr_);
@@ -43,22 +51,24 @@ private:
     static MObject outputAttr_;
 };
 
-template<typename TInputAttrType, typename TOutputAttrType, typename TClass, const char* TTypeName, double (*TTrigFuncPtr)(double)>
-MObject TrigNode<TInputAttrType, TOutputAttrType, TClass, TTypeName, TTrigFuncPtr>::inputAttr_; // NOLINT
+template<typename TInputAttrType, typename TOutputAttrType, typename TClass,
+         const char* TTypeName, bool TSetLimits, double (*TTrigFuncPtr)(double)>
+MObject TrigNode<TInputAttrType, TOutputAttrType, TClass, TTypeName, TSetLimits, TTrigFuncPtr>::inputAttr_; // NOLINT
 
-template<typename TInputAttrType, typename TOutputAttrType, typename TClass, const char* TTypeName, double (*TTrigFuncPtr)(double)>
-MObject TrigNode<TInputAttrType, TOutputAttrType, TClass, TTypeName, TTrigFuncPtr>::outputAttr_; // NOLINT
+template<typename TInputAttrType, typename TOutputAttrType, typename TClass,
+         const char* TTypeName, bool TSetLimits, double (*TTrigFuncPtr)(double)>
+MObject TrigNode<TInputAttrType, TOutputAttrType, TClass, TTypeName, TSetLimits, TTrigFuncPtr>::outputAttr_; // NOLINT
 
-#define TRIG_NODE(InputAttrType, OutputAttrType, NodeName, TrigFuncPtr)         \
-    constexpr char name##NodeName[] = #NodeName; \
-    class NodeName : public TrigNode<InputAttrType, OutputAttrType, NodeName, name##NodeName, TrigFuncPtr> {}; // NOLINT
+#define TRIG_NODE(InputAttrType, OutputAttrType, NodeName, SetLimits, TrigFuncPtr) \
+    constexpr char name##NodeName[] = #NodeName;                                   \
+    class NodeName : public TrigNode<InputAttrType, OutputAttrType, NodeName, name##NodeName, SetLimits, TrigFuncPtr> {}; // NOLINT
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "TemplateArgumentsIssues"
-TRIG_NODE(double, MAngle , AcosAngle, &std::acos);
-TRIG_NODE(double, MAngle , AsinAngle, &std::asin);
-TRIG_NODE(double, MAngle , AtanAngle, &std::atan);
-TRIG_NODE(MAngle, double , Cos, &std::cos);
-TRIG_NODE(MAngle, double , Sin, &std::sin);
-TRIG_NODE(MAngle, double , Tan, &std::tan);
+TRIG_NODE(double, MAngle, AcosAngle, true, &std::acos);
+TRIG_NODE(double, MAngle, AsinAngle, true, &std::asin);
+TRIG_NODE(double, MAngle, AtanAngle, false, &std::atan);
+TRIG_NODE(MAngle, double, Cos, false, &std::cos);
+TRIG_NODE(MAngle, double, Sin, false, &std::sin);
+TRIG_NODE(MAngle, double, Tan, false, &std::tan);
 #pragma clang diagnostic pop
