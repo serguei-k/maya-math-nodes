@@ -24,12 +24,15 @@ endif()
 # Create target
 add_library(mayaMathNodes SHARED
     src/Absolute.h
+    src/Add.h
     src/Clamp.h
+    src/Divide.h
     src/Lerp.h
     src/MinMax.h
     src/Multiply.h
     src/Plugin.cpp
     src/Trig.h
+    src/Subtract.h
     src/Utils.h)
 
 include_directories(${MAYA_INCLUDE_DIR})

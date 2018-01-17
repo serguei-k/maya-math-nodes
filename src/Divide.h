@@ -5,7 +5,7 @@
 #include "Utils.h"
 
 template<typename TInOutAttrType, typename TInAttrType, typename TClass, const char* TTypeName>
-class MultiplyNode : public BaseNode<TClass, TTypeName>
+class DivideNode : public BaseNode<TClass, TTypeName>
 {
 public:
     static MStatus initialize()
@@ -35,7 +35,7 @@ public:
             const TInAttrType inputBValue = getAttribute<TInAttrType>(inputBHandle);
             
             MDataHandle outputHandle = dataBlock.outputValue(outputAttr_);
-            outputHandle.set(TInOutAttrType(inputAValue * inputBValue));
+            outputHandle.set(TInOutAttrType(inputAValue + inputBValue));
             outputHandle.setClean();
             
             return MS::kSuccess;
@@ -51,23 +51,19 @@ private:
 };
 
 template<typename TInOutAttrType, typename TInAttrType, typename TClass, const char* TTypeName>
-MObject MultiplyNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::inputAAttr_; // NOLINT
+MObject DivideNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::inputAAttr_; // NOLINT
 
 template<typename TInOutAttrType, typename TInAttrType, typename TClass, const char* TTypeName>
-MObject MultiplyNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::inputBAttr_; // NOLINT
+MObject DivideNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::inputBAttr_; // NOLINT
 
 template<typename TInOutAttrType, typename TInAttrType, typename TClass, const char* TTypeName>
-MObject MultiplyNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::outputAttr_; // NOLINT
+MObject DivideNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::outputAttr_; // NOLINT
 
-#define MULTIPLY_NODE(InOutAttrType, InAttrType, NodeName) \
+#define DIVIDE_NODE(InOutAttrType, InAttrType, NodeName) \
     TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
-    class NodeName : public MultiplyNode<InOutAttrType, InAttrType, NodeName, name##NodeName> {}; // NOLINT
+    class NodeName : public DivideNode<InOutAttrType, InAttrType, NodeName, name##NodeName> {}; // NOLINT
 
-MULTIPLY_NODE(double, double, Multiply);
-MULTIPLY_NODE(double, int, MultiplyByInt);
-MULTIPLY_NODE(int, int, MultiplyInt);
-MULTIPLY_NODE(MAngle, double, MultiplyAngle);
-MULTIPLY_NODE(MAngle, int, MultiplyAngleByInt);
-MULTIPLY_NODE(MMatrix, MMatrix, MultiplyMatrix);
-MULTIPLY_NODE(MVector, double, MultiplyVector);
-MULTIPLY_NODE(MVector, MMatrix, MultiplyVectorByMatrix);
+DIVIDE_NODE(double, double, Divide);
+DIVIDE_NODE(double, int, DivideByInt);
+DIVIDE_NODE(MAngle, double, DivideAngle);
+DIVIDE_NODE(MAngle, int, DivideAngleByInt);

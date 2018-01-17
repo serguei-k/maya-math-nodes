@@ -148,6 +148,21 @@ MAngle operator*(const MAngle& a, double b)
     return MAngle(a.asRadians() * b);
 }
 
+MAngle operator*(const MAngle& a, int b)
+{
+    return MAngle(a.asRadians() * b);
+}
+
+MAngle operator/(const MAngle& a, double b)
+{
+    return MAngle(a.asRadians() / b);
+}
+
+MAngle operator/(const MAngle& a, int b)
+{
+    return MAngle(a.asRadians() / b);
+}
+
 // Base node type definition used for all math nodes in this library
 template<typename TClass, const char* TTypeName>
 class BaseNode : public MPxNode

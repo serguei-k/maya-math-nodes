@@ -5,7 +5,7 @@
 #include "Utils.h"
 
 template<typename TInOutAttrType, typename TInAttrType, typename TClass, const char* TTypeName>
-class MultiplyNode : public BaseNode<TClass, TTypeName>
+class SubtractNode : public BaseNode<TClass, TTypeName>
 {
 public:
     static MStatus initialize()
@@ -35,7 +35,7 @@ public:
             const TInAttrType inputBValue = getAttribute<TInAttrType>(inputBHandle);
             
             MDataHandle outputHandle = dataBlock.outputValue(outputAttr_);
-            outputHandle.set(TInOutAttrType(inputAValue * inputBValue));
+            outputHandle.set(TInOutAttrType(inputAValue + inputBValue));
             outputHandle.setClean();
             
             return MS::kSuccess;
@@ -51,23 +51,19 @@ private:
 };
 
 template<typename TInOutAttrType, typename TInAttrType, typename TClass, const char* TTypeName>
-MObject MultiplyNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::inputAAttr_; // NOLINT
+MObject SubtractNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::inputAAttr_; // NOLINT
 
 template<typename TInOutAttrType, typename TInAttrType, typename TClass, const char* TTypeName>
-MObject MultiplyNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::inputBAttr_; // NOLINT
+MObject SubtractNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::inputBAttr_; // NOLINT
 
 template<typename TInOutAttrType, typename TInAttrType, typename TClass, const char* TTypeName>
-MObject MultiplyNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::outputAttr_; // NOLINT
+MObject SubtractNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::outputAttr_; // NOLINT
 
-#define MULTIPLY_NODE(InOutAttrType, InAttrType, NodeName) \
+#define SUBTRACT_NODE(InOutAttrType, InAttrType, NodeName) \
     TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
-    class NodeName : public MultiplyNode<InOutAttrType, InAttrType, NodeName, name##NodeName> {}; // NOLINT
+    class NodeName : public SubtractNode<InOutAttrType, InAttrType, NodeName, name##NodeName> {}; // NOLINT
 
-MULTIPLY_NODE(double, double, Multiply);
-MULTIPLY_NODE(double, int, MultiplyByInt);
-MULTIPLY_NODE(int, int, MultiplyInt);
-MULTIPLY_NODE(MAngle, double, MultiplyAngle);
-MULTIPLY_NODE(MAngle, int, MultiplyAngleByInt);
-MULTIPLY_NODE(MMatrix, MMatrix, MultiplyMatrix);
-MULTIPLY_NODE(MVector, double, MultiplyVector);
-MULTIPLY_NODE(MVector, MMatrix, MultiplyVectorByMatrix);
+SUBTRACT_NODE(double, double, Subtract);
+SUBTRACT_NODE(int, int, SubtractInt);
+SUBTRACT_NODE(MAngle, MAngle, SubtractAngle);
+SUBTRACT_NODE(MVector, MVector, SubtractVector);

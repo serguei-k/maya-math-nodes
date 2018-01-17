@@ -60,7 +60,7 @@ template<typename TInputAttrType, typename TOutputAttrType, typename TClass,
 MObject TrigNode<TInputAttrType, TOutputAttrType, TClass, TTypeName, TSetLimits, TTrigFuncPtr>::outputAttr_; // NOLINT
 
 #define TRIG_NODE(InputAttrType, OutputAttrType, NodeName, SetLimits, TrigFuncPtr) \
-    TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName;                                   \
+    TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
     class NodeName : public TrigNode<InputAttrType, OutputAttrType, NodeName, name##NodeName, SetLimits, TrigFuncPtr> {}; // NOLINT
 
 #pragma clang diagnostic push

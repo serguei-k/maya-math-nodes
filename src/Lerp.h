@@ -73,7 +73,7 @@ MObject LerpNode<TAttrType, TClass, TTypeName>::alphaAttr_; // NOLINT
 template<typename TAttrType, typename TClass, const char* TTypeName>
 MObject LerpNode<TAttrType, TClass, TTypeName>::outputAttr_; // NOLINT
 
-#define LERP_NODE(AttrType, NodeName)            \
+#define LERP_NODE(AttrType, NodeName) \
     TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
     class NodeName : public LerpNode<AttrType, NodeName, name##NodeName> {}; // NOLINT
 

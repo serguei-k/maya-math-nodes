@@ -3,9 +3,12 @@
 #include <maya/MFnPlugin.h>
 
 #include "Absolute.h"
+#include "Add.h"
 #include "Clamp.h"
+#include "Divide.h"
 #include "Lerp.h"
 #include "Multiply.h"
+#include "Subtract.h"
 #include "Trig.h"
 
 MStatus
@@ -18,12 +21,20 @@ initializePlugin(MObject pluginObj)
     
     Absolute::registerNode(pluginFn, ++typeId);
     AcosAngle::registerNode(pluginFn, ++typeId);
+    Add::registerNode(pluginFn, ++typeId);
+    AddAngle::registerNode(pluginFn, ++typeId);
+    AddInt::registerNode(pluginFn, ++typeId);
+    AddVector::registerNode(pluginFn, ++typeId);
     AsinAngle::registerNode(pluginFn, ++typeId);
     AtanAngle::registerNode(pluginFn, ++typeId);
     Clamp::registerNode(pluginFn, ++typeId);
     ClampAngle::registerNode(pluginFn, ++typeId);
     ClampInt::registerNode(pluginFn, ++typeId);
     Cos::registerNode(pluginFn, ++typeId);
+    Divide::registerNode(pluginFn, ++typeId);
+    DivideAngle::registerNode(pluginFn, ++typeId);
+    DivideAngleByInt::registerNode(pluginFn, ++typeId);
+    DivideByInt::registerNode(pluginFn, ++typeId);
     Lerp::registerNode(pluginFn, ++typeId);
     LerpAngle::registerNode(pluginFn, ++typeId);
     LerpVector::registerNode(pluginFn, ++typeId);
@@ -35,12 +46,17 @@ initializePlugin(MObject pluginObj)
     MinAngle::registerNode(pluginFn, ++typeId);
     Multiply::registerNode(pluginFn, ++typeId);
     MultiplyAngle::registerNode(pluginFn, ++typeId);
+    MultiplyAngleByInt::registerNode(pluginFn, ++typeId);
     MultiplyByInt::registerNode(pluginFn, ++typeId);
     MultiplyInt::registerNode(pluginFn, ++typeId);
     MultiplyMatrix::registerNode(pluginFn, ++typeId);
     MultiplyVector::registerNode(pluginFn, ++typeId);
     MultiplyVectorByMatrix::registerNode(pluginFn, ++typeId);
     Sin::registerNode(pluginFn, ++typeId);
+    Subtract::registerNode(pluginFn, ++typeId);
+    SubtractAngle::registerNode(pluginFn, ++typeId);
+    SubtractInt::registerNode(pluginFn, ++typeId);
+    SubtractVector::registerNode(pluginFn, ++typeId);
     Tan::registerNode(pluginFn, ++typeId);
     
     return MS::kSuccess;
@@ -53,12 +69,20 @@ uninitializePlugin(MObject pluginObj)
     
     Absolute::deregisterNode(pluginFn);
     AcosAngle::deregisterNode(pluginFn);
+    Add::deregisterNode(pluginFn);
+    AddAngle::deregisterNode(pluginFn);
+    AddInt::deregisterNode(pluginFn);
+    AddVector::deregisterNode(pluginFn);
     AsinAngle::deregisterNode(pluginFn);
     AtanAngle::deregisterNode(pluginFn);
     Clamp::deregisterNode(pluginFn);
     ClampAngle::deregisterNode(pluginFn);
     ClampInt::deregisterNode(pluginFn);
     Cos::deregisterNode(pluginFn);
+    Divide::deregisterNode(pluginFn);
+    DivideAngle::deregisterNode(pluginFn);
+    DivideAngleByInt::deregisterNode(pluginFn);
+    DivideByInt::deregisterNode(pluginFn);
     Lerp::deregisterNode(pluginFn);
     LerpAngle::deregisterNode(pluginFn);
     LerpVector::deregisterNode(pluginFn);
@@ -70,12 +94,17 @@ uninitializePlugin(MObject pluginObj)
     MinAngle::deregisterNode(pluginFn);
     Multiply::deregisterNode(pluginFn);
     MultiplyAngle::deregisterNode(pluginFn);
+    MultiplyAngleByInt::deregisterNode(pluginFn);
     MultiplyByInt::deregisterNode(pluginFn);
     MultiplyInt::deregisterNode(pluginFn);
     MultiplyMatrix::deregisterNode(pluginFn);
     MultiplyVector::deregisterNode(pluginFn);
     MultiplyVectorByMatrix::deregisterNode(pluginFn);
     Sin::deregisterNode(pluginFn);
+    Subtract::deregisterNode(pluginFn);
+    SubtractAngle::deregisterNode(pluginFn);
+    SubtractInt::deregisterNode(pluginFn);
+    SubtractVector::deregisterNode(pluginFn);
     Tan::deregisterNode(pluginFn);
     
     return MS::kSuccess;

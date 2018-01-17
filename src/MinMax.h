@@ -80,7 +80,7 @@ template<typename TAttrType, typename TClass, const char* TTypeName,
 MObject MinMaxNode<TAttrType, TClass, TTypeName, TOpFuncPtr>::outputAttr_; // NOLINT
 
 #define MIN_MAX_NODE(AttrType, NodeName, OpFuncPtr) \
-    TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName;    \
+    TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
     class NodeName : public MinMaxNode<AttrType, NodeName, name##NodeName, OpFuncPtr> {}; // NOLINT
 
 #pragma clang diagnostic push
