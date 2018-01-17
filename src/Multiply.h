@@ -10,9 +10,9 @@ class MultiplyNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAAttr_, "inputA", CastTo<TInOutAttrType>(0.0));
-        createAttribute(inputBAttr_, "inputB", CastTo<TInAttrType>(0.0));
-        createAttribute(outputAttr_, "output", CastTo<TInOutAttrType>(0.0), false);
+        createAttribute(inputAAttr_, "inputA", DefaultValue<TInOutAttrType>(0.0));
+        createAttribute(inputBAttr_, "inputB", DefaultValue<TInAttrType>(0.0));
+        createAttribute(outputAttr_, "output", DefaultValue<TInOutAttrType>(0.0), false);
         
         MPxNode::addAttribute(inputAAttr_);
         MPxNode::addAttribute(inputBAttr_);
@@ -60,11 +60,13 @@ template<typename TInOutAttrType, typename TInAttrType, typename TClass, const c
 MObject MultiplyNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::outputAttr_; // NOLINT
 
 #define MULTIPLY_NODE(InOutAttrType, InAttrType, NodeName) \
-    constexpr char name##NodeName[] = #NodeName;               \
+    constexpr char name##NodeName[] = #NodeName;           \
     class NodeName : public MultiplyNode<InOutAttrType, InAttrType, NodeName, name##NodeName> {}; // NOLINT
 
 MULTIPLY_NODE(double, double, Multiply);
 MULTIPLY_NODE(double, int, MultiplyByInt);
 MULTIPLY_NODE(int, int, MultiplyInt);
 MULTIPLY_NODE(MAngle, double, MultiplyAngle);
+MULTIPLY_NODE(MMatrix, MMatrix, MultiplyMatrix);
 MULTIPLY_NODE(MVector, double, MultiplyVector);
+MULTIPLY_NODE(MVector, MMatrix, MultiplyVectorByMatrix);

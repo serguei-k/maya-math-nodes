@@ -37,7 +37,9 @@ __unused initializePlugin(MObject pluginObj)
     MultiplyAngle::registerNode(pluginFn, ++typeId);
     MultiplyByInt::registerNode(pluginFn, ++typeId);
     MultiplyInt::registerNode(pluginFn, ++typeId);
+    MultiplyMatrix::registerNode(pluginFn, ++typeId);
     MultiplyVector::registerNode(pluginFn, ++typeId);
+    MultiplyVectorByMatrix::registerNode(pluginFn, ++typeId);
     Sin::registerNode(pluginFn, ++typeId);
     Tan::registerNode(pluginFn, ++typeId);
     
@@ -70,7 +72,9 @@ __unused uninitializePlugin(MObject pluginObj)
     MultiplyAngle::deregisterNode(pluginFn);
     MultiplyByInt::deregisterNode(pluginFn);
     MultiplyInt::deregisterNode(pluginFn);
+    MultiplyMatrix::deregisterNode(pluginFn);
     MultiplyVector::deregisterNode(pluginFn);
+    MultiplyVectorByMatrix::deregisterNode(pluginFn);
     Sin::deregisterNode(pluginFn);
     Tan::deregisterNode(pluginFn);
     

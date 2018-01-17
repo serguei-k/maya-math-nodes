@@ -11,8 +11,8 @@ class TrigNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAttr_, "input", CastTo<TInputAttrType>(0.0));
-        createAttribute(outputAttr_, "output", CastTo<TOutputAttrType>(0.0), false);
+        createAttribute(inputAttr_, "input", DefaultValue<TInputAttrType>(0.0));
+        createAttribute(outputAttr_, "output", DefaultValue<TOutputAttrType>(0.0), false);
         
         if (TSetLimits)
         {

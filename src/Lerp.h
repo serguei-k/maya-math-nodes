@@ -10,10 +10,10 @@ class LerpNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAAttr_, "inputA", CastTo<TAttrType>(0.0));
-        createAttribute(inputBAttr_, "inputB", CastTo<TAttrType>(0.0));
+        createAttribute(inputAAttr_, "inputA", DefaultValue<TAttrType>(0.0));
+        createAttribute(inputBAttr_, "inputB", DefaultValue<TAttrType>(0.0));
         createAttribute(alphaAttr_, "alpha", 0.5);
-        createAttribute(outputAttr_, "output", CastTo<TAttrType>(0.0), false);
+        createAttribute(outputAttr_, "output", DefaultValue<TAttrType>(0.0), false);
         
         MFnNumericAttribute attrFn(alphaAttr_);
         attrFn.setMin(0.0);

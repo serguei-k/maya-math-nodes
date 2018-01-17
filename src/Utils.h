@@ -5,21 +5,38 @@
 #include <cmath>
 
 #include <maya/MAngle.h>
+#include <maya/MMatrix.h>
+#include <maya/MFnMatrixAttribute.h>
 #include <maya/MFnNumericAttribute.h>
 #include <maya/MFnUnitAttribute.h>
 #include <maya/MPxNode.h>
 #include <maya/MVector.h>
+#include <maya/MQuaternion.h>
 
+// Default value templates
+// Note that complex types are always defaulted to zero/identity
 template <typename TType>
-inline TType CastTo(double from)
+inline TType DefaultValue(double from)
 {
     return TType(from);
 }
 
 template <>
-inline MVector CastTo(double from)
+inline MVector DefaultValue(double)
 {
-    return MVector(from, from, from);
+    return MVector::zero;
+}
+
+template <>
+inline MMatrix DefaultValue(double)
+{
+    return MMatrix::identity;
+}
+
+template <>
+inline MQuaternion DefaultValue(double)
+{
+    return MQuaternion::identity;
 }
 
 // Overloads for createAttribute
@@ -52,6 +69,14 @@ inline void createAttribute(MObject& attr, const char* name, const MVector& valu
     attrFn.setKeyable(isKeyable);
 }
 
+inline void createAttribute(MObject& attr, const char* name, const MMatrix& value, bool isKeyable = true)
+{
+    MFnMatrixAttribute attrFn;
+    attr = attrFn.create(name, name);
+    attrFn.setDefault(value);
+    attrFn.setKeyable(isKeyable);
+}
+
 // Explicit specializations for getAttribute
 template <typename TType>
 inline TType getAttribute(const MDataHandle& handle);
@@ -78,6 +103,12 @@ template <>
 inline MVector getAttribute(const MDataHandle& handle)
 {
     return handle.asVector();
+}
+
+template <>
+inline MMatrix getAttribute(const MDataHandle& handle)
+{
+    return handle.asMatrix();
 }
 
 template <typename TInputType, typename TOutputType>
