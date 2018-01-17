@@ -74,7 +74,7 @@ template<typename TAttrType, typename TClass, const char* TTypeName>
 MObject AbsoluteNode<TAttrType, TClass, TTypeName>::outputAttr_; // NOLINT
 
 #define ABSOLUTE_NODE(AttrType, NodeName)        \
-    constexpr char name##NodeName[] = #NodeName; \
+    TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
     class NodeName : public AbsoluteNode<AttrType, NodeName, name##NodeName> {}; // NOLINT
 
 ABSOLUTE_NODE(double, Absolute);

@@ -13,6 +13,12 @@
 #include <maya/MVector.h>
 #include <maya/MQuaternion.h>
 
+#ifdef _MSC_VER
+    #define TEMPLATE_PARAMETER_LINKAGE extern
+#else
+    #define TEMPLATE_PARAMETER_LINKAGE constexpr
+#endif
+
 // Default value templates
 // Note that complex types are always defaulted to zero/identity
 template <typename TType>

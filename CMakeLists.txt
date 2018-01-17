@@ -6,13 +6,20 @@ cmake_minimum_required(VERSION 3.3)
 project(maya-math-nodes)
 
 # Set default Maya version
-set(MAYA_VERSION 2017)
+if(NOT DEFINED MAYA_VERSION)
+    set(MAYA_VERSION 2017)
+endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(Maya REQUIRED)
 
 # Set compile flags
-set(CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libc++ ")
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if(WIN32)
+    add_compile_options(/wd4068 /EHsc)
+endif()
 
 # Create target
 add_library(mayaMathNodes SHARED
@@ -33,3 +40,7 @@ set_target_properties(mayaMathNodes PROPERTIES
     COMPILE_DEFINITIONS "${MAYA_COMPILE_DEFINITIONS}"
     PREFIX ""
     SUFFIX ${MAYA_PLUGIN_EXT})
+
+if(WIN32)
+    set_target_properties(mayaMathNodes PROPERTIES LINK_FLAGS "/export:initializePlugin /export:uninitializePlugin")
+endif()

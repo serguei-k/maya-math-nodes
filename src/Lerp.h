@@ -74,7 +74,7 @@ template<typename TAttrType, typename TClass, const char* TTypeName>
 MObject LerpNode<TAttrType, TClass, TTypeName>::outputAttr_; // NOLINT
 
 #define LERP_NODE(AttrType, NodeName)            \
-    constexpr char name##NodeName[] = #NodeName; \
+    TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
     class NodeName : public LerpNode<AttrType, NodeName, name##NodeName> {}; // NOLINT
 
 LERP_NODE(double, Lerp);

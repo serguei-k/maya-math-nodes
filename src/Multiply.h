@@ -60,7 +60,7 @@ template<typename TInOutAttrType, typename TInAttrType, typename TClass, const c
 MObject MultiplyNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::outputAttr_; // NOLINT
 
 #define MULTIPLY_NODE(InOutAttrType, InAttrType, NodeName) \
-    constexpr char name##NodeName[] = #NodeName;           \
+    TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName;           \
     class NodeName : public MultiplyNode<InOutAttrType, InAttrType, NodeName, name##NodeName> {}; // NOLINT
 
 MULTIPLY_NODE(double, double, Multiply);

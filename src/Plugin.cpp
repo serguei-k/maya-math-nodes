@@ -9,7 +9,7 @@
 #include "Trig.h"
 
 MStatus
-__unused initializePlugin(MObject pluginObj)
+initializePlugin(MObject pluginObj)
 {
     MFnPlugin pluginFn(pluginObj, "Serguei Kalentchouk, et al.", "0.0.1", "Any");
     
@@ -47,7 +47,7 @@ __unused initializePlugin(MObject pluginObj)
 }
 
 MStatus
-__unused uninitializePlugin(MObject pluginObj)
+uninitializePlugin(MObject pluginObj)
 {
     MFnPlugin pluginFn(pluginObj);
     

@@ -73,7 +73,7 @@ template<typename TAttrType, typename TClass, const char* TTypeName>
 MObject ClampNode<TAttrType, TClass, TTypeName>::outputAttr_; // NOLINT
 
 #define CLAMP_NODE(AttrType, NodeName)           \
-    constexpr char name##NodeName[] = #NodeName; \
+    TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
     class NodeName : public ClampNode<AttrType, NodeName, name##NodeName> {}; // NOLINT
 
 CLAMP_NODE(double, Clamp);
