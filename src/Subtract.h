@@ -26,7 +26,7 @@ public:
     
     MStatus compute(const MPlug& plug, MDataBlock& dataBlock) override
     {
-        if (plug == outputAttr_)
+        if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
             MDataHandle inputAHandle = dataBlock.inputValue(inputAAttr_);
             const TInOutAttrType inputAValue = getAttribute<TInOutAttrType>(inputAHandle);
