@@ -27,6 +27,7 @@ add_library(mayaMathNodes SHARED
     src/Add.h
     src/Clamp.h
     src/Divide.h
+    src/Inverse.h
     src/Lerp.h
     src/MinMax.h
     src/Multiply.h

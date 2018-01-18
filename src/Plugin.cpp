@@ -6,6 +6,7 @@
 #include "Add.h"
 #include "Clamp.h"
 #include "Divide.h"
+#include "Inverse.h"
 #include "Lerp.h"
 #include "Multiply.h"
 #include "Subtract.h"
@@ -35,6 +36,8 @@ initializePlugin(MObject pluginObj)
     DivideAngle::registerNode(pluginFn, ++typeId);
     DivideAngleByInt::registerNode(pluginFn, ++typeId);
     DivideByInt::registerNode(pluginFn, ++typeId);
+    InverseMatrix::registerNode(pluginFn, ++typeId);
+    InverseQuaternion::registerNode(pluginFn, ++typeId);
     Lerp::registerNode(pluginFn, ++typeId);
     LerpAngle::registerNode(pluginFn, ++typeId);
     LerpVector::registerNode(pluginFn, ++typeId);
@@ -84,6 +87,8 @@ uninitializePlugin(MObject pluginObj)
     DivideAngle::deregisterNode(pluginFn);
     DivideAngleByInt::deregisterNode(pluginFn);
     DivideByInt::deregisterNode(pluginFn);
+    InverseMatrix::deregisterNode(pluginFn);
+    InverseQuaternion::deregisterNode(pluginFn);
     Lerp::deregisterNode(pluginFn);
     LerpAngle::deregisterNode(pluginFn);
     LerpVector::deregisterNode(pluginFn);
