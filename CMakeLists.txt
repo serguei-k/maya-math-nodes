@@ -32,6 +32,7 @@ add_library(mayaMathNodes SHARED
     src/MinMax.h
     src/Multiply.h
     src/Plugin.cpp
+    src/Power.h
     src/Trig.h
     src/Subtract.h
     src/Utils.h)

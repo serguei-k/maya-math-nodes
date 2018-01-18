@@ -9,6 +9,7 @@
 #include "Inverse.h"
 #include "Lerp.h"
 #include "Multiply.h"
+#include "Power.h"
 #include "Subtract.h"
 #include "Trig.h"
 
@@ -56,11 +57,13 @@ initializePlugin(MObject pluginObj)
     MultiplyVector::registerNode(pluginFn, ++typeId);
     MultiplyVectorByMatrix::registerNode(pluginFn, ++typeId);
     MultiplyQuaternion::registerNode(pluginFn, ++typeId);
+    Power::registerNode(pluginFn, ++typeId);
     Sin::registerNode(pluginFn, ++typeId);
     Subtract::registerNode(pluginFn, ++typeId);
     SubtractAngle::registerNode(pluginFn, ++typeId);
     SubtractInt::registerNode(pluginFn, ++typeId);
     SubtractVector::registerNode(pluginFn, ++typeId);
+    SquareRoot::registerNode(pluginFn, ++typeId);
     Tan::registerNode(pluginFn, ++typeId);
     
     return MS::kSuccess;
@@ -107,11 +110,13 @@ uninitializePlugin(MObject pluginObj)
     MultiplyVector::deregisterNode(pluginFn);
     MultiplyVectorByMatrix::deregisterNode(pluginFn);
     MultiplyQuaternion::deregisterNode(pluginFn);
+    Power::deregisterNode(pluginFn);
     Sin::deregisterNode(pluginFn);
     Subtract::deregisterNode(pluginFn);
     SubtractAngle::deregisterNode(pluginFn);
     SubtractInt::deregisterNode(pluginFn);
     SubtractVector::deregisterNode(pluginFn);
+    SquareRoot::deregisterNode(pluginFn);
     Tan::deregisterNode(pluginFn);
     
     return MS::kSuccess;
