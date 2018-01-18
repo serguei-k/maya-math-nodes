@@ -3,9 +3,11 @@
 #pragma once
 
 #include <cmath>
+#include <type_traits>
 
 #include <maya/MAngle.h>
 #include <maya/MMatrix.h>
+#include <maya/MFnDependencyNode.h>
 #include <maya/MFnMatrixAttribute.h>
 #include <maya/MFnNumericAttribute.h>
 #include <maya/MFnUnitAttribute.h>
@@ -83,6 +85,14 @@ inline void createAttribute(MObject& attr, const char* name, const MMatrix& valu
     attrFn.setKeyable(isKeyable);
 }
 
+inline void createAttribute(MObject& attr, const char* name, const MQuaternion& value, bool isKeyable = true)
+{
+    MFnNumericAttribute attrFn;
+    attr = attrFn.create(name, name, MFnNumericData::k4Double);
+    attrFn.setDefault(value.x, value.y, value.z, value.w);
+    attrFn.setKeyable(isKeyable);
+}
+
 // Explicit specializations for getAttribute
 template <typename TType>
 inline TType getAttribute(const MDataHandle& handle);
@@ -115,6 +125,17 @@ template <>
 inline MMatrix getAttribute(const MDataHandle& handle)
 {
     return handle.asMatrix();
+}
+
+template <>
+inline MQuaternion getAttribute(const MDataHandle& handle)
+{
+    MFnNumericData numDataFn(const_cast<MDataHandle&>(handle).data());
+    
+    double values[4];
+    numDataFn.getData4Double(values[0], values[1], values[2], values[3]);
+    
+    return MQuaternion(values);
 }
 
 template <typename TInputType, typename TOutputType>
@@ -161,6 +182,26 @@ MAngle operator/(const MAngle& a, double b)
 MAngle operator/(const MAngle& a, int b)
 {
     return MAngle(a.asRadians() / b);
+}
+
+// Attribute alias helper to rename components to x, y, z, w
+MString getAttributeName(const MPlug& plug)
+{
+    return plug.partialName(false, false, false, false, false, true);
+}
+
+void setAttributeAlias(const MObject& object, const MObject& attr)
+{
+    MPlug plug(object, attr);
+    MFnDependencyNode nodeAFn(object);
+    nodeAFn.setAlias(getAttributeName(plug) + " X", getAttributeName(plug.child(0)), plug.child(0));
+    nodeAFn.setAlias(getAttributeName(plug) + " Y", getAttributeName(plug.child(1)), plug.child(1));
+    nodeAFn.setAlias(getAttributeName(plug) + " Z", getAttributeName(plug.child(2)), plug.child(2));
+    
+    if (plug.numChildren() == 4)
+    {
+        nodeAFn.setAlias(getAttributeName(plug) + " W", getAttributeName(plug.child(3)), plug.child(3));
+    }
 }
 
 // Base node type definition used for all math nodes in this library

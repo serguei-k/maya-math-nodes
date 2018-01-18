@@ -43,6 +43,20 @@ public:
         
         return MS::kUnknownParameter;
     }
+    
+    void postConstructor() override
+    {
+        if (std::is_same<TInOutAttrType, MVector>::value)
+        {
+            setAttributeAlias(MPxNode::thisMObject(), inputAAttr_);
+            setAttributeAlias(MPxNode::thisMObject(), outputAttr_);
+        }
+        
+        if (std::is_same<TInAttrType, MVector>::value)
+        {
+            setAttributeAlias(MPxNode::thisMObject(), inputBAttr_);
+        }
+    }
 
 private:
     static MObject inputAAttr_;

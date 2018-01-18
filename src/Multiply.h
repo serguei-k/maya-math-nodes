@@ -43,6 +43,20 @@ public:
         
         return MS::kUnknownParameter;
     }
+    
+    void postConstructor() override
+    {
+        if (std::is_same<TInOutAttrType, MVector>::value || std::is_same<TInOutAttrType, MQuaternion>::value)
+        {
+            setAttributeAlias(MPxNode::thisMObject(), inputAAttr_);
+            setAttributeAlias(MPxNode::thisMObject(), outputAttr_);
+        }
+        
+        if (std::is_same<TInAttrType, MVector>::value || std::is_same<TInAttrType, MQuaternion>::value)
+        {
+            setAttributeAlias(MPxNode::thisMObject(), inputBAttr_);
+        }
+    }
 
 private:
     static MObject inputAAttr_;
@@ -71,3 +85,4 @@ MULTIPLY_NODE(MAngle, int, MultiplyAngleByInt);
 MULTIPLY_NODE(MMatrix, MMatrix, MultiplyMatrix);
 MULTIPLY_NODE(MVector, double, MultiplyVector);
 MULTIPLY_NODE(MVector, MMatrix, MultiplyVectorByMatrix);
+MULTIPLY_NODE(MQuaternion, MQuaternion, MultiplyQuaternion);
