@@ -35,7 +35,8 @@ add_library(mayaMathNodes SHARED
     src/Power.h
     src/Trig.h
     src/Subtract.h
-    src/Utils.h)
+    src/Utils.h
+    src/VectorOps.h)
 
 include_directories(${MAYA_INCLUDE_DIR})
 link_directories(${MAYA_LIBRARY_DIR})

@@ -12,6 +12,7 @@
 #include "Power.h"
 #include "Subtract.h"
 #include "Trig.h"
+#include "VectorOps.h"
 
 MStatus
 initializePlugin(MObject pluginObj)
@@ -27,16 +28,19 @@ initializePlugin(MObject pluginObj)
     AddAngle::registerNode(pluginFn, ++typeId);
     AddInt::registerNode(pluginFn, ++typeId);
     AddVector::registerNode(pluginFn, ++typeId);
+    AngleBetweenVectors::registerNode(pluginFn, ++typeId);
     AsinAngle::registerNode(pluginFn, ++typeId);
     AtanAngle::registerNode(pluginFn, ++typeId);
     Clamp::registerNode(pluginFn, ++typeId);
     ClampAngle::registerNode(pluginFn, ++typeId);
     ClampInt::registerNode(pluginFn, ++typeId);
     Cos::registerNode(pluginFn, ++typeId);
+    CrossProduct::registerNode(pluginFn, ++typeId);
     Divide::registerNode(pluginFn, ++typeId);
     DivideAngle::registerNode(pluginFn, ++typeId);
     DivideAngleByInt::registerNode(pluginFn, ++typeId);
     DivideByInt::registerNode(pluginFn, ++typeId);
+    DotProduct::registerNode(pluginFn, ++typeId);
     InverseMatrix::registerNode(pluginFn, ++typeId);
     InverseQuaternion::registerNode(pluginFn, ++typeId);
     Lerp::registerNode(pluginFn, ++typeId);
@@ -57,6 +61,7 @@ initializePlugin(MObject pluginObj)
     MultiplyVector::registerNode(pluginFn, ++typeId);
     MultiplyVectorByMatrix::registerNode(pluginFn, ++typeId);
     MultiplyQuaternion::registerNode(pluginFn, ++typeId);
+    NormalizeVector::registerNode(pluginFn, ++typeId);
     Power::registerNode(pluginFn, ++typeId);
     Sin::registerNode(pluginFn, ++typeId);
     Subtract::registerNode(pluginFn, ++typeId);
@@ -65,6 +70,7 @@ initializePlugin(MObject pluginObj)
     SubtractVector::registerNode(pluginFn, ++typeId);
     SquareRoot::registerNode(pluginFn, ++typeId);
     Tan::registerNode(pluginFn, ++typeId);
+    VectorLength::registerNode(pluginFn, ++typeId);
     
     return MS::kSuccess;
 }
@@ -80,16 +86,19 @@ uninitializePlugin(MObject pluginObj)
     AddAngle::deregisterNode(pluginFn);
     AddInt::deregisterNode(pluginFn);
     AddVector::deregisterNode(pluginFn);
+    AngleBetweenVectors::deregisterNode(pluginFn);
     AsinAngle::deregisterNode(pluginFn);
     AtanAngle::deregisterNode(pluginFn);
     Clamp::deregisterNode(pluginFn);
     ClampAngle::deregisterNode(pluginFn);
     ClampInt::deregisterNode(pluginFn);
     Cos::deregisterNode(pluginFn);
+    CrossProduct::deregisterNode(pluginFn);
     Divide::deregisterNode(pluginFn);
     DivideAngle::deregisterNode(pluginFn);
     DivideAngleByInt::deregisterNode(pluginFn);
     DivideByInt::deregisterNode(pluginFn);
+    DotProduct::deregisterNode(pluginFn);
     InverseMatrix::deregisterNode(pluginFn);
     InverseQuaternion::deregisterNode(pluginFn);
     Lerp::deregisterNode(pluginFn);
@@ -110,6 +119,7 @@ uninitializePlugin(MObject pluginObj)
     MultiplyVector::deregisterNode(pluginFn);
     MultiplyVectorByMatrix::deregisterNode(pluginFn);
     MultiplyQuaternion::deregisterNode(pluginFn);
+    NormalizeVector::deregisterNode(pluginFn);
     Power::deregisterNode(pluginFn);
     Sin::deregisterNode(pluginFn);
     Subtract::deregisterNode(pluginFn);
@@ -118,6 +128,7 @@ uninitializePlugin(MObject pluginObj)
     SubtractVector::deregisterNode(pluginFn);
     SquareRoot::deregisterNode(pluginFn);
     Tan::deregisterNode(pluginFn);
+    VectorLength::deregisterNode(pluginFn);
     
     return MS::kSuccess;
 }
