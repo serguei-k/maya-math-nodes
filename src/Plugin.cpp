@@ -5,6 +5,7 @@
 #include "Absolute.h"
 #include "Add.h"
 #include "Clamp.h"
+#include "Convert.h"
 #include "Divide.h"
 #include "Inverse.h"
 #include "Lerp.h"
@@ -63,6 +64,8 @@ initializePlugin(MObject pluginObj)
     MultiplyQuaternion::registerNode(pluginFn, ++typeId);
     NormalizeVector::registerNode(pluginFn, ++typeId);
     Power::registerNode(pluginFn, ++typeId);
+    RotationFromMatrix::registerNode(pluginFn, ++typeId);
+    RotationFromQuaternion::registerNode(pluginFn, ++typeId);
     Sin::registerNode(pluginFn, ++typeId);
     Subtract::registerNode(pluginFn, ++typeId);
     SubtractAngle::registerNode(pluginFn, ++typeId);
@@ -121,6 +124,8 @@ uninitializePlugin(MObject pluginObj)
     MultiplyQuaternion::deregisterNode(pluginFn);
     NormalizeVector::deregisterNode(pluginFn);
     Power::deregisterNode(pluginFn);
+    RotationFromMatrix::deregisterNode(pluginFn);
+    RotationFromQuaternion::deregisterNode(pluginFn);
     Sin::deregisterNode(pluginFn);
     Subtract::deregisterNode(pluginFn);
     SubtractAngle::deregisterNode(pluginFn);

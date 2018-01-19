@@ -6,6 +6,7 @@
 #include <type_traits>
 
 #include <maya/MAngle.h>
+#include <maya/MEulerRotation.h>
 #include <maya/MMatrix.h>
 #include <maya/MFnDependencyNode.h>
 #include <maya/MFnMatrixAttribute.h>
@@ -20,6 +21,8 @@
 #else
     #define TEMPLATE_PARAMETER_LINKAGE constexpr
 #endif
+
+#define ADD_AXIS(name, suffix) #name suffix
 
 // Default value templates
 // Note that complex types are always defaulted to zero/identity
@@ -90,6 +93,19 @@ inline void createAttribute(MObject& attr, const char* name, const MQuaternion& 
     MFnNumericAttribute attrFn;
     attr = attrFn.create(name, name, MFnNumericData::k4Double);
     attrFn.setDefault(value.x, value.y, value.z, value.w);
+    attrFn.setKeyable(isKeyable);
+}
+
+inline void createAttribute(MObject& attr, MObject& attrX, MObject& attrY, MObject& attrZ,
+                            const char* name, const MEulerRotation& value, bool isKeyable = true)
+{
+    MFnNumericAttribute attrFn;
+    
+    createAttribute(attrX, ADD_AXIS(name, "X"), MAngle(value.x), isKeyable);
+    createAttribute(attrY, ADD_AXIS(name, "Y"), MAngle(value.y), isKeyable);
+    createAttribute(attrZ, ADD_AXIS(name, "Z"), MAngle(value.z), isKeyable);
+    
+    attr = attrFn.create(name, name, attrX, attrY, attrZ);
     attrFn.setKeyable(isKeyable);
 }
 
