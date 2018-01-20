@@ -3,6 +3,7 @@
 #pragma once
 
 #include <cmath>
+#include <string>
 #include <type_traits>
 
 #include <maya/MAngle.h>
@@ -21,8 +22,6 @@
 #else
     #define TEMPLATE_PARAMETER_LINKAGE constexpr
 #endif
-
-#define ADD_AXIS(name, suffix) #name suffix
 
 // Default value templates
 // Note that complex types are always defaulted to zero/identity
@@ -101,9 +100,9 @@ inline void createAttribute(MObject& attr, MObject& attrX, MObject& attrY, MObje
 {
     MFnNumericAttribute attrFn;
     
-    createAttribute(attrX, ADD_AXIS(name, "X"), MAngle(value.x), isKeyable);
-    createAttribute(attrY, ADD_AXIS(name, "Y"), MAngle(value.y), isKeyable);
-    createAttribute(attrZ, ADD_AXIS(name, "Z"), MAngle(value.z), isKeyable);
+    createAttribute(attrX, (std::string(name) + "X").c_str(), MAngle(value.x), isKeyable);
+    createAttribute(attrY, (std::string(name) + "Y").c_str(), MAngle(value.y), isKeyable);
+    createAttribute(attrZ, (std::string(name) + "Z").c_str(), MAngle(value.z), isKeyable);
     
     attr = attrFn.create(name, name, attrX, attrY, attrZ);
     attrFn.setKeyable(isKeyable);
