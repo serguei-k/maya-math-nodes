@@ -7,31 +7,56 @@
 
 #include "Utils.h"
 
-inline MEulerRotation getRotation(const MMatrix& matrix, MEulerRotation::RotationOrder rotationOrder)
+template <typename TInType, typename TOutType>
+inline TOutType getRotation(const TInType& source, MEulerRotation::RotationOrder rotationOrder);
+
+template <>
+inline MEulerRotation getRotation(const MMatrix& source, MEulerRotation::RotationOrder rotationOrder)
 {
-    MTransformationMatrix xform(matrix);
+    MTransformationMatrix xform(source);
     MEulerRotation rotation = xform.eulerRotation();
     rotation.reorderIt(rotationOrder);
     
     return rotation;
 }
 
-inline MEulerRotation getRotation(const MQuaternion& quaternion, MEulerRotation::RotationOrder rotationOrder)
+template <>
+inline MQuaternion getRotation(const MMatrix& source, MEulerRotation::RotationOrder)
 {
-    MEulerRotation rotation = quaternion.asEulerRotation();
+    MTransformationMatrix xform(source);
+    
+    return xform.rotation();
+}
+
+template <>
+inline MEulerRotation getRotation(const MQuaternion& source, MEulerRotation::RotationOrder rotationOrder)
+{
+    MEulerRotation rotation = source.asEulerRotation();
     rotation.reorderIt(rotationOrder);
     
     return rotation;
 }
 
-template<typename TAttrType, typename TClass, const char* TTypeName>
+template <>
+inline MEulerRotation getRotation(const MEulerRotation& source, MEulerRotation::RotationOrder rotationOrder)
+{
+    return MEulerRotation(source.x, source.y, source.z, rotationOrder);
+}
+
+template <>
+inline MQuaternion getRotation(const MEulerRotation& source, MEulerRotation::RotationOrder rotationOrder)
+{
+    return MEulerRotation(source.x, source.y, source.z, rotationOrder).asQuaternion();
+}
+
+template<typename TInAttrType, typename TOutAttrType, typename TClass, const char* TTypeName>
 class GetRotationNode : public BaseNode<TClass, TTypeName>
 {
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAttr_, "input", DefaultValue<TAttrType>(0.0));
-        createAttribute(outputAttr_, outputAttrX_, outputAttrY_, outputAttrZ_, "output", MEulerRotation::identity, false);
+        createAttribute(inputAttr_, "input", DefaultValue<TInAttrType>(0.0));
+        createAttribute(outputAttr_, "output", DefaultValue<TOutAttrType>(0.0), false);
         
         MFnEnumAttribute attrFn;
         rotationOrderAttr_ = attrFn.create("rotationOrder", "rotationOrder");
@@ -56,25 +81,13 @@ public:
     {
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
-            MDataHandle inputHandle = dataBlock.inputValue(inputAttr_);
-            const auto inputValue = getAttribute<TAttrType>(inputHandle);
+            const auto inputValue = getAttribute<TInAttrType>(dataBlock, inputAttr_);
             
             MDataHandle rotOrderHandle = dataBlock.inputValue(rotationOrderAttr_);
             const auto rotationOrder = MEulerRotation::RotationOrder(rotOrderHandle.asShort());
             
-            MEulerRotation rotation = getRotation(inputValue, rotationOrder);
-            
-            MDataHandle outputXHandle = dataBlock.outputValue(outputAttrX_);
-            outputXHandle.set(MAngle(rotation.x));
-            outputXHandle.setClean();
-    
-            MDataHandle outputYHandle = dataBlock.outputValue(outputAttrY_);
-            outputYHandle.set(MAngle(rotation.y));
-            outputYHandle.setClean();
-    
-            MDataHandle outputZHandle = dataBlock.outputValue(outputAttrZ_);
-            outputZHandle.set(MAngle(rotation.z));
-            outputZHandle.setClean();
+            const auto rotation = getRotation<TInAttrType, TOutAttrType>(inputValue, rotationOrder);
+            setAttribute(dataBlock, outputAttr_, rotation);
             
             return MS::kSuccess;
         }
@@ -83,35 +96,25 @@ public:
     }
 
 private:
-    static MObject inputAttr_;
-    static MObject rotationOrderAttr_;
-    static MObject outputAttr_;
-    static MObject outputAttrX_;
-    static MObject outputAttrY_;
-    static MObject outputAttrZ_;
+    static Attribute inputAttr_;
+    static Attribute rotationOrderAttr_;
+    static Attribute outputAttr_;
 };
 
-template<typename TAttrType, typename TClass, const char* TTypeName>
-MObject GetRotationNode<TAttrType, TClass, TTypeName>::inputAttr_; // NOLINT
+template<typename TInAttrType, typename TOutAttrType, typename TClass, const char* TTypeName>
+Attribute GetRotationNode<TInAttrType, TOutAttrType, TClass, TTypeName>::inputAttr_;
 
-template<typename TAttrType, typename TClass, const char* TTypeName>
-MObject GetRotationNode<TAttrType, TClass, TTypeName>::rotationOrderAttr_; // NOLINT
+template<typename TInAttrType, typename TOutAttrType, typename TClass, const char* TTypeName>
+Attribute GetRotationNode<TInAttrType, TOutAttrType, TClass, TTypeName>::rotationOrderAttr_;
 
-template<typename TAttrType, typename TClass, const char* TTypeName>
-MObject GetRotationNode<TAttrType, TClass, TTypeName>::outputAttr_; // NOLINT
+template<typename TInAttrType, typename TOutAttrType, typename TClass, const char* TTypeName>
+Attribute GetRotationNode<TInAttrType, TOutAttrType, TClass, TTypeName>::outputAttr_;
 
-template<typename TAttrType, typename TClass, const char* TTypeName>
-MObject GetRotationNode<TAttrType, TClass, TTypeName>::outputAttrX_; // NOLINT
-
-template<typename TAttrType, typename TClass, const char* TTypeName>
-MObject GetRotationNode<TAttrType, TClass, TTypeName>::outputAttrY_; // NOLINT
-
-template<typename TAttrType, typename TClass, const char* TTypeName>
-MObject GetRotationNode<TAttrType, TClass, TTypeName>::outputAttrZ_; // NOLINT
-
-#define GET_ROTATION_NODE(AttrType, NodeName) \
+#define GET_ROTATION_NODE(InAttrType, OutAttrType, NodeName) \
     TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
-    class NodeName : public GetRotationNode<AttrType, NodeName, name##NodeName> {}; // NOLINT
+    class NodeName : public GetRotationNode<InAttrType, OutAttrType, NodeName, name##NodeName> {};
 
-GET_ROTATION_NODE(MMatrix, RotationFromMatrix);
-GET_ROTATION_NODE(MQuaternion, RotationFromQuaternion);
+GET_ROTATION_NODE(MMatrix, MEulerRotation, RotationFromMatrix);
+GET_ROTATION_NODE(MQuaternion, MEulerRotation, RotationFromQuaternion);
+GET_ROTATION_NODE(MMatrix, MQuaternion, QuaternionFromMatrix);
+GET_ROTATION_NODE(MEulerRotation, MQuaternion, QuaternionFromRotation);

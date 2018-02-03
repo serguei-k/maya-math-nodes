@@ -8,13 +8,13 @@ namespace std
 {
 
 template <>
-inline const MAngle& max(const MAngle& a, const MAngle& b) // NOLINT
+inline const MAngle& max(const MAngle& a, const MAngle& b)
 {
     return (a.asRadians() > b.asRadians()) ? a : b;
 }
 
 template <>
-inline const MAngle& min(const MAngle& a, const MAngle& b) // NOLINT
+inline const MAngle& min(const MAngle& a, const MAngle& b)
 {
     return (a.asRadians() < b.asRadians()) ? a : b;
 }
@@ -45,15 +45,10 @@ public:
     {
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
-            MDataHandle inputAHandle = dataBlock.inputValue(inputAAttr_);
-            const TAttrType inputAValue = getAttribute<TAttrType>(inputAHandle);
+            const auto inputAValue = getAttribute<TAttrType>(dataBlock, inputAAttr_);
+            const auto inputBValue = getAttribute<TAttrType>(dataBlock, inputBAttr_);
             
-            MDataHandle inputBHandle = dataBlock.inputValue(inputBAttr_);
-            const TAttrType inputBValue = getAttribute<TAttrType>(inputBHandle);
-            
-            MDataHandle outputHandle = dataBlock.outputValue(outputAttr_);
-            outputHandle.set(TOpFuncPtr(inputAValue, inputBValue));
-            outputHandle.setClean();
+            setAttribute(dataBlock, outputAttr_, TOpFuncPtr(inputAValue, inputBValue));
             
             return MS::kSuccess;
         }
@@ -62,26 +57,26 @@ public:
     }
 
 private:
-    static MObject inputAAttr_;
-    static MObject inputBAttr_;
-    static MObject outputAttr_;
+    static Attribute inputAAttr_;
+    static Attribute inputBAttr_;
+    static Attribute outputAttr_;
 };
 
 template<typename TAttrType, typename TClass, const char* TTypeName,
          const TAttrType& (*TOpFuncPtr)(const TAttrType&, const TAttrType&)>
-MObject MinMaxNode<TAttrType, TClass, TTypeName, TOpFuncPtr>::inputAAttr_; // NOLINT
+Attribute MinMaxNode<TAttrType, TClass, TTypeName, TOpFuncPtr>::inputAAttr_;
 
 template<typename TAttrType, typename TClass, const char* TTypeName,
          const TAttrType& (*TOpFuncPtr)(const TAttrType&, const TAttrType&)>
-MObject MinMaxNode<TAttrType, TClass, TTypeName, TOpFuncPtr>::inputBAttr_; // NOLINT
+Attribute MinMaxNode<TAttrType, TClass, TTypeName, TOpFuncPtr>::inputBAttr_;
 
 template<typename TAttrType, typename TClass, const char* TTypeName,
          const TAttrType& (*TOpFuncPtr)(const TAttrType&, const TAttrType&)>
-MObject MinMaxNode<TAttrType, TClass, TTypeName, TOpFuncPtr>::outputAttr_; // NOLINT
+Attribute MinMaxNode<TAttrType, TClass, TTypeName, TOpFuncPtr>::outputAttr_;
 
 #define MIN_MAX_NODE(AttrType, NodeName, OpFuncPtr) \
     TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
-    class NodeName : public MinMaxNode<AttrType, NodeName, name##NodeName, OpFuncPtr> {}; // NOLINT
+    class NodeName : public MinMaxNode<AttrType, NodeName, name##NodeName, OpFuncPtr> {};
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "TemplateArgumentsIssues"

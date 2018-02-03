@@ -34,18 +34,11 @@ public:
     {
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
-            MDataHandle inputHandle = dataBlock.inputValue(inputAttr_);
-            const TAttrType inputValue = getAttribute<TAttrType>(inputHandle);
+            const TAttrType inputValue = getAttribute<TAttrType>(dataBlock, inputAttr_);
+            const TAttrType inputAValue = getAttribute<TAttrType>(dataBlock, inputAAttr_);
+            const TAttrType inputBValue = getAttribute<TAttrType>(dataBlock, inputBAttr_);
             
-            MDataHandle inputAHandle = dataBlock.inputValue(inputAAttr_);
-            const TAttrType inputAValue = getAttribute<TAttrType>(inputAHandle);
-            
-            MDataHandle inputBHandle = dataBlock.inputValue(inputBAttr_);
-            const TAttrType inputBValue = getAttribute<TAttrType>(inputBHandle);
-            
-            MDataHandle outputHandle = dataBlock.outputValue(outputAttr_);
-            outputHandle.set(TAttrType(std::max(inputAValue, std::min(inputValue, inputBValue))));
-            outputHandle.setClean();
+            setAttribute(dataBlock, outputAttr_, TAttrType(std::max(inputAValue, std::min(inputValue, inputBValue))));
             
             return MS::kSuccess;
         }
@@ -54,27 +47,27 @@ public:
     }
 
 private:
-    static MObject inputAttr_;
-    static MObject inputAAttr_;
-    static MObject inputBAttr_;
-    static MObject outputAttr_;
+    static Attribute inputAttr_;
+    static Attribute inputAAttr_;
+    static Attribute inputBAttr_;
+    static Attribute outputAttr_;
 };
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
-MObject ClampNode<TAttrType, TClass, TTypeName>::inputAttr_; // NOLINT
+Attribute ClampNode<TAttrType, TClass, TTypeName>::inputAttr_;
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
-MObject ClampNode<TAttrType, TClass, TTypeName>::inputAAttr_; // NOLINT
+Attribute ClampNode<TAttrType, TClass, TTypeName>::inputAAttr_;
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
-MObject ClampNode<TAttrType, TClass, TTypeName>::inputBAttr_; // NOLINT
+Attribute ClampNode<TAttrType, TClass, TTypeName>::inputBAttr_;
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
-MObject ClampNode<TAttrType, TClass, TTypeName>::outputAttr_; // NOLINT
+Attribute ClampNode<TAttrType, TClass, TTypeName>::outputAttr_;
 
 #define CLAMP_NODE(AttrType, NodeName) \
     TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
-    class NodeName : public ClampNode<AttrType, NodeName, name##NodeName> {}; // NOLINT
+    class NodeName : public ClampNode<AttrType, NodeName, name##NodeName> {};
 
 CLAMP_NODE(double, Clamp);
 CLAMP_NODE(int, ClampInt);

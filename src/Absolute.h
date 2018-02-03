@@ -47,12 +47,9 @@ public:
     {
         if (plug == outputAttr_)
         {
-            MDataHandle inputAttrHandle = dataBlock.inputValue(inputAttr_);
-            const TAttrType inputAttrValue = getAttribute<TAttrType>(inputAttrHandle);
+            const auto inputAttrValue = getAttribute<TAttrType>(dataBlock, inputAttr_);
             
-            MDataHandle outputAttrHandle = dataBlock.outputValue(outputAttr_);
-            outputAttrHandle.set(std_ext::abs_t(inputAttrValue));
-            outputAttrHandle.setClean();
+            setAttribute(dataBlock, outputAttr_, std_ext::abs_t(inputAttrValue));
             
             return MS::kSuccess;
         }
@@ -61,19 +58,19 @@ public:
     }
 
 private:
-    static MObject inputAttr_;
-    static MObject outputAttr_;
+    static Attribute inputAttr_;
+    static Attribute outputAttr_;
 };
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
-MObject AbsoluteNode<TAttrType, TClass, TTypeName>::inputAttr_; // NOLINT
+Attribute AbsoluteNode<TAttrType, TClass, TTypeName>::inputAttr_;
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
-MObject AbsoluteNode<TAttrType, TClass, TTypeName>::outputAttr_; // NOLINT
+Attribute AbsoluteNode<TAttrType, TClass, TTypeName>::outputAttr_;
 
 #define ABSOLUTE_NODE(AttrType, NodeName) \
     TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
-    class NodeName : public AbsoluteNode<AttrType, NodeName, name##NodeName> {}; // NOLINT
+    class NodeName : public AbsoluteNode<AttrType, NodeName, name##NodeName> {};
 
 ABSOLUTE_NODE(double, Absolute);
 ABSOLUTE_NODE(int, AbsoluteInt);

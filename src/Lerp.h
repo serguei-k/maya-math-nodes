@@ -35,57 +35,40 @@ public:
     {
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
-            MDataHandle inputAHandle = dataBlock.inputValue(inputAAttr_);
-            const TAttrType inputAValue = getAttribute<TAttrType>(inputAHandle);
+            const auto inputAValue = getAttribute<TAttrType>(dataBlock, inputAAttr_);
+            const auto inputBValue = getAttribute<TAttrType>(dataBlock, inputBAttr_);
+            const auto alphaValue = getAttribute<double>(dataBlock, alphaAttr_);
             
-            MDataHandle inputBHandle = dataBlock.inputValue(inputBAttr_);
-            const TAttrType inputBValue = getAttribute<TAttrType>(inputBHandle);
-            
-            MDataHandle alphaHandle = dataBlock.inputValue(alphaAttr_);
-            const double alphaValue = getAttribute<double>(alphaHandle);
-            
-            MDataHandle outputHandle = dataBlock.outputValue(outputAttr_);
-            outputHandle.set(TAttrType(inputAValue + (inputBValue - inputAValue) * alphaValue));
-            outputHandle.setClean();
+            setAttribute(dataBlock, outputAttr_, TAttrType(inputAValue + (inputBValue - inputAValue) * alphaValue));
             
             return MS::kSuccess;
         }
         
         return MS::kUnknownParameter;
     }
-    
-    void postConstructor() override
-    {
-        if (std::is_same<TAttrType, MVector>::value)
-        {
-            setAttributeAlias(MPxNode::thisMObject(), inputAAttr_);
-            setAttributeAlias(MPxNode::thisMObject(), inputBAttr_);
-            setAttributeAlias(MPxNode::thisMObject(), outputAttr_);
-        }
-    }
 
 private:
-    static MObject inputAAttr_;
-    static MObject inputBAttr_;
-    static MObject alphaAttr_;
-    static MObject outputAttr_;
+    static Attribute inputAAttr_;
+    static Attribute inputBAttr_;
+    static Attribute alphaAttr_;
+    static Attribute outputAttr_;
 };
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
-MObject LerpNode<TAttrType, TClass, TTypeName>::inputAAttr_; // NOLINT
+Attribute LerpNode<TAttrType, TClass, TTypeName>::inputAAttr_;
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
-MObject LerpNode<TAttrType, TClass, TTypeName>::inputBAttr_; // NOLINT
+Attribute LerpNode<TAttrType, TClass, TTypeName>::inputBAttr_;
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
-MObject LerpNode<TAttrType, TClass, TTypeName>::alphaAttr_; // NOLINT
+Attribute LerpNode<TAttrType, TClass, TTypeName>::alphaAttr_;
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
-MObject LerpNode<TAttrType, TClass, TTypeName>::outputAttr_; // NOLINT
+Attribute LerpNode<TAttrType, TClass, TTypeName>::outputAttr_;
 
 #define LERP_NODE(AttrType, NodeName) \
     TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
-    class NodeName : public LerpNode<AttrType, NodeName, name##NodeName> {}; // NOLINT
+    class NodeName : public LerpNode<AttrType, NodeName, name##NodeName> {};
 
 LERP_NODE(double, Lerp);
 LERP_NODE(MAngle, LerpAngle);

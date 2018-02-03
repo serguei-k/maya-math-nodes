@@ -33,12 +33,9 @@ public:
     {
         if (plug == outputAttr_)
         {
-            MDataHandle inputHandle = dataBlock.inputValue(inputAttr_);
-            const double inputValue = getAttribute<TInputAttrType, double>(inputHandle);
+            const auto inputValue = getAttribute<TInputAttrType, double>(dataBlock, inputAttr_);
             
-            MDataHandle outputHandle = dataBlock.outputValue(outputAttr_);
-            outputHandle.set(TOutputAttrType(TTrigFuncPtr(inputValue)));
-            outputHandle.setClean();
+            setAttribute(dataBlock, outputAttr_, TOutputAttrType(TTrigFuncPtr(inputValue)));
             
             return MS::kSuccess;
         }
@@ -47,21 +44,21 @@ public:
     }
 
 private:
-    static MObject inputAttr_;
-    static MObject outputAttr_;
+    static Attribute inputAttr_;
+    static Attribute outputAttr_;
 };
 
 template<typename TInputAttrType, typename TOutputAttrType, typename TClass,
          const char* TTypeName, bool TSetLimits, double (*TTrigFuncPtr)(double)>
-MObject TrigNode<TInputAttrType, TOutputAttrType, TClass, TTypeName, TSetLimits, TTrigFuncPtr>::inputAttr_; // NOLINT
+Attribute TrigNode<TInputAttrType, TOutputAttrType, TClass, TTypeName, TSetLimits, TTrigFuncPtr>::inputAttr_;
 
 template<typename TInputAttrType, typename TOutputAttrType, typename TClass,
          const char* TTypeName, bool TSetLimits, double (*TTrigFuncPtr)(double)>
-MObject TrigNode<TInputAttrType, TOutputAttrType, TClass, TTypeName, TSetLimits, TTrigFuncPtr>::outputAttr_; // NOLINT
+Attribute TrigNode<TInputAttrType, TOutputAttrType, TClass, TTypeName, TSetLimits, TTrigFuncPtr>::outputAttr_;
 
 #define TRIG_NODE(InputAttrType, OutputAttrType, NodeName, SetLimits, TrigFuncPtr) \
     TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
-    class NodeName : public TrigNode<InputAttrType, OutputAttrType, NodeName, name##NodeName, SetLimits, TrigFuncPtr> {}; // NOLINT
+    class NodeName : public TrigNode<InputAttrType, OutputAttrType, NodeName, name##NodeName, SetLimits, TrigFuncPtr> {};
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "TemplateArgumentsIssues"

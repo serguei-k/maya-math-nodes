@@ -28,11 +28,8 @@ public:
     {
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
-            MDataHandle inputAHandle = dataBlock.inputValue(inputAAttr_);
-            const MVector inputAValue = getAttribute<MVector>(inputAHandle);
-            
-            MDataHandle inputBHandle = dataBlock.inputValue(inputBAttr_);
-            const MVector inputBValue = getAttribute<MVector>(inputBHandle);
+            const MVector inputAValue = getAttribute<MVector>(dataBlock, inputAAttr_);
+            const MVector inputBValue = getAttribute<MVector>(dataBlock, inputBAttr_);
             
             MDataHandle outputHandle = dataBlock.outputValue(outputAttr_);
             outputHandle.set(TOutAttrType((inputAValue.*TOpFucPtr)(inputBValue)));
@@ -52,19 +49,19 @@ public:
     }
 
 private:
-    static MObject inputAAttr_;
-    static MObject inputBAttr_;
-    static MObject outputAttr_;
+    static Attribute inputAAttr_;
+    static Attribute inputBAttr_;
+    static Attribute outputAttr_;
 };
 
 template<typename TOutAttrType, typename TClass, const char* TTypeName, typename TOpFuncType, TOpFuncType TOpFucPtr>
-MObject Vector2OpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::inputAAttr_; // NOLINT
+Attribute Vector2OpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::inputAAttr_; // NOLINT
 
 template<typename TOutAttrType, typename TClass, const char* TTypeName, typename TOpFuncType, TOpFuncType TOpFucPtr>
-MObject Vector2OpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::inputBAttr_; // NOLINT
+Attribute Vector2OpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::inputBAttr_; // NOLINT
 
 template<typename TOutAttrType, typename TClass, const char* TTypeName, typename TOpFuncType, TOpFuncType TOpFucPtr>
-MObject Vector2OpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::outputAttr_; // NOLINT
+Attribute Vector2OpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::outputAttr_; // NOLINT
 
 #define VECTOR2_OP_NODE(OutAttrType, NodeName, OpFuncPtrType, OpFucPtr) \
     TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
@@ -96,12 +93,9 @@ public:
     {
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
-            MDataHandle inputHandle = dataBlock.inputValue(inputAttr_);
-            const MVector inputValue = getAttribute<MVector>(inputHandle);
+            const auto inputValue = getAttribute<MVector>(dataBlock, inputAttr_);
             
-            MDataHandle outputHandle = dataBlock.outputValue(outputAttr_);
-            outputHandle.set(TOutAttrType((inputValue.*TOpFucPtr)()));
-            outputHandle.setClean();
+            setAttribute(dataBlock, outputAttr_, TOutAttrType((inputValue.*TOpFucPtr)()));
             
             return MS::kSuccess;
         }
@@ -116,20 +110,20 @@ public:
     }
 
 private:
-    static MObject inputAttr_;
-    static MObject outputAttr_;
+    static Attribute inputAttr_;
+    static Attribute outputAttr_;
 };
 
 
 template<typename TOutAttrType, typename TClass, const char* TTypeName, typename TOpFuncType, TOpFuncType TOpFucPtr>
-MObject VectorOpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::inputAttr_; // NOLINT
+Attribute VectorOpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::inputAttr_;
 
 template<typename TOutAttrType, typename TClass, const char* TTypeName, typename TOpFuncType, TOpFuncType TOpFucPtr>
-MObject VectorOpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::outputAttr_; // NOLINT
+Attribute VectorOpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::outputAttr_;
 
 #define VECTOR_OP_NODE(OutAttrType, NodeName, OpFuncPtrType, OpFucPtr) \
     TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
-    class NodeName : public VectorOpNode<OutAttrType, NodeName, name##NodeName, OpFuncPtrType, OpFucPtr> {}; // NOLINT
+    class NodeName : public VectorOpNode<OutAttrType, NodeName, name##NodeName, OpFuncPtrType, OpFucPtr> {};
 
 VECTOR_OP_NODE(double, VectorLength, double (MVector::*)() const, &MVector::length);
 VECTOR_OP_NODE(MVector, NormalizeVector, MVector (MVector::*)() const, &MVector::normal);

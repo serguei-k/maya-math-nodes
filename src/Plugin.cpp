@@ -64,6 +64,8 @@ initializePlugin(MObject pluginObj)
     MultiplyQuaternion::registerNode(pluginFn, ++typeId);
     NormalizeVector::registerNode(pluginFn, ++typeId);
     Power::registerNode(pluginFn, ++typeId);
+    QuaternionFromMatrix::registerNode(pluginFn, ++typeId);
+    QuaternionFromRotation::registerNode(pluginFn, ++typeId);
     RotationFromMatrix::registerNode(pluginFn, ++typeId);
     RotationFromQuaternion::registerNode(pluginFn, ++typeId);
     Sin::registerNode(pluginFn, ++typeId);
@@ -124,6 +126,8 @@ uninitializePlugin(MObject pluginObj)
     MultiplyQuaternion::deregisterNode(pluginFn);
     NormalizeVector::deregisterNode(pluginFn);
     Power::deregisterNode(pluginFn);
+    QuaternionFromMatrix::deregisterNode(pluginFn);
+    QuaternionFromRotation::deregisterNode(pluginFn);
     RotationFromMatrix::deregisterNode(pluginFn);
     RotationFromQuaternion::deregisterNode(pluginFn);
     Sin::deregisterNode(pluginFn);

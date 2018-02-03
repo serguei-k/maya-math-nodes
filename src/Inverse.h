@@ -25,42 +25,30 @@ public:
     {
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
-            MDataHandle inputHandle = dataBlock.inputValue(inputAttr_);
-            const TAttrType inputValue = getAttribute<TAttrType>(inputHandle);
+            const auto inputValue = getAttribute<TAttrType>(dataBlock, inputAttr_);
             
-            MDataHandle outputHandle = dataBlock.outputValue(outputAttr_);
-            outputHandle.set(inputValue.inverse());
-            outputHandle.setClean();
+            setAttribute(dataBlock, outputAttr_, inputValue.inverse());
             
             return MS::kSuccess;
         }
         
         return MS::kUnknownParameter;
     }
-    
-    void postConstructor() override
-    {
-        if (std::is_same<TAttrType, MVector>::value || std::is_same<TAttrType, MQuaternion>::value)
-        {
-            setAttributeAlias(MPxNode::thisMObject(), inputAttr_);
-            setAttributeAlias(MPxNode::thisMObject(), outputAttr_);
-        }
-    }
 
 private:
-    static MObject inputAttr_;
-    static MObject outputAttr_;
+    static Attribute inputAttr_;
+    static Attribute outputAttr_;
 };
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
-MObject InverseNode<TAttrType, TClass, TTypeName>::inputAttr_; // NOLINT
+Attribute InverseNode<TAttrType, TClass, TTypeName>::inputAttr_;
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
-MObject InverseNode<TAttrType, TClass, TTypeName>::outputAttr_; // NOLINT
+Attribute InverseNode<TAttrType, TClass, TTypeName>::outputAttr_;
 
 #define INVERSE_NODE(AttrType, NodeName) \
     TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
-    class NodeName : public InverseNode<AttrType, NodeName, name##NodeName> {}; // NOLINT
+    class NodeName : public InverseNode<AttrType, NodeName, name##NodeName> {};
 
 INVERSE_NODE(MMatrix, InverseMatrix);
 INVERSE_NODE(MQuaternion, InverseQuaternion);

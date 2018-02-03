@@ -28,15 +28,10 @@ public:
     {
         if (plug == outputAttr_)
         {
-            MDataHandle inputHandle = dataBlock.inputValue(inputAttr_);
-            const double inputValue = getAttribute<double>(inputHandle);
-    
-            MDataHandle exponentHandle = dataBlock.inputValue(exponentAttr_);
-            const double exponentValue = getAttribute<double>(exponentHandle);
+            const auto inputValue = getAttribute<double>(dataBlock, inputAttr_);
+            const auto exponentValue = getAttribute<double>(dataBlock, exponentAttr_);
             
-            MDataHandle outputHandle = dataBlock.outputValue(outputAttr_);
-            outputHandle.set(std::pow(inputValue, exponentValue));
-            outputHandle.setClean();
+            setAttribute(dataBlock, outputAttr_, std::pow(inputValue, exponentValue));
             
             return MS::kSuccess;
         }
@@ -45,23 +40,23 @@ public:
     }
 
 private:
-    static MObject inputAttr_;
-    static MObject exponentAttr_;
-    static MObject outputAttr_;
+    static Attribute inputAttr_;
+    static Attribute exponentAttr_;
+    static Attribute outputAttr_;
 };
 
 template<typename TClass, const char* TTypeName>
-MObject PowerNode<TClass, TTypeName>::inputAttr_; // NOLINT
+Attribute PowerNode<TClass, TTypeName>::inputAttr_;
 
 template<typename TClass, const char* TTypeName>
-MObject PowerNode<TClass, TTypeName>::exponentAttr_; // NOLINT
+Attribute PowerNode<TClass, TTypeName>::exponentAttr_;
 
 template<typename TClass, const char* TTypeName>
-MObject PowerNode<TClass, TTypeName>::outputAttr_; // NOLINT
+Attribute PowerNode<TClass, TTypeName>::outputAttr_;
 
 #define POWER_NODE(NodeName) \
     TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
-    class NodeName : public PowerNode<NodeName, name##NodeName> {}; // NOLINT
+    class NodeName : public PowerNode<NodeName, name##NodeName> {};
 
 POWER_NODE(Power);
 
@@ -87,12 +82,9 @@ public:
     {
         if (plug == outputAttr_)
         {
-            MDataHandle inputHandle = dataBlock.inputValue(inputAttr_);
-            const double inputValue = getAttribute<double>(inputHandle);
+            const auto inputValue = getAttribute<double>(dataBlock, inputAttr_);
             
-            MDataHandle outputHandle = dataBlock.outputValue(outputAttr_);
-            outputHandle.set(std::sqrt(inputValue));
-            outputHandle.setClean();
+            setAttribute(dataBlock, outputAttr_, std::sqrt(inputValue));
             
             return MS::kSuccess;
         }
@@ -101,18 +93,18 @@ public:
     }
 
 private:
-    static MObject inputAttr_;
-    static MObject outputAttr_;
+    static Attribute inputAttr_;
+    static Attribute outputAttr_;
 };
 
 template<typename TClass, const char* TTypeName>
-MObject SquareRootNode<TClass, TTypeName>::inputAttr_; // NOLINT
+Attribute SquareRootNode<TClass, TTypeName>::inputAttr_;
 
 template<typename TClass, const char* TTypeName>
-MObject SquareRootNode<TClass, TTypeName>::outputAttr_; // NOLINT
+Attribute SquareRootNode<TClass, TTypeName>::outputAttr_;
 
 #define SQUARE_ROOT_NODE(NodeName) \
     TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
-    class NodeName : public SquareRootNode<NodeName, name##NodeName> {}; // NOLINT
+    class NodeName : public SquareRootNode<NodeName, name##NodeName> {};
 
 SQUARE_ROOT_NODE(SquareRoot);

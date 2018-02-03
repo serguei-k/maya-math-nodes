@@ -28,15 +28,10 @@ public:
     {
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
-            MDataHandle inputAHandle = dataBlock.inputValue(inputAAttr_);
-            const TInOutAttrType inputAValue = getAttribute<TInOutAttrType>(inputAHandle);
+            const auto inputAValue = getAttribute<TInOutAttrType>(dataBlock, inputAAttr_);
+            const auto inputBValue = getAttribute<TInAttrType>(dataBlock, inputBAttr_);
             
-            MDataHandle inputBHandle = dataBlock.inputValue(inputBAttr_);
-            const TInAttrType inputBValue = getAttribute<TInAttrType>(inputBHandle);
-            
-            MDataHandle outputHandle = dataBlock.outputValue(outputAttr_);
-            outputHandle.set(TInOutAttrType(inputAValue * inputBValue));
-            outputHandle.setClean();
+            setAttribute(dataBlock, outputAttr_, TInOutAttrType(inputAValue * inputBValue));
             
             return MS::kSuccess;
         }
@@ -59,23 +54,23 @@ public:
     }
 
 private:
-    static MObject inputAAttr_;
-    static MObject inputBAttr_;
-    static MObject outputAttr_;
+    static Attribute inputAAttr_;
+    static Attribute inputBAttr_;
+    static Attribute outputAttr_;
 };
 
 template<typename TInOutAttrType, typename TInAttrType, typename TClass, const char* TTypeName>
-MObject MultiplyNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::inputAAttr_; // NOLINT
+Attribute MultiplyNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::inputAAttr_;
 
 template<typename TInOutAttrType, typename TInAttrType, typename TClass, const char* TTypeName>
-MObject MultiplyNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::inputBAttr_; // NOLINT
+Attribute MultiplyNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::inputBAttr_;
 
 template<typename TInOutAttrType, typename TInAttrType, typename TClass, const char* TTypeName>
-MObject MultiplyNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::outputAttr_; // NOLINT
+Attribute MultiplyNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::outputAttr_;
 
 #define MULTIPLY_NODE(InOutAttrType, InAttrType, NodeName) \
     TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
-    class NodeName : public MultiplyNode<InOutAttrType, InAttrType, NodeName, name##NodeName> {}; // NOLINT
+    class NodeName : public MultiplyNode<InOutAttrType, InAttrType, NodeName, name##NodeName> {};
 
 MULTIPLY_NODE(double, double, Multiply);
 MULTIPLY_NODE(double, int, MultiplyByInt);
