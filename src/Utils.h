@@ -329,26 +329,6 @@ MAngle operator/(const MAngle& a, int b)
     return MAngle(a.asRadians() / b);
 }
 
-// Attribute alias helper to rename components to x, y, z, w
-MString getAttributeName(const MPlug& plug)
-{
-    return plug.partialName(false, false, false, false, false, true);
-}
-
-void setAttributeAlias(const MObject& object, const MObject& attr)
-{
-    MPlug plug(object, attr);
-    MFnDependencyNode nodeAFn(object);
-    nodeAFn.setAlias(getAttributeName(plug) + " X", getAttributeName(plug.child(0)), plug.child(0));
-    nodeAFn.setAlias(getAttributeName(plug) + " Y", getAttributeName(plug.child(1)), plug.child(1));
-    nodeAFn.setAlias(getAttributeName(plug) + " Z", getAttributeName(plug.child(2)), plug.child(2));
-    
-    if (plug.numChildren() == 4)
-    {
-        nodeAFn.setAlias(getAttributeName(plug) + " W", getAttributeName(plug.child(3)), plug.child(3));
-    }
-}
-
 // Base node type definition used for all math nodes in this library
 template<typename TClass, const char* TTypeName>
 class BaseNode : public MPxNode

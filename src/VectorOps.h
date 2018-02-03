@@ -28,24 +28,15 @@ public:
     {
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
-            const MVector inputAValue = getAttribute<MVector>(dataBlock, inputAAttr_);
-            const MVector inputBValue = getAttribute<MVector>(dataBlock, inputBAttr_);
+            const auto inputAValue = getAttribute<MVector>(dataBlock, inputAAttr_);
+            const auto inputBValue = getAttribute<MVector>(dataBlock, inputBAttr_);
             
-            MDataHandle outputHandle = dataBlock.outputValue(outputAttr_);
-            outputHandle.set(TOutAttrType((inputAValue.*TOpFucPtr)(inputBValue)));
-            outputHandle.setClean();
+            setAttribute(dataBlock, outputAttr_, TOutAttrType((inputAValue.*TOpFucPtr)(inputBValue)));
             
             return MS::kSuccess;
         }
         
         return MS::kUnknownParameter;
-    }
-    
-    void postConstructor() override
-    {
-        setAttributeAlias(MPxNode::thisMObject(), inputAAttr_);
-        setAttributeAlias(MPxNode::thisMObject(), inputBAttr_);
-        setAttributeAlias(MPxNode::thisMObject(), outputAttr_);
     }
 
 private:
@@ -55,17 +46,17 @@ private:
 };
 
 template<typename TOutAttrType, typename TClass, const char* TTypeName, typename TOpFuncType, TOpFuncType TOpFucPtr>
-Attribute Vector2OpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::inputAAttr_; // NOLINT
+Attribute Vector2OpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::inputAAttr_;
 
 template<typename TOutAttrType, typename TClass, const char* TTypeName, typename TOpFuncType, TOpFuncType TOpFucPtr>
-Attribute Vector2OpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::inputBAttr_; // NOLINT
+Attribute Vector2OpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::inputBAttr_;
 
 template<typename TOutAttrType, typename TClass, const char* TTypeName, typename TOpFuncType, TOpFuncType TOpFucPtr>
-Attribute Vector2OpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::outputAttr_; // NOLINT
+Attribute Vector2OpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::outputAttr_;
 
 #define VECTOR2_OP_NODE(OutAttrType, NodeName, OpFuncPtrType, OpFucPtr) \
     TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
-    class NodeName : public Vector2OpNode<OutAttrType, NodeName, name##NodeName, OpFuncPtrType, OpFucPtr> {}; // NOLINT
+    class NodeName : public Vector2OpNode<OutAttrType, NodeName, name##NodeName, OpFuncPtrType, OpFucPtr> {};
 
 VECTOR2_OP_NODE(double, DotProduct, double (MVector::*)(const MVector&) const, &MVector::operator*);
 VECTOR2_OP_NODE(MAngle, AngleBetweenVectors, double (MVector::*)(const MVector&) const, &MVector::angle);
@@ -102,18 +93,11 @@ public:
         
         return MS::kUnknownParameter;
     }
-    
-    void postConstructor() override
-    {
-        setAttributeAlias(MPxNode::thisMObject(), inputAttr_);
-        setAttributeAlias(MPxNode::thisMObject(), outputAttr_);
-    }
 
 private:
     static Attribute inputAttr_;
     static Attribute outputAttr_;
 };
-
 
 template<typename TOutAttrType, typename TClass, const char* TTypeName, typename TOpFuncType, TOpFuncType TOpFucPtr>
 Attribute VectorOpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::inputAttr_;
