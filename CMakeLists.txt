@@ -7,7 +7,7 @@ project(maya-math-nodes)
 
 # Set default Maya version
 if(NOT DEFINED MAYA_VERSION)
-    set(MAYA_VERSION 2017)
+    set(MAYA_VERSION 2018)
 endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
