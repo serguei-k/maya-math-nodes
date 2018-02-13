@@ -337,7 +337,7 @@ public:
     static void registerNode(class MFnPlugin& pluginFn, int typeId)
     {
         kTypeId = typeId;
-        pluginFn.registerNode(TTypeName, typeId, []() -> void* { return new TClass(); }, TClass::initialize);
+        pluginFn.registerNode((std::string(NODE_NAME_PREFIX) + TTypeName).c_str(), typeId, []() -> void* { return new TClass(); }, TClass::initialize);
     }
     
     static void deregisterNode(class MFnPlugin& pluginFn)

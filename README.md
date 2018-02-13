@@ -25,3 +25,9 @@ make
 Alternatively you can use an IDE that supports CMake projects, such as CLion.
 
 Note that Linux build is currently not supported, PRs for Linux support are welcomed!
+
+#### Notes
+Some environments require having a specific unique prefix for custom node names.
+This can be achieved by passing the following variable to the cmake command:
+
+```-DNODE_NAME_PREFIX=prefix```
