@@ -12,8 +12,7 @@ endif()
 
 # Set node name prefix macro
 if(NOT DEFINED NODE_NAME_PREFIX)
-    #TODO: default prefix requirement is tbd
-    set(NODE_NAME_PREFIX "")
+    set(NODE_NAME_PREFIX "math_")
 endif()
 add_definitions(-DNODE_NAME_PREFIX="${NODE_NAME_PREFIX}")
 
