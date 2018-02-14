@@ -11,6 +11,7 @@
 #include "Lerp.h"
 #include "Multiply.h"
 #include "Power.h"
+#include "Round.h"
 #include "Subtract.h"
 #include "Trig.h"
 #include "VectorOps.h"
@@ -22,7 +23,10 @@ initializePlugin(MObject pluginObj)
     
     int typeId = 0x0012c340;
     
+    // Do not change the registration order after a major release, start a new alphabetized block below instead
     Absolute::registerNode(pluginFn, typeId++);
+    AbsoluteAngle::registerNode(pluginFn, typeId++);
+    AbsoluteInt::registerNode(pluginFn, typeId++);
     AcosAngle::registerNode(pluginFn, typeId++);
     Add::registerNode(pluginFn, typeId++);
     AddAngle::registerNode(pluginFn, typeId++);
@@ -31,6 +35,8 @@ initializePlugin(MObject pluginObj)
     AngleBetweenVectors::registerNode(pluginFn, typeId++);
     AsinAngle::registerNode(pluginFn, typeId++);
     AtanAngle::registerNode(pluginFn, typeId++);
+    Ceil::registerNode(pluginFn, typeId++);
+    CeilAngle::registerNode(pluginFn, typeId++);
     Clamp::registerNode(pluginFn, typeId++);
     ClampAngle::registerNode(pluginFn, typeId++);
     ClampInt::registerNode(pluginFn, typeId++);
@@ -41,6 +47,8 @@ initializePlugin(MObject pluginObj)
     DivideAngleByInt::registerNode(pluginFn, typeId++);
     DivideByInt::registerNode(pluginFn, typeId++);
     DotProduct::registerNode(pluginFn, typeId++);
+    Floor::registerNode(pluginFn, typeId++);
+    FloorAngle::registerNode(pluginFn, typeId++);
     InverseMatrix::registerNode(pluginFn, typeId++);
     InverseQuaternion::registerNode(pluginFn, typeId++);
     Lerp::registerNode(pluginFn, typeId++);
@@ -65,6 +73,8 @@ initializePlugin(MObject pluginObj)
     Power::registerNode(pluginFn, typeId++);
     QuaternionFromMatrix::registerNode(pluginFn, typeId++);
     QuaternionFromRotation::registerNode(pluginFn, typeId++);
+    Round::registerNode(pluginFn, typeId++);
+    RoundAngle::registerNode(pluginFn, typeId++);
     RotationFromMatrix::registerNode(pluginFn, typeId++);
     RotationFromQuaternion::registerNode(pluginFn, typeId++);
     Sin::registerNode(pluginFn, typeId++);
@@ -85,6 +95,8 @@ uninitializePlugin(MObject pluginObj)
     MFnPlugin pluginFn(pluginObj);
     
     Absolute::deregisterNode(pluginFn);
+    AbsoluteAngle::deregisterNode(pluginFn);
+    AbsoluteInt::deregisterNode(pluginFn);
     AcosAngle::deregisterNode(pluginFn);
     Add::deregisterNode(pluginFn);
     AddAngle::deregisterNode(pluginFn);
@@ -93,6 +105,8 @@ uninitializePlugin(MObject pluginObj)
     AngleBetweenVectors::deregisterNode(pluginFn);
     AsinAngle::deregisterNode(pluginFn);
     AtanAngle::deregisterNode(pluginFn);
+    Ceil::deregisterNode(pluginFn);
+    CeilAngle::deregisterNode(pluginFn);
     Clamp::deregisterNode(pluginFn);
     ClampAngle::deregisterNode(pluginFn);
     ClampInt::deregisterNode(pluginFn);
@@ -103,6 +117,8 @@ uninitializePlugin(MObject pluginObj)
     DivideAngleByInt::deregisterNode(pluginFn);
     DivideByInt::deregisterNode(pluginFn);
     DotProduct::deregisterNode(pluginFn);
+    Floor::deregisterNode(pluginFn);
+    FloorAngle::deregisterNode(pluginFn);
     InverseMatrix::deregisterNode(pluginFn);
     InverseQuaternion::deregisterNode(pluginFn);
     Lerp::deregisterNode(pluginFn);
@@ -127,6 +143,8 @@ uninitializePlugin(MObject pluginObj)
     Power::deregisterNode(pluginFn);
     QuaternionFromMatrix::deregisterNode(pluginFn);
     QuaternionFromRotation::deregisterNode(pluginFn);
+    Round::deregisterNode(pluginFn);
+    RoundAngle::deregisterNode(pluginFn);
     RotationFromMatrix::deregisterNode(pluginFn);
     RotationFromQuaternion::deregisterNode(pluginFn);
     Sin::deregisterNode(pluginFn);

@@ -40,6 +40,7 @@ add_library(mayaMathNodes SHARED
     src/Multiply.h
     src/Plugin.cpp
     src/Power.h
+    src/Round.h
     src/Trig.h
     src/Subtract.h
     src/Utils.h

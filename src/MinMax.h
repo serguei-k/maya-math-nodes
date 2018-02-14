@@ -29,9 +29,10 @@ public:
     static MStatus initialize()
     {
         createAttribute(inputAAttr_, "inputA", DefaultValue<TAttrType>(0.0));
-        createAttribute(inputBAttr_, "inputB", DefaultValue<TAttrType>(1.0));
+        createAttribute(inputBAttr_, "inputB", DefaultValue<TAttrType>(0.0));
         createAttribute(outputAttr_, "output", DefaultValue<TAttrType>(0.0), false);
         
+        MPxNode::addAttribute(inputAAttr_);
         MPxNode::addAttribute(inputBAttr_);
         MPxNode::addAttribute(outputAttr_);
         
