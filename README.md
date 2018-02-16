@@ -8,26 +8,29 @@ then run the following:
 ```
 mkdir build
 cd build
-cmake ../. -G "Visual Studio 15 2017 Win64" -DMAYA_VERSION=2017
+cmake ../. -G "Visual Studio 15 2017 Win64"
 ```
 
 This will generate a Visual Studio solution you can use to build.
 
-To build the library on OSX use the following command:
+To build the library on OSX or Linux use the following command:
 
 ```
 mkdir build
 cd build
-cmake ../. -G "CodeBlocks - Unix Makefiles" -DMAYA_VERSION=2017
+cmake ../. -G "CodeBlocks - Unix Makefiles"
 make
 ```
 
-Alternatively you can use an IDE that supports CMake projects, such as CLion.
+The build looks for Maya in the default installation directory for each platform, however you can always provide it with a custom path:
 
-Note that Linux build is currently not supported, PRs for Linux support are welcomed!
+```-DMAYA_LOCATION=/apps/autodesk/```
 
-#### Notes
-Some environments require having a specific unique prefix for custom node names.
+Likewise, the build defaults to Maya version 2018, this can be changed as follows:
+
+```-DMAYA_VERSION=2017```
+
+Some environments require having a specific unique name prefix for custom nodes.
 This can be achieved by passing the following variable to the cmake command:
 
 ```-DNODE_NAME_PREFIX=prefix```
