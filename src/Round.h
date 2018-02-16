@@ -108,9 +108,9 @@ Attribute RoundNode<TAttrType, TClass, TTypeName, TOpFuncPtrType, TOpFucPtr>::ou
     TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
     class NodeName : public RoundNode<AttrType, NodeName, name##NodeName, OpFuncPtrType, OpFucPtr> {};
 
-ROUND_NODE(double, Ceil, double (double), &std_ext::ceil_t);
-ROUND_NODE(MAngle, CeilAngle, MAngle (const MAngle&), &std_ext::ceil_t);
-ROUND_NODE(double, Floor, double (double), &std_ext::floor_t);
-ROUND_NODE(MAngle, FloorAngle, MAngle (const MAngle&), &std_ext::floor_t);
-ROUND_NODE(double, Round, double (double), &std_ext::round_t);
-ROUND_NODE(MAngle, RoundAngle, MAngle (const MAngle&), &std_ext::round_t);
+ROUND_NODE(double, Ceil, double (*)(double), &std_ext::ceil_t);
+ROUND_NODE(MAngle, CeilAngle, MAngle (*)(const MAngle&), &std_ext::ceil_t);
+ROUND_NODE(double, Floor, double (*)(double), &std_ext::floor_t);
+ROUND_NODE(MAngle, FloorAngle, MAngle (*)(const MAngle&), &std_ext::floor_t);
+ROUND_NODE(double, Round, double (*)(double), &std_ext::round_t);
+ROUND_NODE(MAngle, RoundAngle, MAngle (*)(const MAngle&), &std_ext::round_t);
