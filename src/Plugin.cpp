@@ -81,6 +81,7 @@ initializePlugin(MObject pluginObj)
     RotationFromQuaternion::registerNode(pluginFn, typeId++);
     ScaleFromMatrix::registerNode(pluginFn, typeId++);
     Sin::registerNode(pluginFn, typeId++);
+    SlerpQuaternion::registerNode(pluginFn, typeId);
     Subtract::registerNode(pluginFn, typeId++);
     SubtractAngle::registerNode(pluginFn, typeId++);
     SubtractInt::registerNode(pluginFn, typeId++);
@@ -156,6 +157,7 @@ uninitializePlugin(MObject pluginObj)
     RotationFromQuaternion::deregisterNode(pluginFn);
     ScaleFromMatrix::deregisterNode(pluginFn);
     Sin::deregisterNode(pluginFn);
+    SlerpQuaternion::deregisterNode(pluginFn);
     Subtract::deregisterNode(pluginFn);
     SubtractAngle::deregisterNode(pluginFn);
     SubtractInt::deregisterNode(pluginFn);

@@ -192,7 +192,7 @@ public:
         createAttribute(outputAttr_, "output", DefaultValue<MMatrix>(0.0), false);
         
         MFnEnumAttribute attrFn;
-        rotationOrderAttr_ = attrFn.create("rotationOrder", "rotationOrder");
+        rotationOrderAttr_ = attrFn.create("rotationOrder", "rotationOrder", 1);
         attrFn.addField("xyz", 1);
         attrFn.addField("yzx", 2);
         attrFn.addField("zxy", 3);
