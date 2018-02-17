@@ -8,7 +8,7 @@
 #include "Convert.h"
 #include "Divide.h"
 #include "Inverse.h"
-#include "Lerp.h"
+#include "Interpolate.h"
 #include "Multiply.h"
 #include "Power.h"
 #include "Round.h"
