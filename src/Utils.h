@@ -50,9 +50,9 @@ inline TType DefaultValue(double from)
 }
 
 template <>
-inline MVector DefaultValue(double)
+inline MVector DefaultValue(double from)
 {
-    return MVector::zero;
+    return MVector(from, from, from);
 }
 
 template <>
@@ -74,103 +74,120 @@ inline MQuaternion DefaultValue(double)
 }
 
 // Overloads for createAttribute
-inline void createAttribute(Attribute& attr, const char* name, double value, bool isKeyable = true)
+inline void createAttribute(Attribute& attr, const char* name, double value, bool isInput = true)
 {
-    MFnNumericAttribute numericFn;
-    attr.attr = numericFn.create(name, name, MFnNumericData::kDouble, value);
-    numericFn.setKeyable(isKeyable);
+    MFnNumericAttribute attrFn;
+    attr.attr = attrFn.create(name, name, MFnNumericData::kDouble, value);
+    attrFn.setKeyable(isInput);
+    attrFn.setStorable(isInput);
 }
 
-inline void createAttribute(Attribute& attr, const char* name, int value, bool isKeyable = true)
+inline void createAttribute(Attribute& attr, const char* name, int value, bool isInput = true)
 {
     MFnNumericAttribute attrFn;
     attr.attr = attrFn.create(name, name, MFnNumericData::kInt, value);
-    attrFn.setKeyable(isKeyable);
+    attrFn.setKeyable(isInput);
+    attrFn.setStorable(isInput);
 }
 
-inline void createAttribute(Attribute& attr, const char* name, const MAngle& value, bool isKeyable = true)
+inline void createAttribute(Attribute& attr, const char* name, const MAngle& value, bool isInput = true)
 {
     MFnUnitAttribute attrFn;
     attr.attr = attrFn.create(name, name, value);
-    attrFn.setKeyable(isKeyable);
+    attrFn.setKeyable(isInput);
+    attrFn.setStorable(isInput);
 }
 
-inline void createAttribute(Attribute& attr, const char* name, const MVector& value, bool isKeyable = true)
+inline void createAttribute(Attribute& attr, const char* name, const MVector& value, bool isInput = true)
 {
     MFnNumericAttribute attrFn;
     
     const std::string attrXName = (std::string(name) + "X");
     attr.attrX = attrFn.create(attrXName.c_str(), attrXName.c_str(), MFnNumericData::kDouble, value.x);
-    attrFn.setKeyable(isKeyable);
+    attrFn.setKeyable(isInput);
+    attrFn.setStorable(isInput);
     
     const std::string attrYName = (std::string(name) + "Y");
     attr.attrY = attrFn.create(attrYName.c_str(), attrYName.c_str(), MFnNumericData::kDouble, value.y);
-    attrFn.setKeyable(isKeyable);
+    attrFn.setKeyable(isInput);
+    attrFn.setStorable(isInput);
     
     const std::string attrZName = (std::string(name) + "Z");
     attr.attrZ = attrFn.create(attrZName.c_str(), attrZName.c_str(), MFnNumericData::kDouble, value.z);
-    attrFn.setKeyable(isKeyable);
+    attrFn.setKeyable(isInput);
+    attrFn.setStorable(isInput);
     
     attr.attr = attrFn.create(name, name, attr.attrX, attr.attrY, attr.attrZ);
-    attrFn.setKeyable(isKeyable);
+    attrFn.setKeyable(isInput);
+    attrFn.setStorable(isInput);
 }
 
-inline void createAttribute(Attribute& attr, const char* name, const MMatrix& value, bool isKeyable = true)
+inline void createAttribute(Attribute& attr, const char* name, const MMatrix& value, bool isInput = true)
 {
     MFnMatrixAttribute attrFn;
     attr.attr = attrFn.create(name, name);
     attrFn.setDefault(value);
-    attrFn.setKeyable(isKeyable);
+    attrFn.setKeyable(isInput);
+    attrFn.setStorable(isInput);
 }
 
-inline void createAttribute(Attribute& attr, const char* name, const MQuaternion& value, bool isKeyable = true)
+inline void createAttribute(Attribute& attr, const char* name, const MQuaternion& value, bool isInput = true)
 {
     MFnCompoundAttribute cAttrFn;
     MFnNumericAttribute attrFn;
     
     const std::string attrXName = (std::string(name) + "X");
     attr.attrX = attrFn.create(attrXName.c_str(), attrXName.c_str(), MFnNumericData::kDouble, value.x);
-    attrFn.setKeyable(isKeyable);
+    attrFn.setKeyable(isInput);
+    attrFn.setStorable(isInput);
     
     const std::string attrYName = (std::string(name) + "Y");
     attr.attrY = attrFn.create(attrYName.c_str(), attrYName.c_str(), MFnNumericData::kDouble, value.y);
-    attrFn.setKeyable(isKeyable);
+    attrFn.setKeyable(isInput);
+    attrFn.setStorable(isInput);
     
     const std::string attrZName = (std::string(name) + "Z");
     attr.attrZ = attrFn.create(attrZName.c_str(), attrZName.c_str(), MFnNumericData::kDouble, value.z);
-    attrFn.setKeyable(isKeyable);
+    attrFn.setKeyable(isInput);
+    attrFn.setStorable(isInput);
     
     const std::string attrWName = (std::string(name) + "W");
     attr.attrW = attrFn.create(attrWName.c_str(), attrWName.c_str(), MFnNumericData::kDouble, value.w);
-    attrFn.setKeyable(isKeyable);
+    attrFn.setKeyable(isInput);
+    attrFn.setStorable(isInput);
     
     attr.attr = cAttrFn.create(name, name);
     cAttrFn.addChild(attr.attrX);
     cAttrFn.addChild(attr.attrY);
     cAttrFn.addChild(attr.attrZ);
     cAttrFn.addChild(attr.attrW);
-    attrFn.setKeyable(isKeyable);
+    cAttrFn.setKeyable(isInput);
+    cAttrFn.setStorable(isInput);
 }
 
-inline void createAttribute(Attribute& attr, const char* name, const MEulerRotation& value, bool isKeyable = true)
+inline void createAttribute(Attribute& attr, const char* name, const MEulerRotation& value, bool isInput = true)
 {
     MFnNumericAttribute attrFn;
     MFnUnitAttribute uAttrFn;
     
     const std::string attrXName = (std::string(name) + "X");
     attr.attrX = uAttrFn.create(attrXName.c_str(), attrXName.c_str(), MAngle(value.x));
-    attrFn.setKeyable(isKeyable);
+    uAttrFn.setKeyable(isInput);
+    uAttrFn.setStorable(isInput);
     
     const std::string attrYName = (std::string(name) + "Y");
     attr.attrY = uAttrFn.create(attrYName.c_str(), attrYName.c_str(), MAngle(value.y));
-    attrFn.setKeyable(isKeyable);
+    uAttrFn.setKeyable(isInput);
+    uAttrFn.setStorable(isInput);
     
     const std::string attrZName = (std::string(name) + "Z");
     attr.attrZ = uAttrFn.create(attrZName.c_str(), attrZName.c_str(), MAngle(value.z));
-    attrFn.setKeyable(isKeyable);
+    uAttrFn.setKeyable(isInput);
+    uAttrFn.setStorable(isInput);
     
     attr.attr = attrFn.create(name, name, attr.attrX, attr.attrY, attr.attrZ);
-    attrFn.setKeyable(isKeyable);
+    attrFn.setKeyable(isInput);
+    attrFn.setStorable(isInput);
 }
 
 // Explicit specializations for getAttribute
