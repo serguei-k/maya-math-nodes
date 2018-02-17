@@ -13,11 +13,7 @@ inline TOutType getRotation(const TInType& source, MEulerRotation::RotationOrder
 template <>
 inline MEulerRotation getRotation(const MMatrix& source, MEulerRotation::RotationOrder rotationOrder)
 {
-    MTransformationMatrix xform(source);
-    MEulerRotation rotation = xform.eulerRotation();
-    rotation.reorderIt(rotationOrder);
-    
-    return rotation;
+    return MEulerRotation::decompose(source, rotationOrder);
 }
 
 template <>
@@ -118,3 +114,160 @@ GET_ROTATION_NODE(MMatrix, MEulerRotation, RotationFromMatrix);
 GET_ROTATION_NODE(MQuaternion, MEulerRotation, RotationFromQuaternion);
 GET_ROTATION_NODE(MMatrix, MQuaternion, QuaternionFromMatrix);
 GET_ROTATION_NODE(MEulerRotation, MQuaternion, QuaternionFromRotation);
+
+inline MVector getTranslationFromMatrix(const MMatrix& matrix)
+{
+    return MVector(matrix[3][0], matrix[3][1], matrix[3][2]);
+}
+
+inline MVector getScaleFromMatrix(const MMatrix& matrix)
+{
+    MTransformationMatrix xform(matrix);
+    
+    double3 scale {1.0, 1.0, 1.0};
+    xform.getScale(scale, MSpace::kTransform);
+    
+    return MVector(scale);
+}
+
+template<typename TClass, const char* TTypeName, typename TOpFuncPtrType, TOpFuncPtrType TOpFucPtr>
+class GetVectorNode : public BaseNode<TClass, TTypeName>
+{
+public:
+    static MStatus initialize()
+    {
+        createAttribute(inputAttr_, "input", DefaultValue<MMatrix>(0.0));
+        createAttribute(outputAttr_, "output", DefaultValue<MVector>(0.0), false);
+        
+        MPxNode::addAttribute(inputAttr_);
+        MPxNode::addAttribute(outputAttr_);
+        
+        MPxNode::attributeAffects(inputAttr_, outputAttr_);
+        
+        return MS::kSuccess;
+    }
+    
+    MStatus compute(const MPlug& plug, MDataBlock& dataBlock) override
+    {
+        if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
+        {
+            const auto inputValue = getAttribute<MMatrix>(dataBlock, inputAttr_);
+            
+            setAttribute(dataBlock, outputAttr_, (*TOpFucPtr)(inputValue));
+            
+            return MS::kSuccess;
+        }
+        
+        return MS::kUnknownParameter;
+    }
+
+private:
+    static Attribute inputAttr_;
+    static Attribute outputAttr_;
+};
+
+template<typename TClass, const char* TTypeName, typename TOpFuncPtrType, TOpFuncPtrType TOpFucPtr>
+Attribute GetVectorNode<TClass, TTypeName, TOpFuncPtrType, TOpFucPtr>::inputAttr_;
+
+template<typename TClass, const char* TTypeName, typename TOpFuncPtrType, TOpFuncPtrType TOpFucPtr>
+Attribute GetVectorNode<TClass, TTypeName, TOpFuncPtrType, TOpFucPtr>::outputAttr_;
+
+#define GET_VECTOR_NODE(NodeName, OpFuncPtrType, OpFucPtr) \
+    TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
+    class NodeName : public GetVectorNode<NodeName, name##NodeName, OpFuncPtrType, OpFucPtr> {};
+
+GET_VECTOR_NODE(TranslationFromMatrix, MVector (*)(const MMatrix&), &getTranslationFromMatrix);
+GET_VECTOR_NODE(ScaleFromMatrix, MVector (*)(const MMatrix&), &getScaleFromMatrix);
+
+
+template<typename TClass, const char* TTypeName>
+class GetMatrixNode : public BaseNode<TClass, TTypeName>
+{
+public:
+    static MStatus initialize()
+    {
+        createAttribute(translationAttr_, "translation", DefaultValue<MVector>(0.0));
+        createAttribute(rotationAttr_, "rotation", DefaultValue<MEulerRotation>(0.0));
+        createAttribute(scaleAttr_, "scale", DefaultValue<MVector>(1.0));
+        createAttribute(outputAttr_, "output", DefaultValue<MMatrix>(0.0), false);
+        
+        MFnEnumAttribute attrFn;
+        rotationOrderAttr_ = attrFn.create("rotationOrder", "rotationOrder");
+        attrFn.addField("xyz", 1);
+        attrFn.addField("yzx", 2);
+        attrFn.addField("zxy", 3);
+        attrFn.addField("xzy", 4);
+        attrFn.addField("yxz", 5);
+        attrFn.addField("zyx", 6);
+        
+        MPxNode::addAttribute(translationAttr_);
+        MPxNode::addAttribute(rotationAttr_);
+        MPxNode::addAttribute(scaleAttr_);
+        MPxNode::addAttribute(rotationOrderAttr_);
+        MPxNode::addAttribute(outputAttr_);
+        
+        MPxNode::attributeAffects(translationAttr_, outputAttr_);
+        MPxNode::attributeAffects(rotationAttr_, outputAttr_);
+        MPxNode::attributeAffects(scaleAttr_, outputAttr_);
+        MPxNode::attributeAffects(rotationOrderAttr_, outputAttr_);
+        
+        return MS::kSuccess;
+    }
+    
+    MStatus compute(const MPlug& plug, MDataBlock& dataBlock) override
+    {
+        if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
+        {
+            const auto translationValue = getAttribute<MVector>(dataBlock, translationAttr_);
+            auto rotationValue = getAttribute<MEulerRotation>(dataBlock, rotationAttr_);
+            const auto scaleValue = getAttribute<MVector>(dataBlock, scaleAttr_);
+            
+            MDataHandle rotOrderHandle = dataBlock.inputValue(rotationOrderAttr_);
+            const auto rotationOrder = MTransformationMatrix::RotationOrder(rotOrderHandle.asShort());
+            
+            MTransformationMatrix xform;
+            xform.setTranslation(translationValue, MSpace::kTransform);
+            
+            double3 rotation {rotationValue.x, rotationValue.y, rotationValue.z};
+            xform.setRotation(rotation, rotationOrder);
+            
+            double3 scale {1.0, 1.0, 1.0};
+            scaleValue.get(scale);
+            xform.setScale(scale, MSpace::kTransform);
+            
+            setAttribute(dataBlock, outputAttr_, xform.asMatrix());
+            
+            return MS::kSuccess;
+        }
+        
+        return MS::kUnknownParameter;
+    }
+
+private:
+    static Attribute translationAttr_;
+    static Attribute rotationAttr_;
+    static Attribute scaleAttr_;
+    static Attribute rotationOrderAttr_;
+    static Attribute outputAttr_;
+};
+
+template<typename TClass, const char* TTypeName>
+Attribute GetMatrixNode<TClass, TTypeName>::translationAttr_;
+
+template<typename TClass, const char* TTypeName>
+Attribute GetMatrixNode<TClass, TTypeName>::rotationAttr_;
+
+template<typename TClass, const char* TTypeName>
+Attribute GetMatrixNode<TClass, TTypeName>::scaleAttr_;
+
+template<typename TClass, const char* TTypeName>
+Attribute GetMatrixNode<TClass, TTypeName>::rotationOrderAttr_;
+
+template<typename TClass, const char* TTypeName>
+Attribute GetMatrixNode<TClass, TTypeName>::outputAttr_;
+
+#define GET_MATRIX_NODE(NodeName) \
+    TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
+    class NodeName : public GetMatrixNode<NodeName, name##NodeName> {};
+
+GET_MATRIX_NODE(MatrixFromTRS);

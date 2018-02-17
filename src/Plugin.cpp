@@ -54,6 +54,7 @@ initializePlugin(MObject pluginObj)
     Lerp::registerNode(pluginFn, typeId++);
     LerpAngle::registerNode(pluginFn, typeId++);
     LerpVector::registerNode(pluginFn, typeId++);
+    MatrixFromTRS::registerNode(pluginFn, typeId);
     Max::registerNode(pluginFn, typeId++);
     Min::registerNode(pluginFn, typeId++);
     MaxInt::registerNode(pluginFn, typeId++);
@@ -77,6 +78,7 @@ initializePlugin(MObject pluginObj)
     RoundAngle::registerNode(pluginFn, typeId++);
     RotationFromMatrix::registerNode(pluginFn, typeId++);
     RotationFromQuaternion::registerNode(pluginFn, typeId++);
+    ScaleFromMatrix::registerNode(pluginFn, typeId++);
     Sin::registerNode(pluginFn, typeId++);
     Subtract::registerNode(pluginFn, typeId++);
     SubtractAngle::registerNode(pluginFn, typeId++);
@@ -84,6 +86,7 @@ initializePlugin(MObject pluginObj)
     SubtractVector::registerNode(pluginFn, typeId++);
     SquareRoot::registerNode(pluginFn, typeId++);
     Tan::registerNode(pluginFn, typeId++);
+    TranslationFromMatrix::registerNode(pluginFn, typeId++);
     VectorLength::registerNode(pluginFn, typeId++);
     
     return MS::kSuccess;
@@ -128,6 +131,7 @@ uninitializePlugin(MObject pluginObj)
     Min::deregisterNode(pluginFn);
     MaxInt::deregisterNode(pluginFn);
     MinInt::deregisterNode(pluginFn);
+    MatrixFromTRS::deregisterNode(pluginFn);
     MaxAngle::deregisterNode(pluginFn);
     MinAngle::deregisterNode(pluginFn);
     Multiply::deregisterNode(pluginFn);
@@ -147,6 +151,7 @@ uninitializePlugin(MObject pluginObj)
     RoundAngle::deregisterNode(pluginFn);
     RotationFromMatrix::deregisterNode(pluginFn);
     RotationFromQuaternion::deregisterNode(pluginFn);
+    ScaleFromMatrix::deregisterNode(pluginFn);
     Sin::deregisterNode(pluginFn);
     Subtract::deregisterNode(pluginFn);
     SubtractAngle::deregisterNode(pluginFn);
@@ -154,6 +159,7 @@ uninitializePlugin(MObject pluginObj)
     SubtractVector::deregisterNode(pluginFn);
     SquareRoot::deregisterNode(pluginFn);
     Tan::deregisterNode(pluginFn);
+    TranslationFromMatrix::deregisterNode(pluginFn);
     VectorLength::deregisterNode(pluginFn);
     
     return MS::kSuccess;
