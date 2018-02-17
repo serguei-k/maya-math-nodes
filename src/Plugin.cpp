@@ -14,6 +14,7 @@
 #include "Round.h"
 #include "Subtract.h"
 #include "Trig.h"
+#include "Twist.h"
 #include "VectorOps.h"
 
 MStatus
@@ -87,6 +88,8 @@ initializePlugin(MObject pluginObj)
     SquareRoot::registerNode(pluginFn, typeId++);
     Tan::registerNode(pluginFn, typeId++);
     TranslationFromMatrix::registerNode(pluginFn, typeId++);
+    TwistFromMatrix::registerNode(pluginFn, typeId++);
+    TwistFromRotation::registerNode(pluginFn, typeId++);
     VectorLength::registerNode(pluginFn, typeId++);
     
     return MS::kSuccess;
@@ -160,6 +163,8 @@ uninitializePlugin(MObject pluginObj)
     SquareRoot::deregisterNode(pluginFn);
     Tan::deregisterNode(pluginFn);
     TranslationFromMatrix::deregisterNode(pluginFn);
+    TwistFromMatrix::deregisterNode(pluginFn);
+    TwistFromRotation::deregisterNode(pluginFn);
     VectorLength::deregisterNode(pluginFn);
     
     return MS::kSuccess;
