@@ -36,6 +36,7 @@ initializePlugin(MObject pluginObj)
     AngleBetweenVectors::registerNode(pluginFn, typeId++);
     AsinAngle::registerNode(pluginFn, typeId++);
     AtanAngle::registerNode(pluginFn, typeId++);
+    Atan2Angle::registerNode(pluginFn, typeId++);
     Ceil::registerNode(pluginFn, typeId++);
     CeilAngle::registerNode(pluginFn, typeId++);
     Clamp::registerNode(pluginFn, typeId++);
@@ -112,6 +113,7 @@ uninitializePlugin(MObject pluginObj)
     AngleBetweenVectors::deregisterNode(pluginFn);
     AsinAngle::deregisterNode(pluginFn);
     AtanAngle::deregisterNode(pluginFn);
+    Atan2Angle::deregisterNode(pluginFn);
     Ceil::deregisterNode(pluginFn);
     CeilAngle::deregisterNode(pluginFn);
     Clamp::deregisterNode(pluginFn);
