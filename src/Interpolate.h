@@ -12,8 +12,8 @@ class LerpNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAAttr_, "inputA", DefaultValue<TAttrType>(0.0));
-        createAttribute(inputBAttr_, "inputB", DefaultValue<TAttrType>(0.0));
+        createAttribute(input1Attr_, "input1", DefaultValue<TAttrType>(0.0));
+        createAttribute(input2Attr_, "input2", DefaultValue<TAttrType>(0.0));
         createAttribute(alphaAttr_, "alpha", 0.5);
         createAttribute(outputAttr_, "output", DefaultValue<TAttrType>(0.0), false);
         
@@ -21,13 +21,13 @@ public:
         attrFn.setMin(0.0);
         attrFn.setMax(1.0);
         
-        MPxNode::addAttribute(inputAAttr_);
-        MPxNode::addAttribute(inputBAttr_);
+        MPxNode::addAttribute(input1Attr_);
+        MPxNode::addAttribute(input2Attr_);
         MPxNode::addAttribute(alphaAttr_);
         MPxNode::addAttribute(outputAttr_);
         
-        MPxNode::attributeAffects(inputAAttr_, outputAttr_);
-        MPxNode::attributeAffects(inputBAttr_, outputAttr_);
+        MPxNode::attributeAffects(input1Attr_, outputAttr_);
+        MPxNode::attributeAffects(input2Attr_, outputAttr_);
         MPxNode::attributeAffects(alphaAttr_, outputAttr_);
         
         return MS::kSuccess;
@@ -37,11 +37,11 @@ public:
     {
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
-            const auto inputAValue = getAttribute<TAttrType>(dataBlock, inputAAttr_);
-            const auto inputBValue = getAttribute<TAttrType>(dataBlock, inputBAttr_);
+            const auto input1Value = getAttribute<TAttrType>(dataBlock, input1Attr_);
+            const auto input2Value = getAttribute<TAttrType>(dataBlock, input2Attr_);
             const auto alphaValue = getAttribute<double>(dataBlock, alphaAttr_);
             
-            setAttribute(dataBlock, outputAttr_, TAttrType(inputAValue + (inputBValue - inputAValue) * alphaValue));
+            setAttribute(dataBlock, outputAttr_, TAttrType(input1Value + (input2Value - input1Value) * alphaValue));
             
             return MS::kSuccess;
         }
@@ -50,17 +50,17 @@ public:
     }
 
 private:
-    static Attribute inputAAttr_;
-    static Attribute inputBAttr_;
+    static Attribute input1Attr_;
+    static Attribute input2Attr_;
     static Attribute alphaAttr_;
     static Attribute outputAttr_;
 };
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
-Attribute LerpNode<TAttrType, TClass, TTypeName>::inputAAttr_;
+Attribute LerpNode<TAttrType, TClass, TTypeName>::input1Attr_;
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
-Attribute LerpNode<TAttrType, TClass, TTypeName>::inputBAttr_;
+Attribute LerpNode<TAttrType, TClass, TTypeName>::input2Attr_;
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
 Attribute LerpNode<TAttrType, TClass, TTypeName>::alphaAttr_;
@@ -83,8 +83,8 @@ class SlerpNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAAttr_, "inputA", DefaultValue<MQuaternion>(0.0));
-        createAttribute(inputBAttr_, "inputB", DefaultValue<MQuaternion>(0.0));
+        createAttribute(input1Attr_, "input1", DefaultValue<MQuaternion>(0.0));
+        createAttribute(input2Attr_, "input2", DefaultValue<MQuaternion>(0.0));
         createAttribute(alphaAttr_, "alpha", 0.5);
         createAttribute(outputAttr_, "output", DefaultValue<MQuaternion>(0.0), false);
         
@@ -97,14 +97,14 @@ public:
         eAttrFn.addField("Short", 0);
         eAttrFn.addField("Long", -1);
         
-        MPxNode::addAttribute(inputAAttr_);
-        MPxNode::addAttribute(inputBAttr_);
+        MPxNode::addAttribute(input1Attr_);
+        MPxNode::addAttribute(input2Attr_);
         MPxNode::addAttribute(alphaAttr_);
         MPxNode::addAttribute(interpTypeAttr_);
         MPxNode::addAttribute(outputAttr_);
         
-        MPxNode::attributeAffects(inputAAttr_, outputAttr_);
-        MPxNode::attributeAffects(inputBAttr_, outputAttr_);
+        MPxNode::attributeAffects(input1Attr_, outputAttr_);
+        MPxNode::attributeAffects(input2Attr_, outputAttr_);
         MPxNode::attributeAffects(alphaAttr_, outputAttr_);
         MPxNode::attributeAffects(interpTypeAttr_, outputAttr_);
         
@@ -115,14 +115,14 @@ public:
     {
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
-            const auto inputAValue = getAttribute<MQuaternion>(dataBlock, inputAAttr_);
-            const auto inputBValue = getAttribute<MQuaternion>(dataBlock, inputBAttr_);
+            const auto input1Value = getAttribute<MQuaternion>(dataBlock, input1Attr_);
+            const auto input2Value = getAttribute<MQuaternion>(dataBlock, input2Attr_);
             const auto alphaValue = getAttribute<double>(dataBlock, alphaAttr_);
             
             MDataHandle interpTypeHandle = dataBlock.inputValue(interpTypeAttr_);
             const auto interpType =interpTypeHandle.asShort();
             
-            setAttribute(dataBlock, outputAttr_, slerp(inputAValue, inputBValue, alphaValue, interpType));
+            setAttribute(dataBlock, outputAttr_, slerp(input1Value, input2Value, alphaValue, interpType));
             
             return MS::kSuccess;
         }
@@ -131,18 +131,18 @@ public:
     }
 
 private:
-    static Attribute inputAAttr_;
-    static Attribute inputBAttr_;
+    static Attribute input1Attr_;
+    static Attribute input2Attr_;
     static Attribute alphaAttr_;
     static Attribute interpTypeAttr_;
     static Attribute outputAttr_;
 };
 
 template<typename TClass, const char* TTypeName>
-Attribute SlerpNode<TClass, TTypeName>::inputAAttr_;
+Attribute SlerpNode<TClass, TTypeName>::input1Attr_;
 
 template<typename TClass, const char* TTypeName>
-Attribute SlerpNode<TClass, TTypeName>::inputBAttr_;
+Attribute SlerpNode<TClass, TTypeName>::input2Attr_;
 
 template<typename TClass, const char* TTypeName>
 Attribute SlerpNode<TClass, TTypeName>::alphaAttr_;

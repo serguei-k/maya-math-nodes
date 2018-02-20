@@ -13,19 +13,19 @@ class ClampNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAAttr_, "input", DefaultValue<TAttrType>(0.0));
-        createAttribute(inputAAttr_, "inputA", DefaultValue<TAttrType>(0.0));
-        createAttribute(inputBAttr_, "inputB", DefaultValue<TAttrType>(1.0));
+        createAttribute(inputMinAttr_, "input", DefaultValue<TAttrType>(0.0));
+        createAttribute(inputMinAttr_, "inputMin", DefaultValue<TAttrType>(0.0));
+        createAttribute(inputMaxAttr_, "inputMax", DefaultValue<TAttrType>(1.0));
         createAttribute(outputAttr_, "output", DefaultValue<TAttrType>(0.0), false);
         
-        MPxNode::addAttribute(inputAttr_);
-        MPxNode::addAttribute(inputAAttr_);
-        MPxNode::addAttribute(inputBAttr_);
+        MPxNode::addAttribute(inputMinttr_);
+        MPxNode::addAttribute(inputMinAttr_);
+        MPxNode::addAttribute(inputMaxAttr_);
         MPxNode::addAttribute(outputAttr_);
         
-        MPxNode::attributeAffects(inputAttr_, outputAttr_);
-        MPxNode::attributeAffects(inputAAttr_, outputAttr_);
-        MPxNode::attributeAffects(inputBAttr_, outputAttr_);
+        MPxNode::attributeAffects(inputMinttr_, outputAttr_);
+        MPxNode::attributeAffects(inputMinAttr_, outputAttr_);
+        MPxNode::attributeAffects(inputMaxAttr_, outputAttr_);
         
         return MS::kSuccess;
     }
@@ -34,11 +34,11 @@ public:
     {
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
-            const TAttrType inputValue = getAttribute<TAttrType>(dataBlock, inputAttr_);
-            const TAttrType inputAValue = getAttribute<TAttrType>(dataBlock, inputAAttr_);
-            const TAttrType inputBValue = getAttribute<TAttrType>(dataBlock, inputBAttr_);
+            const TAttrType inputValue = getAttribute<TAttrType>(dataBlock, inputMinttr_);
+            const TAttrType inputMinValue = getAttribute<TAttrType>(dataBlock, inputMinAttr_);
+            const TAttrType inputMaxValue = getAttribute<TAttrType>(dataBlock, inputMaxAttr_);
             
-            setAttribute(dataBlock, outputAttr_, TAttrType(std::max(inputAValue, std::min(inputValue, inputBValue))));
+            setAttribute(dataBlock, outputAttr_, TAttrType(std::max(inputMinValue, std::min(inputValue, inputMaxValue))));
             
             return MS::kSuccess;
         }
@@ -47,20 +47,20 @@ public:
     }
 
 private:
-    static Attribute inputAttr_;
-    static Attribute inputAAttr_;
-    static Attribute inputBAttr_;
+    static Attribute inputMinttr_;
+    static Attribute inputMinAttr_;
+    static Attribute inputMaxAttr_;
     static Attribute outputAttr_;
 };
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
-Attribute ClampNode<TAttrType, TClass, TTypeName>::inputAttr_;
+Attribute ClampNode<TAttrType, TClass, TTypeName>::inputMinttr_;
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
-Attribute ClampNode<TAttrType, TClass, TTypeName>::inputAAttr_;
+Attribute ClampNode<TAttrType, TClass, TTypeName>::inputMinAttr_;
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
-Attribute ClampNode<TAttrType, TClass, TTypeName>::inputBAttr_;
+Attribute ClampNode<TAttrType, TClass, TTypeName>::inputMaxAttr_;
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
 Attribute ClampNode<TAttrType, TClass, TTypeName>::outputAttr_;

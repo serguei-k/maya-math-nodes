@@ -10,16 +10,16 @@ class DivideNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAAttr_, "inputA", DefaultValue<TInOutAttrType>(0.0));
-        createAttribute(inputBAttr_, "inputB", DefaultValue<TInAttrType>(0.0));
+        createAttribute(input1Attr_, "input1", DefaultValue<TInOutAttrType>(0.0));
+        createAttribute(input2Attr_, "input2", DefaultValue<TInAttrType>(0.0));
         createAttribute(outputAttr_, "output", DefaultValue<TInOutAttrType>(0.0), false);
         
-        MPxNode::addAttribute(inputAAttr_);
-        MPxNode::addAttribute(inputBAttr_);
+        MPxNode::addAttribute(input1Attr_);
+        MPxNode::addAttribute(input2Attr_);
         MPxNode::addAttribute(outputAttr_);
         
-        MPxNode::attributeAffects(inputAAttr_, outputAttr_);
-        MPxNode::attributeAffects(inputBAttr_, outputAttr_);
+        MPxNode::attributeAffects(input1Attr_, outputAttr_);
+        MPxNode::attributeAffects(input2Attr_, outputAttr_);
         
         return MS::kSuccess;
     }
@@ -28,10 +28,10 @@ public:
     {
         if (plug == outputAttr_)
         {
-            const auto inputAValue = getAttribute<TInOutAttrType>(dataBlock, inputAAttr_);
-            const auto inputBValue = getAttribute<TInAttrType>(dataBlock, inputBAttr_);
+            const auto input1Value = getAttribute<TInOutAttrType>(dataBlock, input1Attr_);
+            const auto input2Value = getAttribute<TInAttrType>(dataBlock, input2Attr_);
             
-            setAttribute(dataBlock, outputAttr_, TInOutAttrType(inputAValue / inputBValue));
+            setAttribute(dataBlock, outputAttr_, TInOutAttrType(input1Value / input2Value));
             
             return MS::kSuccess;
         }
@@ -40,16 +40,16 @@ public:
     }
 
 private:
-    static Attribute inputAAttr_;
-    static Attribute inputBAttr_;
+    static Attribute input1Attr_;
+    static Attribute input2Attr_;
     static Attribute outputAttr_;
 };
 
 template<typename TInOutAttrType, typename TInAttrType, typename TClass, const char* TTypeName>
-Attribute DivideNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::inputAAttr_;
+Attribute DivideNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::input1Attr_;
 
 template<typename TInOutAttrType, typename TInAttrType, typename TClass, const char* TTypeName>
-Attribute DivideNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::inputBAttr_;
+Attribute DivideNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::input2Attr_;
 
 template<typename TInOutAttrType, typename TInAttrType, typename TClass, const char* TTypeName>
 Attribute DivideNode<TInOutAttrType, TInAttrType, TClass, TTypeName>::outputAttr_;

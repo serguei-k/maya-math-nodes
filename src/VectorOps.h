@@ -10,16 +10,16 @@ class Vector2OpNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAAttr_, "inputA", MVector::xAxis);
-        createAttribute(inputBAttr_, "inputB", MVector::yAxis);
+        createAttribute(input1Attr_, "input1", MVector::xAxis);
+        createAttribute(input2Attr_, "input2", MVector::yAxis);
         createAttribute(outputAttr_, "output", DefaultValue<TOutAttrType>(0.0), false);
         
-        MPxNode::addAttribute(inputAAttr_);
-        MPxNode::addAttribute(inputBAttr_);
+        MPxNode::addAttribute(input1Attr_);
+        MPxNode::addAttribute(input2Attr_);
         MPxNode::addAttribute(outputAttr_);
         
-        MPxNode::attributeAffects(inputAAttr_, outputAttr_);
-        MPxNode::attributeAffects(inputBAttr_, outputAttr_);
+        MPxNode::attributeAffects(input1Attr_, outputAttr_);
+        MPxNode::attributeAffects(input2Attr_, outputAttr_);
         
         return MS::kSuccess;
     }
@@ -28,10 +28,10 @@ public:
     {
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
-            const auto inputAValue = getAttribute<MVector>(dataBlock, inputAAttr_);
-            const auto inputBValue = getAttribute<MVector>(dataBlock, inputBAttr_);
+            const auto input1Value = getAttribute<MVector>(dataBlock, input1Attr_);
+            const auto input2Value = getAttribute<MVector>(dataBlock, input2Attr_);
             
-            setAttribute(dataBlock, outputAttr_, TOutAttrType((inputAValue.*TOpFucPtr)(inputBValue)));
+            setAttribute(dataBlock, outputAttr_, TOutAttrType((input1Value.*TOpFucPtr)(input2Value)));
             
             return MS::kSuccess;
         }
@@ -40,16 +40,16 @@ public:
     }
 
 private:
-    static Attribute inputAAttr_;
-    static Attribute inputBAttr_;
+    static Attribute input1Attr_;
+    static Attribute input2Attr_;
     static Attribute outputAttr_;
 };
 
 template<typename TOutAttrType, typename TClass, const char* TTypeName, typename TOpFuncType, TOpFuncType TOpFucPtr>
-Attribute Vector2OpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::inputAAttr_;
+Attribute Vector2OpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::input1Attr_;
 
 template<typename TOutAttrType, typename TClass, const char* TTypeName, typename TOpFuncType, TOpFuncType TOpFucPtr>
-Attribute Vector2OpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::inputBAttr_;
+Attribute Vector2OpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::input2Attr_;
 
 template<typename TOutAttrType, typename TClass, const char* TTypeName, typename TOpFuncType, TOpFuncType TOpFucPtr>
 Attribute Vector2OpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::outputAttr_;
@@ -69,13 +69,13 @@ class VectorOpNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAttr_, "input", MVector::zero);
+        createAttribute(input1ttr_, "input", MVector::zero);
         createAttribute(outputAttr_, "output", DefaultValue<TOutAttrType>(0.0), false);
         
-        MPxNode::addAttribute(inputAttr_);
+        MPxNode::addAttribute(input1ttr_);
         MPxNode::addAttribute(outputAttr_);
         
-        MPxNode::attributeAffects(inputAttr_, outputAttr_);
+        MPxNode::attributeAffects(input1ttr_, outputAttr_);
         
         return MS::kSuccess;
     }
@@ -84,7 +84,7 @@ public:
     {
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
-            const auto inputValue = getAttribute<MVector>(dataBlock, inputAttr_);
+            const auto inputValue = getAttribute<MVector>(dataBlock, input1ttr_);
             
             setAttribute(dataBlock, outputAttr_, TOutAttrType((inputValue.*TOpFucPtr)()));
             
@@ -95,12 +95,12 @@ public:
     }
 
 private:
-    static Attribute inputAttr_;
+    static Attribute input1ttr_;
     static Attribute outputAttr_;
 };
 
 template<typename TOutAttrType, typename TClass, const char* TTypeName, typename TOpFuncType, TOpFuncType TOpFucPtr>
-Attribute VectorOpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::inputAttr_;
+Attribute VectorOpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::input1ttr_;
 
 template<typename TOutAttrType, typename TClass, const char* TTypeName, typename TOpFuncType, TOpFuncType TOpFucPtr>
 Attribute VectorOpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>::outputAttr_;

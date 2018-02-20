@@ -15,20 +15,20 @@ class TrigNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAttr_, "input", DefaultValue<TInputAttrType>(0.0));
+        createAttribute(input1ttr_, "input", DefaultValue<TInputAttrType>(0.0));
         createAttribute(outputAttr_, "output", DefaultValue<TOutputAttrType>(0.0), false);
         
         if (TSetLimits)
         {
-            MFnNumericAttribute attrFn(inputAttr_);
+            MFnNumericAttribute attrFn(input1ttr_);
             attrFn.setMin(-1.0);
             attrFn.setMax(1.0);
         }
         
-        MPxNode::addAttribute(inputAttr_);
+        MPxNode::addAttribute(input1ttr_);
         MPxNode::addAttribute(outputAttr_);
         
-        MPxNode::attributeAffects(inputAttr_, outputAttr_);
+        MPxNode::attributeAffects(input1ttr_, outputAttr_);
         
         return MS::kSuccess;
     }
@@ -37,7 +37,7 @@ public:
     {
         if (plug == outputAttr_)
         {
-            const auto inputValue = getAttribute<TInputAttrType, double>(dataBlock, inputAttr_);
+            const auto inputValue = getAttribute<TInputAttrType, double>(dataBlock, input1ttr_);
             
             setAttribute(dataBlock, outputAttr_, TOutputAttrType(TTrigFuncPtr(inputValue)));
             
@@ -48,13 +48,13 @@ public:
     }
 
 private:
-    static Attribute inputAttr_;
+    static Attribute input1ttr_;
     static Attribute outputAttr_;
 };
 
 template<typename TInputAttrType, typename TOutputAttrType, typename TClass,
          const char* TTypeName, bool TSetLimits, TrigFuncPtr TTrigFuncPtr>
-Attribute TrigNode<TInputAttrType, TOutputAttrType, TClass, TTypeName, TSetLimits, TTrigFuncPtr>::inputAttr_;
+Attribute TrigNode<TInputAttrType, TOutputAttrType, TClass, TTypeName, TSetLimits, TTrigFuncPtr>::input1ttr_;
 
 template<typename TInputAttrType, typename TOutputAttrType, typename TClass,
          const char* TTypeName, bool TSetLimits, TrigFuncPtr TTrigFuncPtr>
@@ -66,12 +66,12 @@ Attribute TrigNode<TInputAttrType, TOutputAttrType, TClass, TTypeName, TSetLimit
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "TemplateArgumentsIssues"
-TRIG_NODE(double, MAngle, AcosAngle, true, &std::acos);
-TRIG_NODE(double, MAngle, AsinAngle, true, &std::asin);
-TRIG_NODE(double, MAngle, AtanAngle, false, &std::atan);
-TRIG_NODE(MAngle, double, Cos, false, &std::cos);
-TRIG_NODE(MAngle, double, Sin, false, &std::sin);
-TRIG_NODE(MAngle, double, Tan, false, &std::tan);
+TRIG_NODE(double, MAngle, Acos, true, &std::acos);
+TRIG_NODE(double, MAngle, Asin, true, &std::asin);
+TRIG_NODE(double, MAngle, Atan, false, &std::atan);
+TRIG_NODE(MAngle, double, CosAngle, false, &std::cos);
+TRIG_NODE(MAngle, double, SinAngle, false, &std::sin);
+TRIG_NODE(MAngle, double, TanAngle, false, &std::tan);
 #pragma clang diagnostic pop
 
 
@@ -81,16 +81,16 @@ class Atan2TrigNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAAttr_, "inputA", DefaultValue<double >(0.0));
-        createAttribute(inputBAttr_, "inputB", DefaultValue<double >(1.0));
+        createAttribute(input1Attr_, "input1", DefaultValue<double >(0.0));
+        createAttribute(input2Attr_, "input2", DefaultValue<double >(1.0));
         createAttribute(outputAttr_, "output", DefaultValue<MAngle>(0.0), false);
         
-        MPxNode::addAttribute(inputAAttr_);
-        MPxNode::addAttribute(inputBAttr_);
+        MPxNode::addAttribute(input1Attr_);
+        MPxNode::addAttribute(input2Attr_);
         MPxNode::addAttribute(outputAttr_);
         
-        MPxNode::attributeAffects(inputAAttr_, outputAttr_);
-        MPxNode::attributeAffects(inputBAttr_, outputAttr_);
+        MPxNode::attributeAffects(input1Attr_, outputAttr_);
+        MPxNode::attributeAffects(input2Attr_, outputAttr_);
         
         return MS::kSuccess;
     }
@@ -99,16 +99,16 @@ public:
     {
         if (plug == outputAttr_)
         {
-            const auto inputAValue = getAttribute<double>(dataBlock, inputAAttr_);
-            const auto inputBValue = getAttribute<double>(dataBlock, inputBAttr_);
+            const auto input1Value = getAttribute<double>(dataBlock, input1Attr_);
+            const auto input2Value = getAttribute<double>(dataBlock, input2Attr_);
             
-            if (inputAValue == 0 && inputBValue == 0)
+            if (input1Value == 0 && input2Value == 0)
             {
                 MGlobal::displayError("Both inputs to atan2 function cannot be 0!");
                 return MS::kFailure;
             }
             
-            setAttribute(dataBlock, outputAttr_, MAngle(std::atan2(inputAValue, inputBValue)));
+            setAttribute(dataBlock, outputAttr_, MAngle(std::atan2(input1Value, input2Value)));
             
             return MS::kSuccess;
         }
@@ -117,16 +117,16 @@ public:
     }
 
 private:
-    static Attribute inputAAttr_;
-    static Attribute inputBAttr_;
+    static Attribute input1Attr_;
+    static Attribute input2Attr_;
     static Attribute outputAttr_;
 };
 
 template<typename TClass, const char* TTypeName>
-Attribute Atan2TrigNode<TClass, TTypeName>::inputAAttr_;
+Attribute Atan2TrigNode<TClass, TTypeName>::input1Attr_;
 
 template<typename TClass, const char* TTypeName>
-Attribute Atan2TrigNode<TClass, TTypeName>::inputBAttr_;
+Attribute Atan2TrigNode<TClass, TTypeName>::input2Attr_;
 
 template<typename TClass, const char* TTypeName>
 Attribute Atan2TrigNode<TClass, TTypeName>::outputAttr_;
@@ -135,4 +135,4 @@ Attribute Atan2TrigNode<TClass, TTypeName>::outputAttr_;
     TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
     class NodeName : public Atan2TrigNode<NodeName, name##NodeName> {};
 
-ATAN2_TRIG_NODE(Atan2Angle);
+ATAN2_TRIG_NODE(Atan2);

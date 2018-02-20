@@ -28,16 +28,16 @@ class MinMaxNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAAttr_, "inputA", DefaultValue<TAttrType>(0.0));
-        createAttribute(inputBAttr_, "inputB", DefaultValue<TAttrType>(0.0));
+        createAttribute(input1Attr_, "input1", DefaultValue<TAttrType>(0.0));
+        createAttribute(input2Attr_, "input2", DefaultValue<TAttrType>(0.0));
         createAttribute(outputAttr_, "output", DefaultValue<TAttrType>(0.0), false);
         
-        MPxNode::addAttribute(inputAAttr_);
-        MPxNode::addAttribute(inputBAttr_);
+        MPxNode::addAttribute(input1Attr_);
+        MPxNode::addAttribute(input2Attr_);
         MPxNode::addAttribute(outputAttr_);
         
-        MPxNode::attributeAffects(inputAAttr_, outputAttr_);
-        MPxNode::attributeAffects(inputBAttr_, outputAttr_);
+        MPxNode::attributeAffects(input1Attr_, outputAttr_);
+        MPxNode::attributeAffects(input2Attr_, outputAttr_);
         
         return MS::kSuccess;
     }
@@ -46,10 +46,10 @@ public:
     {
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
-            const auto inputAValue = getAttribute<TAttrType>(dataBlock, inputAAttr_);
-            const auto inputBValue = getAttribute<TAttrType>(dataBlock, inputBAttr_);
+            const auto input1Value = getAttribute<TAttrType>(dataBlock, input1Attr_);
+            const auto input2Value = getAttribute<TAttrType>(dataBlock, input2Attr_);
             
-            setAttribute(dataBlock, outputAttr_, TOpFuncPtr(inputAValue, inputBValue));
+            setAttribute(dataBlock, outputAttr_, TOpFuncPtr(input1Value, input2Value));
             
             return MS::kSuccess;
         }
@@ -58,18 +58,18 @@ public:
     }
 
 private:
-    static Attribute inputAAttr_;
-    static Attribute inputBAttr_;
+    static Attribute input1Attr_;
+    static Attribute input2Attr_;
     static Attribute outputAttr_;
 };
 
 template<typename TAttrType, typename TClass, const char* TTypeName,
          const TAttrType& (*TOpFuncPtr)(const TAttrType&, const TAttrType&)>
-Attribute MinMaxNode<TAttrType, TClass, TTypeName, TOpFuncPtr>::inputAAttr_;
+Attribute MinMaxNode<TAttrType, TClass, TTypeName, TOpFuncPtr>::input1Attr_;
 
 template<typename TAttrType, typename TClass, const char* TTypeName,
          const TAttrType& (*TOpFuncPtr)(const TAttrType&, const TAttrType&)>
-Attribute MinMaxNode<TAttrType, TClass, TTypeName, TOpFuncPtr>::inputBAttr_;
+Attribute MinMaxNode<TAttrType, TClass, TTypeName, TOpFuncPtr>::input2Attr_;
 
 template<typename TAttrType, typename TClass, const char* TTypeName,
          const TAttrType& (*TOpFuncPtr)(const TAttrType&, const TAttrType&)>

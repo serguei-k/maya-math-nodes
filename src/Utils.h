@@ -18,10 +18,10 @@
 #include <maya/MVector.h>
 #include <maya/MQuaternion.h>
 
-#ifdef _MSC_VER
-    #define TEMPLATE_PARAMETER_LINKAGE extern
-#else
+#ifdef __APPLE__
     #define TEMPLATE_PARAMETER_LINKAGE constexpr
+#else
+    #define TEMPLATE_PARAMETER_LINKAGE extern const
 #endif
 
 struct Attribute
@@ -80,6 +80,7 @@ inline void createAttribute(Attribute& attr, const char* name, double value, boo
     attr.attr = attrFn.create(name, name, MFnNumericData::kDouble, value);
     attrFn.setKeyable(isInput);
     attrFn.setStorable(isInput);
+    attrFn.setWritable(isInput);
 }
 
 inline void createAttribute(Attribute& attr, const char* name, int value, bool isInput = true)
@@ -88,6 +89,7 @@ inline void createAttribute(Attribute& attr, const char* name, int value, bool i
     attr.attr = attrFn.create(name, name, MFnNumericData::kInt, value);
     attrFn.setKeyable(isInput);
     attrFn.setStorable(isInput);
+    attrFn.setWritable(isInput);
 }
 
 inline void createAttribute(Attribute& attr, const char* name, const MAngle& value, bool isInput = true)
@@ -96,6 +98,7 @@ inline void createAttribute(Attribute& attr, const char* name, const MAngle& val
     attr.attr = attrFn.create(name, name, value);
     attrFn.setKeyable(isInput);
     attrFn.setStorable(isInput);
+    attrFn.setWritable(isInput);
 }
 
 inline void createAttribute(Attribute& attr, const char* name, const MVector& value, bool isInput = true)
@@ -106,20 +109,24 @@ inline void createAttribute(Attribute& attr, const char* name, const MVector& va
     attr.attrX = attrFn.create(attrXName.c_str(), attrXName.c_str(), MFnNumericData::kDouble, value.x);
     attrFn.setKeyable(isInput);
     attrFn.setStorable(isInput);
+    attrFn.setWritable(isInput);
     
     const std::string attrYName = (std::string(name) + "Y");
     attr.attrY = attrFn.create(attrYName.c_str(), attrYName.c_str(), MFnNumericData::kDouble, value.y);
     attrFn.setKeyable(isInput);
     attrFn.setStorable(isInput);
+    attrFn.setWritable(isInput);
     
     const std::string attrZName = (std::string(name) + "Z");
     attr.attrZ = attrFn.create(attrZName.c_str(), attrZName.c_str(), MFnNumericData::kDouble, value.z);
     attrFn.setKeyable(isInput);
     attrFn.setStorable(isInput);
+    attrFn.setWritable(isInput);
     
     attr.attr = attrFn.create(name, name, attr.attrX, attr.attrY, attr.attrZ);
     attrFn.setKeyable(isInput);
     attrFn.setStorable(isInput);
+    attrFn.setWritable(isInput);
 }
 
 inline void createAttribute(Attribute& attr, const char* name, const MMatrix& value, bool isInput = true)
@@ -129,6 +136,7 @@ inline void createAttribute(Attribute& attr, const char* name, const MMatrix& va
     attrFn.setDefault(value);
     attrFn.setKeyable(isInput);
     attrFn.setStorable(isInput);
+    attrFn.setWritable(isInput);
 }
 
 inline void createAttribute(Attribute& attr, const char* name, const MQuaternion& value, bool isInput = true)
@@ -140,21 +148,25 @@ inline void createAttribute(Attribute& attr, const char* name, const MQuaternion
     attr.attrX = attrFn.create(attrXName.c_str(), attrXName.c_str(), MFnNumericData::kDouble, value.x);
     attrFn.setKeyable(isInput);
     attrFn.setStorable(isInput);
+    attrFn.setWritable(isInput);
     
     const std::string attrYName = (std::string(name) + "Y");
     attr.attrY = attrFn.create(attrYName.c_str(), attrYName.c_str(), MFnNumericData::kDouble, value.y);
     attrFn.setKeyable(isInput);
     attrFn.setStorable(isInput);
+    attrFn.setWritable(isInput);
     
     const std::string attrZName = (std::string(name) + "Z");
     attr.attrZ = attrFn.create(attrZName.c_str(), attrZName.c_str(), MFnNumericData::kDouble, value.z);
     attrFn.setKeyable(isInput);
     attrFn.setStorable(isInput);
+    attrFn.setWritable(isInput);
     
     const std::string attrWName = (std::string(name) + "W");
     attr.attrW = attrFn.create(attrWName.c_str(), attrWName.c_str(), MFnNumericData::kDouble, value.w);
     attrFn.setKeyable(isInput);
     attrFn.setStorable(isInput);
+    attrFn.setWritable(isInput);
     
     attr.attr = cAttrFn.create(name, name);
     cAttrFn.addChild(attr.attrX);
@@ -163,6 +175,7 @@ inline void createAttribute(Attribute& attr, const char* name, const MQuaternion
     cAttrFn.addChild(attr.attrW);
     cAttrFn.setKeyable(isInput);
     cAttrFn.setStorable(isInput);
+    cAttrFn.setWritable(isInput);
 }
 
 inline void createAttribute(Attribute& attr, const char* name, const MEulerRotation& value, bool isInput = true)
@@ -174,20 +187,24 @@ inline void createAttribute(Attribute& attr, const char* name, const MEulerRotat
     attr.attrX = uAttrFn.create(attrXName.c_str(), attrXName.c_str(), MAngle(value.x));
     uAttrFn.setKeyable(isInput);
     uAttrFn.setStorable(isInput);
+    uAttrFn.setWritable(isInput);
     
     const std::string attrYName = (std::string(name) + "Y");
     attr.attrY = uAttrFn.create(attrYName.c_str(), attrYName.c_str(), MAngle(value.y));
     uAttrFn.setKeyable(isInput);
     uAttrFn.setStorable(isInput);
+    uAttrFn.setWritable(isInput);
     
     const std::string attrZName = (std::string(name) + "Z");
     attr.attrZ = uAttrFn.create(attrZName.c_str(), attrZName.c_str(), MAngle(value.z));
     uAttrFn.setKeyable(isInput);
     uAttrFn.setStorable(isInput);
+    uAttrFn.setWritable(isInput);
     
     attr.attr = attrFn.create(name, name, attr.attrX, attr.attrY, attr.attrZ);
     attrFn.setKeyable(isInput);
     attrFn.setStorable(isInput);
+    attrFn.setWritable(isInput);
 }
 
 // Explicit specializations for getAttribute
