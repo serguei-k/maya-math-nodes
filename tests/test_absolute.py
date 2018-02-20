@@ -5,10 +5,10 @@ from node_test_case import NodeTestCase
 
 class TestAbsolute(NodeTestCase):
     def test_absolute(self):
-        pass
+        self.create_node('Absolute', {'input': -1.0}, 1.0)
     
     def test_absolute_int(self):
-        pass
+        self.create_node('AbsoluteInt', {'input': 1}, 1)
     
     def test_absolute_angle(self):
-        pass
+        self.create_node('AbsoluteAngle', {'input': -1.0}, 1.0)
