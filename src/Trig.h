@@ -15,20 +15,20 @@ class TrigNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(input1ttr_, "input", DefaultValue<TInputAttrType>(0.0));
+        createAttribute(inputAttr_, "input", DefaultValue<TInputAttrType>(0.0));
         createAttribute(outputAttr_, "output", DefaultValue<TOutputAttrType>(0.0), false);
         
         if (TSetLimits)
         {
-            MFnNumericAttribute attrFn(input1ttr_);
+            MFnNumericAttribute attrFn(inputAttr_);
             attrFn.setMin(-1.0);
             attrFn.setMax(1.0);
         }
         
-        MPxNode::addAttribute(input1ttr_);
+        MPxNode::addAttribute(inputAttr_);
         MPxNode::addAttribute(outputAttr_);
         
-        MPxNode::attributeAffects(input1ttr_, outputAttr_);
+        MPxNode::attributeAffects(inputAttr_, outputAttr_);
         
         return MS::kSuccess;
     }
@@ -37,7 +37,7 @@ public:
     {
         if (plug == outputAttr_)
         {
-            const auto inputValue = getAttribute<TInputAttrType, double>(dataBlock, input1ttr_);
+            const auto inputValue = getAttribute<TInputAttrType, double>(dataBlock, inputAttr_);
             
             setAttribute(dataBlock, outputAttr_, TOutputAttrType(TTrigFuncPtr(inputValue)));
             
@@ -48,13 +48,13 @@ public:
     }
 
 private:
-    static Attribute input1ttr_;
+    static Attribute inputAttr_;
     static Attribute outputAttr_;
 };
 
 template<typename TInputAttrType, typename TOutputAttrType, typename TClass,
          const char* TTypeName, bool TSetLimits, TrigFuncPtr TTrigFuncPtr>
-Attribute TrigNode<TInputAttrType, TOutputAttrType, TClass, TTypeName, TSetLimits, TTrigFuncPtr>::input1ttr_;
+Attribute TrigNode<TInputAttrType, TOutputAttrType, TClass, TTypeName, TSetLimits, TTrigFuncPtr>::inputAttr_;
 
 template<typename TInputAttrType, typename TOutputAttrType, typename TClass,
          const char* TTypeName, bool TSetLimits, TrigFuncPtr TTrigFuncPtr>

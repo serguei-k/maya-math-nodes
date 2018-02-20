@@ -13,17 +13,17 @@ class ClampNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(inputMinAttr_, "input", DefaultValue<TAttrType>(0.0));
+        createAttribute(inputAttr_, "input", DefaultValue<TAttrType>(0.0));
         createAttribute(inputMinAttr_, "inputMin", DefaultValue<TAttrType>(0.0));
         createAttribute(inputMaxAttr_, "inputMax", DefaultValue<TAttrType>(1.0));
         createAttribute(outputAttr_, "output", DefaultValue<TAttrType>(0.0), false);
         
-        MPxNode::addAttribute(inputMinttr_);
+        MPxNode::addAttribute(inputAttr_);
         MPxNode::addAttribute(inputMinAttr_);
         MPxNode::addAttribute(inputMaxAttr_);
         MPxNode::addAttribute(outputAttr_);
         
-        MPxNode::attributeAffects(inputMinttr_, outputAttr_);
+        MPxNode::attributeAffects(inputAttr_, outputAttr_);
         MPxNode::attributeAffects(inputMinAttr_, outputAttr_);
         MPxNode::attributeAffects(inputMaxAttr_, outputAttr_);
         
@@ -34,7 +34,7 @@ public:
     {
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
-            const TAttrType inputValue = getAttribute<TAttrType>(dataBlock, inputMinttr_);
+            const TAttrType inputValue = getAttribute<TAttrType>(dataBlock, inputAttr_);
             const TAttrType inputMinValue = getAttribute<TAttrType>(dataBlock, inputMinAttr_);
             const TAttrType inputMaxValue = getAttribute<TAttrType>(dataBlock, inputMaxAttr_);
             
@@ -47,14 +47,14 @@ public:
     }
 
 private:
-    static Attribute inputMinttr_;
+    static Attribute inputAttr_;
     static Attribute inputMinAttr_;
     static Attribute inputMaxAttr_;
     static Attribute outputAttr_;
 };
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
-Attribute ClampNode<TAttrType, TClass, TTypeName>::inputMinttr_;
+Attribute ClampNode<TAttrType, TClass, TTypeName>::inputAttr_;
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
 Attribute ClampNode<TAttrType, TClass, TTypeName>::inputMinAttr_;
