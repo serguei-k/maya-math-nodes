@@ -95,7 +95,7 @@ public:
         MFnEnumAttribute eAttrFn;
         interpTypeAttr_ = eAttrFn.create("interpolationType", "interpolationType", 0);
         eAttrFn.addField("Short", 0);
-        eAttrFn.addField("Long", -1);
+        eAttrFn.addField("Long", 1);
         
         MPxNode::addAttribute(input1Attr_);
         MPxNode::addAttribute(input2Attr_);
@@ -120,7 +120,7 @@ public:
             const auto alphaValue = getAttribute<double>(dataBlock, alphaAttr_);
             
             MDataHandle interpTypeHandle = dataBlock.inputValue(interpTypeAttr_);
-            const auto interpType =interpTypeHandle.asShort();
+            const auto interpType = interpTypeHandle.asShort() * -1;
             
             setAttribute(dataBlock, outputAttr_, slerp(input1Value, input2Value, alphaValue, interpType));
             

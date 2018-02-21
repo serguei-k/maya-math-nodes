@@ -38,8 +38,12 @@ class NodeTestCase(unittest.TestCase):
                 cmds.setAttr('{0}.{1}'.format(node, attr), inputs[attr])
         
         if isinstance(output, list):
-            self.assertAlmostEqual(cmds.getAttr('{0}.output'.format(node))[0], tuple(output))
+            self.assertItemsAlmostEqual(cmds.getAttr('{0}.output'.format(node))[0], output, 4)
         else:
-            self.assertAlmostEqual(cmds.getAttr('{0}.output'.format(node)), output)
+            self.assertAlmostEqual(cmds.getAttr('{0}.output'.format(node)), output, 4)
         
         return node
+    
+    def assertItemsAlmostEqual(self, expected_seq, actual_seq, places=7, msg=None):
+        for expected, actual in zip(expected_seq, actual_seq):
+            self.assertAlmostEqual(expected, actual, places, msg)
