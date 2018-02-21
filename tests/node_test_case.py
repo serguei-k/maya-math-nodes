@@ -32,6 +32,14 @@ class NodeTestCase(unittest.TestCase):
         self.assertTrue(cmds.objectType(node, isType=full_node_type))
         
         for attr in inputs:
-            cmds.setAttr('{0}.{1}'.format(node, attr), inputs[attr])
+            if isinstance(inputs[attr], list):
+                cmds.setAttr('{0}.{1}'.format(node, attr), *inputs[attr])
+            else:
+                cmds.setAttr('{0}.{1}'.format(node, attr), inputs[attr])
         
-        self.assertEqual(cmds.getAttr('{0}.output'.format(node)), output)
+        if isinstance(output, list):
+            self.assertAlmostEqual(cmds.getAttr('{0}.output'.format(node))[0], tuple(output))
+        else:
+            self.assertAlmostEqual(cmds.getAttr('{0}.output'.format(node)), output)
+        
+        return node
