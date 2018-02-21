@@ -56,7 +56,7 @@ initializePlugin(MObject pluginObj)
     Lerp::registerNode(pluginFn, typeId++);
     LerpAngle::registerNode(pluginFn, typeId++);
     LerpVector::registerNode(pluginFn, typeId++);
-    MatrixFromTRS::registerNode(pluginFn, typeId);
+    MatrixFromTRS::registerNode(pluginFn, typeId++);
     Max::registerNode(pluginFn, typeId++);
     Min::registerNode(pluginFn, typeId++);
     MaxInt::registerNode(pluginFn, typeId++);
@@ -82,7 +82,7 @@ initializePlugin(MObject pluginObj)
     RotationFromQuaternion::registerNode(pluginFn, typeId++);
     ScaleFromMatrix::registerNode(pluginFn, typeId++);
     SinAngle::registerNode(pluginFn, typeId++);
-    SlerpQuaternion::registerNode(pluginFn, typeId);
+    SlerpQuaternion::registerNode(pluginFn, typeId++);
     Subtract::registerNode(pluginFn, typeId++);
     SubtractAngle::registerNode(pluginFn, typeId++);
     SubtractInt::registerNode(pluginFn, typeId++);
