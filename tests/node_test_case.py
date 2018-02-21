@@ -6,6 +6,7 @@ import maya.cmds as cmds
 plugin_name = 'mayaMathNodes'
 node_name_prefix = 'math_'
 
+
 class NodeTestCase(unittest.TestCase):
     """Maya Node Test Case
     
@@ -32,18 +33,27 @@ class NodeTestCase(unittest.TestCase):
         self.assertTrue(cmds.objectType(node, isType=full_node_type))
         
         for attr in inputs:
-            if isinstance(inputs[attr], list):
-                cmds.setAttr('{0}.{1}'.format(node, attr), *inputs[attr])
+            value = inputs[attr]
+            if isinstance(value, list):
+                if len(value) == 16:
+                    cmds.setAttr('{0}.{1}'.format(node, attr), *value, type='matrix')
+                else:
+                    cmds.setAttr('{0}.{1}'.format(node, attr), *value)
             else:
                 cmds.setAttr('{0}.{1}'.format(node, attr), inputs[attr])
         
         if isinstance(output, list):
-            self.assertItemsAlmostEqual(cmds.getAttr('{0}.output'.format(node))[0], output, 4)
+            result = cmds.getAttr('{0}.output'.format(node))
+            if isinstance(result[0], tuple):
+                result = result[0]
+            
+            self.assertItemsAlmostEqual(result, output, 4)
         else:
             self.assertAlmostEqual(cmds.getAttr('{0}.output'.format(node)), output, 4)
         
         return node
     
     def assertItemsAlmostEqual(self, expected_seq, actual_seq, places=7, msg=None):
+        """Assert that container items are near equal within epsilon threshold"""
         for expected, actual in zip(expected_seq, actual_seq):
             self.assertAlmostEqual(expected, actual, places, msg)
