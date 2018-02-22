@@ -35,7 +35,7 @@ This can be achieved by passing the following variable to the cmake command:
 
 ```-DNODE_NAME_PREFIX=prefix```
 
-#### Testing (WIP)
+#### Testing
 In order to run the test suite, execute the *mayapy* interpreter and pass the *tests* directory as an argument, for example:
 
 ```/Applications/Autodesk/maya2018/Maya.app/Contents/bin/mayapy tests```
