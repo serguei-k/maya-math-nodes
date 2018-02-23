@@ -4,6 +4,18 @@
 
 #include "Utils.h"
 
+class MVectorExt : public MVector
+{
+public:
+    explicit MVectorExt(const MVector& vector) : MVector(vector) {}
+    
+    double vectorLengthSquared() const
+    {
+        return x * x + y * y + z * z;
+    }
+};
+
+
 template<typename TOutAttrType, typename TClass, const char* TTypeName, typename TOpFuncPtrType, TOpFuncPtrType TOpFucPtr>
 class Vector2OpNode : public BaseNode<TClass, TTypeName>
 {
@@ -84,7 +96,7 @@ public:
     {
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
-            const auto inputValue = getAttribute<MVector>(dataBlock, input1ttr_);
+            const auto inputValue = static_cast<MVectorExt>(getAttribute<MVector>(dataBlock, input1ttr_));
             
             setAttribute(dataBlock, outputAttr_, TOutAttrType((inputValue.*TOpFucPtr)()));
             
@@ -110,4 +122,5 @@ Attribute VectorOpNode<TOutAttrType, TClass, TTypeName, TOpFuncType, TOpFucPtr>:
     class NodeName : public VectorOpNode<OutAttrType, NodeName, name##NodeName, OpFuncPtrType, OpFucPtr> {};
 
 VECTOR_OP_NODE(double, VectorLength, double (MVector::*)() const, &MVector::length);
+VECTOR_OP_NODE(double, VectorLengthSquared, double (MVectorExt::*)() const, &MVectorExt::vectorLengthSquared);
 VECTOR_OP_NODE(MVector, NormalizeVector, MVector (MVector::*)() const, &MVector::normal);

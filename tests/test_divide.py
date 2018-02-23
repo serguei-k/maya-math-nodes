@@ -15,3 +15,6 @@ class TestDivide(NodeTestCase):
     
     def test_divide_angle_by_int(self):
         self.create_node('DivideAngleByInt', {'input1': 10.0, 'input2': 2}, 5.0)
+    
+    def test_modulus_int(self):
+        self.create_node('ModulusInt', {'input1': 5, 'input2': 4}, 1)

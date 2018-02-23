@@ -271,3 +271,67 @@ Attribute GetMatrixNode<TClass, TTypeName>::outputAttr_;
     class NodeName : public GetMatrixNode<NodeName, name##NodeName> {};
 
 GET_MATRIX_NODE(MatrixFromTRS);
+
+
+template<typename TClass, const char* TTypeName>
+class GetAxisNode : public BaseNode<TClass, TTypeName>
+{
+public:
+    static MStatus initialize()
+    {
+        createAttribute(inputAttr_, "input", DefaultValue<MMatrix>(0.0));
+        createAttribute(outputAttr_, "output", DefaultValue<MVector>(0.0), false);
+    
+        MFnEnumAttribute attrFn;
+        axisAttr_ = attrFn.create("axis", "axis");
+        attrFn.addField("x", 0);
+        attrFn.addField("y", 1);
+        attrFn.addField("z", 2);
+        
+        MPxNode::addAttribute(inputAttr_);
+        MPxNode::addAttribute(axisAttr_);
+        MPxNode::addAttribute(outputAttr_);
+    
+        MPxNode::attributeAffects(inputAttr_, outputAttr_);
+        MPxNode::attributeAffects(axisAttr_, outputAttr_);
+        
+        return MS::kSuccess;
+    }
+    
+    MStatus compute(const MPlug& plug, MDataBlock& dataBlock) override
+    {
+        if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
+        {
+            const auto inputValue = getAttribute<MMatrix>(dataBlock, inputAttr_);
+    
+            MDataHandle axisHandle = dataBlock.inputValue(axisAttr_);
+            const auto axis = axisHandle.asShort();
+            
+            setAttribute(dataBlock, outputAttr_, MVector(inputValue[axis][0], inputValue[axis][1], inputValue[axis][2]));
+            
+            return MS::kSuccess;
+        }
+        
+        return MS::kUnknownParameter;
+    }
+
+private:
+    static Attribute inputAttr_;
+    static Attribute axisAttr_;
+    static Attribute outputAttr_;
+};
+
+template<typename TClass, const char* TTypeName>
+Attribute GetAxisNode<TClass, TTypeName>::inputAttr_;
+
+template<typename TClass, const char* TTypeName>
+Attribute GetAxisNode<TClass, TTypeName>::axisAttr_;
+
+template<typename TClass, const char* TTypeName>
+Attribute GetAxisNode<TClass, TTypeName>::outputAttr_;
+
+#define GET_AXIS_NODE(NodeName) \
+    TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
+    class NodeName : public GetAxisNode<NodeName, name##NodeName> {};
+
+GET_AXIS_NODE(AxisFromMatrix);

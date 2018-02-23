@@ -51,3 +51,11 @@ class TestConvert(NodeTestCase):
         self.create_node('MatrixFromTRS',
                          {'translation': [1.0, 2.0, 3.0], 'rotation': [0.0, 90.0, 0.0]},
                          result)
+        
+    def test_axis_from_matrix(self):
+        matrix = [0.5, 0.0, 0.0, 0.0,
+                  0.0, 0.5, 0.0, 0.0,
+                  0.0, 0.0, 0.5, 0.0,
+                  0.0, 0.0, 0.0, 1.0]
+        
+        self.create_node('AxisFromMatrix', {'input': matrix, 'axis': 1}, [0.0, 0.5, 0.0])

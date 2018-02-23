@@ -37,6 +37,7 @@ initializePlugin(MObject pluginObj)
     Asin::registerNode(pluginFn, typeId++);
     Atan::registerNode(pluginFn, typeId++);
     Atan2::registerNode(pluginFn, typeId++);
+    AxisFromMatrix::registerNode(pluginFn, typeId++);
     Ceil::registerNode(pluginFn, typeId++);
     CeilAngle::registerNode(pluginFn, typeId++);
     Clamp::registerNode(pluginFn, typeId++);
@@ -58,11 +59,12 @@ initializePlugin(MObject pluginObj)
     LerpVector::registerNode(pluginFn, typeId++);
     MatrixFromTRS::registerNode(pluginFn, typeId++);
     Max::registerNode(pluginFn, typeId++);
-    Min::registerNode(pluginFn, typeId++);
-    MaxInt::registerNode(pluginFn, typeId++);
-    MinInt::registerNode(pluginFn, typeId++);
     MaxAngle::registerNode(pluginFn, typeId++);
+    MaxInt::registerNode(pluginFn, typeId++);
+    Min::registerNode(pluginFn, typeId++);
     MinAngle::registerNode(pluginFn, typeId++);
+    MinInt::registerNode(pluginFn, typeId++);
+    ModulusInt::registerNode(pluginFn, typeId++);
     Multiply::registerNode(pluginFn, typeId++);
     MultiplyAngle::registerNode(pluginFn, typeId++);
     MultiplyAngleByInt::registerNode(pluginFn, typeId++);
@@ -93,6 +95,7 @@ initializePlugin(MObject pluginObj)
     TwistFromMatrix::registerNode(pluginFn, typeId++);
     TwistFromRotation::registerNode(pluginFn, typeId++);
     VectorLength::registerNode(pluginFn, typeId++);
+    VectorLengthSquared::registerNode(pluginFn, typeId);
     
     return MS::kSuccess;
 }
@@ -114,6 +117,7 @@ uninitializePlugin(MObject pluginObj)
     Asin::deregisterNode(pluginFn);
     Atan::deregisterNode(pluginFn);
     Atan2::deregisterNode(pluginFn);
+    AxisFromMatrix::deregisterNode(pluginFn);
     Ceil::deregisterNode(pluginFn);
     CeilAngle::deregisterNode(pluginFn);
     Clamp::deregisterNode(pluginFn);
@@ -133,13 +137,14 @@ uninitializePlugin(MObject pluginObj)
     Lerp::deregisterNode(pluginFn);
     LerpAngle::deregisterNode(pluginFn);
     LerpVector::deregisterNode(pluginFn);
-    Max::deregisterNode(pluginFn);
-    Min::deregisterNode(pluginFn);
-    MaxInt::deregisterNode(pluginFn);
-    MinInt::deregisterNode(pluginFn);
     MatrixFromTRS::deregisterNode(pluginFn);
+    Max::deregisterNode(pluginFn);
     MaxAngle::deregisterNode(pluginFn);
+    MaxInt::deregisterNode(pluginFn);
+    Min::deregisterNode(pluginFn);
     MinAngle::deregisterNode(pluginFn);
+    MinInt::deregisterNode(pluginFn);
+    ModulusInt::deregisterNode(pluginFn);
     Multiply::deregisterNode(pluginFn);
     MultiplyAngle::deregisterNode(pluginFn);
     MultiplyAngleByInt::deregisterNode(pluginFn);
@@ -170,6 +175,7 @@ uninitializePlugin(MObject pluginObj)
     TwistFromMatrix::deregisterNode(pluginFn);
     TwistFromRotation::deregisterNode(pluginFn);
     VectorLength::deregisterNode(pluginFn);
+    VectorLengthSquared::deregisterNode(pluginFn);
     
     return MS::kSuccess;
 }

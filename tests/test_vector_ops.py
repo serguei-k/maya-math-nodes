@@ -15,6 +15,9 @@ class TestVectorOps(NodeTestCase):
     
     def test_vector_length(self):
         self.create_node('VectorLength', {'input': [1.0, 1.0, 1.0]}, 1.7321)
+
+    def test_vector_length_squared(self):
+        self.create_node('VectorLengthSquared', {'input': [1.0, 1.0, 1.0]}, 3.0)
     
     def test_normalize_vector(self):
         self.create_node('NormalizeVector', {'input': [1.0, 1.0, 1.0]}, [0.5774, 0.5774, 0.5774])
