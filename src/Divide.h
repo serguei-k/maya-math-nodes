@@ -2,21 +2,28 @@
 // Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 #pragma once
 
-#include <__functional_base>
 #include <maya/MGlobal.h>
 
 #include "Utils.h"
 
 template<typename TPrimary, typename TSecondary>
-struct divides_fob : std::binary_function<TPrimary, TSecondary, TPrimary>
+struct divides_fob
 {
     TPrimary operator() (const TPrimary& arg1, const TSecondary& arg2) const { return arg1 / arg2; }
+    
+    typedef TPrimary first_argument_type;
+    typedef TSecondary second_argument_type;
+    typedef TPrimary result_type;
 };
 
 template<typename TPrimary, typename TSecondary>
-struct modulus_fob : std::binary_function<TPrimary, TSecondary, TPrimary>
+struct modulus_fob
 {
     TPrimary operator() (const TPrimary& arg1, const TSecondary& arg2) const { return arg1 % arg2; }
+    
+    typedef TPrimary first_argument_type;
+    typedef TSecondary second_argument_type;
+    typedef TPrimary result_type;
 };
 
 
