@@ -3,6 +3,7 @@
 #pragma once
 
 #include <__functional_base>
+#include <maya/MGlobal.h>
 
 #include "Utils.h"
 
@@ -45,6 +46,12 @@ public:
         {
             const auto input1Value = getAttribute<typename TOperator::first_argument_type>(dataBlock, input1Attr_);
             const auto input2Value = getAttribute<typename TOperator::second_argument_type>(dataBlock, input2Attr_);
+            
+            if (input2Value == 0)
+            {
+                MGlobal::displayError("Cannot divide by 0!");
+                return MS::kFailure;
+            }
             
             setAttribute(dataBlock, outputAttr_, TOperator()(input1Value, input2Value));
             
