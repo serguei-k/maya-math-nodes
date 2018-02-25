@@ -2,8 +2,6 @@
 // Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 #pragma once
 
-#include <functional>
-
 #include "Utils.h"
 
 template<typename TType>
