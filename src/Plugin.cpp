@@ -10,6 +10,7 @@
 #include "Inverse.h"
 #include "Interpolate.h"
 #include "Multiply.h"
+#include "Negate.h"
 #include "Power.h"
 #include "Round.h"
 #include "Subtract.h"
@@ -74,6 +75,10 @@ initializePlugin(MObject pluginObj)
     MultiplyVector::registerNode(pluginFn, typeId++);
     MultiplyVectorByMatrix::registerNode(pluginFn, typeId++);
     MultiplyQuaternion::registerNode(pluginFn, typeId++);
+    Negate::registerNode(pluginFn, typeId++);
+    NegateAngle::registerNode(pluginFn, typeId++);
+    NegateInt::registerNode(pluginFn, typeId++);
+    NegateVector::registerNode(pluginFn, typeId++);
     NormalizeVector::registerNode(pluginFn, typeId++);
     Power::registerNode(pluginFn, typeId++);
     QuaternionFromMatrix::registerNode(pluginFn, typeId++);
@@ -154,6 +159,10 @@ uninitializePlugin(MObject pluginObj)
     MultiplyVector::deregisterNode(pluginFn);
     MultiplyVectorByMatrix::deregisterNode(pluginFn);
     MultiplyQuaternion::deregisterNode(pluginFn);
+    Negate::deregisterNode(pluginFn);
+    NegateAngle::deregisterNode(pluginFn);
+    NegateInt::deregisterNode(pluginFn);
+    NegateVector::deregisterNode(pluginFn);
     NormalizeVector::deregisterNode(pluginFn);
     Power::deregisterNode(pluginFn);
     QuaternionFromMatrix::deregisterNode(pluginFn);

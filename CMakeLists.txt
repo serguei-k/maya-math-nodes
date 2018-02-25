@@ -38,6 +38,7 @@ add_library(mayaMathNodes SHARED
     src/Inverse.h
     src/MinMax.h
     src/Multiply.h
+    src/Negate.h
     src/Plugin.cpp
     src/Power.h
     src/Round.h
