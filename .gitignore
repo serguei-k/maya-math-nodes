@@ -12,3 +12,6 @@ CTestTestfile.cmake
 # CLion
 .idea/
 build/
+
+# Python
+*.pyc
