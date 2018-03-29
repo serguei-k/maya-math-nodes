@@ -52,3 +52,6 @@ class TestMultiply(NodeTestCase):
         self.create_node('MultiplyQuaternion',
                          {'input1': [0.7071, 0.0, 0.0, 0.7071], 'input2': [0.7071, 0.0, 0.0, 0.7071]},
                          [1.0, 0.0, 0.0, 0.0])
+    
+    def test_multiply_rotation(self):
+        self.create_node('MultiplyRotation', {'input1': [45.0, 0.0, -15.0], 'input2': 2.0}, [90.0, 0.0, -30.0])

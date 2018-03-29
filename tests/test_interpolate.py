@@ -22,3 +22,21 @@ class TestInterpolate(NodeTestCase):
         
         cmds.setAttr('{0}.{1}'.format(node, 'interpolationType'), 1)
         self.assertItemsAlmostEqual(cmds.getAttr('{0}.output'.format(node))[0], [-0.7071, 0.0, 0.0, 0.7071], 4)
+    
+    def test_lerp_matrix(self):
+        matrix1 = [1.0, 0.0, 0.0, 0.0,
+                   0.0, 1.0, 0.0, 0.0,
+                   0.0, 0.0, 1.0, 0.0,
+                   10.0, -10.0, 10.0, 1.0]
+        
+        matrix2 = [-1.0, 0.0, 0.0, 0.0,
+                   0.0, 1.0, 0.0, 0.0,
+                   0.0, 0.0, -1.0, 0.0,
+                   5.0, -5.0, 5.0, 1.0]
+        
+        out_matrix = [0.0, 0.0, -1.0, 0.0,
+                      0.0, 1.0, 0.0, 0.0,
+                      1.0, 0.0, 0.0, 0.0,
+                      7.5, -7.5, 7.5, 1.0]
+        
+        self.create_node('LerpMatrix', {'input1': matrix1, 'input2': matrix2, 'alpha': 0.5}, out_matrix)

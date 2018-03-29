@@ -6,6 +6,7 @@
 #include "Add.h"
 #include "Clamp.h"
 #include "Convert.h"
+#include "Distance.h"
 #include "Divide.h"
 #include "Inverse.h"
 #include "Interpolate.h"
@@ -51,12 +52,16 @@ initializePlugin(MObject pluginObj)
     DivideAngleByInt::registerNode(pluginFn, typeId++);
     DivideByInt::registerNode(pluginFn, typeId++);
     DotProduct::registerNode(pluginFn, typeId++);
+    DistancePoints::registerNode(pluginFn, typeId++);
+    DistanceTransforms::registerNode(pluginFn, typeId++);
     Floor::registerNode(pluginFn, typeId++);
     FloorAngle::registerNode(pluginFn, typeId++);
     InverseMatrix::registerNode(pluginFn, typeId++);
     InverseQuaternion::registerNode(pluginFn, typeId++);
+    InverseRotation::registerNode(pluginFn, typeId++);
     Lerp::registerNode(pluginFn, typeId++);
     LerpAngle::registerNode(pluginFn, typeId++);
+    LerpMatrix::registerNode(pluginFn, typeId++);
     LerpVector::registerNode(pluginFn, typeId++);
     MatrixFromTRS::registerNode(pluginFn, typeId++);
     Max::registerNode(pluginFn, typeId++);
@@ -75,6 +80,7 @@ initializePlugin(MObject pluginObj)
     MultiplyVector::registerNode(pluginFn, typeId++);
     MultiplyVectorByMatrix::registerNode(pluginFn, typeId++);
     MultiplyQuaternion::registerNode(pluginFn, typeId++);
+    MultiplyRotation::registerNode(pluginFn, typeId++);
     Negate::registerNode(pluginFn, typeId++);
     NegateAngle::registerNode(pluginFn, typeId++);
     NegateInt::registerNode(pluginFn, typeId++);
@@ -135,12 +141,16 @@ uninitializePlugin(MObject pluginObj)
     DivideAngleByInt::deregisterNode(pluginFn);
     DivideByInt::deregisterNode(pluginFn);
     DotProduct::deregisterNode(pluginFn);
+    DistancePoints::deregisterNode(pluginFn);
+    DistanceTransforms::deregisterNode(pluginFn);
     Floor::deregisterNode(pluginFn);
     FloorAngle::deregisterNode(pluginFn);
     InverseMatrix::deregisterNode(pluginFn);
     InverseQuaternion::deregisterNode(pluginFn);
+    InverseRotation::deregisterNode(pluginFn);
     Lerp::deregisterNode(pluginFn);
     LerpAngle::deregisterNode(pluginFn);
+    LerpMatrix::deregisterNode(pluginFn);
     LerpVector::deregisterNode(pluginFn);
     MatrixFromTRS::deregisterNode(pluginFn);
     Max::deregisterNode(pluginFn);
@@ -159,6 +169,7 @@ uninitializePlugin(MObject pluginObj)
     MultiplyVector::deregisterNode(pluginFn);
     MultiplyVectorByMatrix::deregisterNode(pluginFn);
     MultiplyQuaternion::deregisterNode(pluginFn);
+    MultiplyRotation::deregisterNode(pluginFn);
     Negate::deregisterNode(pluginFn);
     NegateAngle::deregisterNode(pluginFn);
     NegateInt::deregisterNode(pluginFn);

@@ -52,3 +52,4 @@ Attribute InverseNode<TAttrType, TClass, TTypeName>::outputAttr_;
 
 INVERSE_NODE(MMatrix, InverseMatrix);
 INVERSE_NODE(MQuaternion, InverseQuaternion);
+INVERSE_NODE(MEulerRotation, InverseRotation);

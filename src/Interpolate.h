@@ -3,8 +3,50 @@
 #pragma once
 
 #include <maya/MFnEnumAttribute.h>
+#include <maya/MTransformationMatrix.h>
 
 #include "Utils.h"
+
+template<typename TType>
+inline TType lerp(const TType& value1, const TType& value2, double alpha)
+{
+    return value1 + (value2 - value1) * alpha;
+}
+
+template<>
+inline MMatrix lerp(const MMatrix& value1, const MMatrix& value2, double alpha)
+{
+    MTransformationMatrix outXform(MMatrix::identity);
+    const MTransformationMatrix xform1(value1);
+    const MTransformationMatrix xform2(value2);
+    
+    double3 scale1, scale2, outScale;
+    xform1.getScale(scale1, MSpace::kWorld);
+    xform2.getScale(scale2, MSpace::kWorld);
+    
+    outScale[0] = lerp(scale1[0], scale2[0], alpha);
+    outScale[1] = lerp(scale1[1], scale2[1], alpha);
+    outScale[2] = lerp(scale1[2], scale2[2], alpha);
+    
+    double3 shear1, shear2, outShear;
+    xform1.getShear(shear1, MSpace::kWorld);
+    xform2.getShear(shear2, MSpace::kWorld);
+    
+    outShear[0] = lerp(shear1[0], shear2[0], alpha);
+    outShear[1] = lerp(shear1[1], shear2[1], alpha);
+    outShear[2] = lerp(shear1[2], shear2[2], alpha);
+    
+    MQuaternion outQuaternion = slerp(xform1.rotation(), xform2.rotation(), alpha);
+    
+    outXform.setScale(outScale, MSpace::kWorld);
+    outXform.setShear(outShear, MSpace::kWorld);
+    outXform.setRotationQuaternion(outQuaternion.x, outQuaternion.y, outQuaternion.z, outQuaternion.w);
+    outXform.setTranslation(lerp(xform1.getTranslation(MSpace::kWorld),
+                                 xform2.getTranslation(MSpace::kWorld),
+                                 alpha), MSpace::kWorld);
+    
+    return outXform.asMatrix();
+}
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
 class LerpNode : public BaseNode<TClass, TTypeName>
@@ -41,7 +83,7 @@ public:
             const auto input2Value = getAttribute<TAttrType>(dataBlock, input2Attr_);
             const auto alphaValue = getAttribute<double>(dataBlock, alphaAttr_);
             
-            setAttribute(dataBlock, outputAttr_, TAttrType(input1Value + (input2Value - input1Value) * alphaValue));
+            setAttribute(dataBlock, outputAttr_, lerp(input1Value, input2Value, alphaValue));
             
             return MS::kSuccess;
         }
@@ -75,6 +117,7 @@ Attribute LerpNode<TAttrType, TClass, TTypeName>::outputAttr_;
 LERP_NODE(double, Lerp);
 LERP_NODE(MAngle, LerpAngle);
 LERP_NODE(MVector, LerpVector);
+LERP_NODE(MMatrix, LerpMatrix);
 
 
 template<typename TClass, const char* TTypeName>

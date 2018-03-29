@@ -67,3 +67,4 @@ MULTIPLY_NODE(MMatrix, MMatrix, MultiplyMatrix);
 MULTIPLY_NODE(MVector, double, MultiplyVector);
 MULTIPLY_NODE(MVector, MMatrix, MultiplyVectorByMatrix);
 MULTIPLY_NODE(MQuaternion, MQuaternion, MultiplyQuaternion);
+MULTIPLY_NODE(MEulerRotation, double, MultiplyRotation);

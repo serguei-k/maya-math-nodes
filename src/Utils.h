@@ -383,6 +383,11 @@ public:
     {
         pluginFn.deregisterNode(kTypeId);
     }
+    
+    SchedulingType schedulingType() const override
+    {
+        return SchedulingType::kParallel;
+    }
 
 protected:
     static int kTypeId;

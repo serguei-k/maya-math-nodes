@@ -32,6 +32,7 @@ add_library(mayaMathNodes SHARED
     src/Absolute.h
     src/Add.h
     src/Clamp.h
+    src/Distance.h
     src/Divide.h
     src/Convert.h
     src/Interpolate.h
