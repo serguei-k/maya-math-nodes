@@ -1,7 +1,7 @@
 ## Maya Math Nodes
 Collection of math nodes for Autodesk Maya
 
-![status](https://img.shields.io/badge/status-alpha-orange.svg)
+![status](https://img.shields.io/badge/status-beta-orange.svg)
 
 #### Building
 To build the library on Windows, clone the repository and navigate to the cloned directory,
