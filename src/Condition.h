@@ -10,7 +10,7 @@
 
 inline bool equals(double a, double b)
 {
-    return std::abs(a - b) <= std::numeric_limits<double>::epsilon() * std::abs(a + b);
+    return std::abs(a - b) <= std::numeric_limits<double>::epsilon() * std::max(1.0, std::abs(a + b));
 }
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
