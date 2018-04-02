@@ -92,6 +92,15 @@ inline void createAttribute(Attribute& attr, const char* name, int value, bool i
     attrFn.setWritable(isInput);
 }
 
+inline void createAttribute(Attribute& attr, const char* name, bool value, bool isInput = true)
+{
+    MFnNumericAttribute attrFn;
+    attr.attr = attrFn.create(name, name, MFnNumericData::kBoolean, value);
+    attrFn.setKeyable(isInput);
+    attrFn.setStorable(isInput);
+    attrFn.setWritable(isInput);
+}
+
 inline void createAttribute(Attribute& attr, const char* name, const MAngle& value, bool isInput = true)
 {
     MFnUnitAttribute attrFn;
@@ -223,6 +232,13 @@ inline int getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
 {
     MDataHandle handle = dataBlock.inputValue(attribute);
     return handle.asInt();
+}
+
+template <>
+inline bool getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
+{
+    MDataHandle handle = dataBlock.inputValue(attribute);
+    return handle.asBool();
 }
 
 template <>

@@ -31,6 +31,7 @@ endif()
 add_library(mayaMathNodes SHARED
     src/Absolute.h
     src/Add.h
+    src/Condition.h
     src/Clamp.h
     src/Distance.h
     src/Divide.h

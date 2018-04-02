@@ -5,6 +5,7 @@
 #include "Absolute.h"
 #include "Add.h"
 #include "Clamp.h"
+#include "Condition.h"
 #include "Convert.h"
 #include "Distance.h"
 #include "Divide.h"
@@ -45,6 +46,8 @@ initializePlugin(MObject pluginObj)
     Clamp::registerNode(pluginFn, typeId++);
     ClampAngle::registerNode(pluginFn, typeId++);
     ClampInt::registerNode(pluginFn, typeId++);
+    Compare::registerNode(pluginFn, typeId++);
+    CompareAngle::registerNode(pluginFn, typeId++);
     CosAngle::registerNode(pluginFn, typeId++);
     CrossProduct::registerNode(pluginFn, typeId++);
     Divide::registerNode(pluginFn, typeId++);
@@ -94,6 +97,13 @@ initializePlugin(MObject pluginObj)
     RotationFromMatrix::registerNode(pluginFn, typeId++);
     RotationFromQuaternion::registerNode(pluginFn, typeId++);
     ScaleFromMatrix::registerNode(pluginFn, typeId++);
+    Select::registerNode(pluginFn, typeId++);
+    SelectAngle::registerNode(pluginFn, typeId++);
+    SelectInt::registerNode(pluginFn, typeId++);
+    SelectMatrix::registerNode(pluginFn, typeId++);
+    SelectQuaternion::registerNode(pluginFn, typeId++);
+    SelectRotation::registerNode(pluginFn, typeId++);
+    SelectVector::registerNode(pluginFn, typeId++);
     SinAngle::registerNode(pluginFn, typeId++);
     SlerpQuaternion::registerNode(pluginFn, typeId++);
     Subtract::registerNode(pluginFn, typeId++);
@@ -134,6 +144,8 @@ uninitializePlugin(MObject pluginObj)
     Clamp::deregisterNode(pluginFn);
     ClampAngle::deregisterNode(pluginFn);
     ClampInt::deregisterNode(pluginFn);
+    Compare::deregisterNode(pluginFn);
+    CompareAngle::deregisterNode(pluginFn);
     CosAngle::deregisterNode(pluginFn);
     CrossProduct::deregisterNode(pluginFn);
     Divide::deregisterNode(pluginFn);
@@ -183,6 +195,13 @@ uninitializePlugin(MObject pluginObj)
     RotationFromMatrix::deregisterNode(pluginFn);
     RotationFromQuaternion::deregisterNode(pluginFn);
     ScaleFromMatrix::deregisterNode(pluginFn);
+    Select::deregisterNode(pluginFn);
+    SelectAngle::deregisterNode(pluginFn);
+    SelectInt::deregisterNode(pluginFn);
+    SelectMatrix::deregisterNode(pluginFn);
+    SelectQuaternion::deregisterNode(pluginFn);
+    SelectRotation::deregisterNode(pluginFn);
+    SelectVector::deregisterNode(pluginFn);
     SinAngle::deregisterNode(pluginFn);
     SlerpQuaternion::deregisterNode(pluginFn);
     Subtract::deregisterNode(pluginFn);

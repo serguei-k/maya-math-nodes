@@ -42,7 +42,9 @@ class NodeTestCase(unittest.TestCase):
             else:
                 cmds.setAttr('{0}.{1}'.format(node, attr), inputs[attr])
         
-        if isinstance(output, list):
+        if isinstance(output, bool):
+            self.assertEquals(cmds.getAttr('{0}.output'.format(node)), output)
+        elif isinstance(output, list):
             result = cmds.getAttr('{0}.output'.format(node))
             if isinstance(result[0], tuple):
                 result = result[0]
