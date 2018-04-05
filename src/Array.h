@@ -16,6 +16,26 @@ inline TType average(const std::vector<TType>& values)
     return TType(sum / int(values.size()));
 }
 
+template<>
+inline MEulerRotation average(const std::vector<MEulerRotation>& values)
+{
+    if (values.empty()) return MEulerRotation::identity;
+    
+    MVector axes;
+    for (const auto& rotation : values)
+    {
+        MVector axis = MVector::zAxis;
+        double angle = 0.0;
+        
+        rotation.asQuaternion().getAxisAngle(axis, angle);
+        axes += axis.normal() * angle;
+    }
+    axes /= values.size();
+    
+    const MQuaternion average(axes.length(), axes.normal());
+    return average.asEulerRotation();
+}
+
 template<typename TAttrType, typename TClass, const char* TTypeName>
 class AverageNode : public BaseNode<TClass, TTypeName>
 {
@@ -66,3 +86,4 @@ AVERAGE_NODE(double, Average);
 AVERAGE_NODE(int, AverageInt);
 AVERAGE_NODE(MAngle, AverageAngle);
 AVERAGE_NODE(MVector, AverageVector);
+AVERAGE_NODE(MEulerRotation, AverageRotation);

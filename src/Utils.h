@@ -382,6 +382,28 @@ inline MEulerRotation getAttribute(MDataBlock& dataBlock, const Attribute& attri
 }
 
 template <>
+inline std::vector<MEulerRotation> getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
+{
+    std::vector<MEulerRotation> out;
+    MArrayDataHandle arrayHandle = dataBlock.inputArrayValue(attribute);
+    
+    out.resize(arrayHandle.elementCount());
+    for (unsigned index = 0u; index < arrayHandle.elementCount(); ++index)
+    {
+        MDataHandle handle = arrayHandle.inputValue();
+        
+        const double x = handle.child(attribute.attrX).asAngle().asRadians();
+        const double y = handle.child(attribute.attrY).asAngle().asRadians();
+        const double z = handle.child(attribute.attrZ).asAngle().asRadians();
+        
+        out[index] = MEulerRotation(x, y, z);
+        arrayHandle.next();
+    }
+    
+    return out;
+}
+
+template <>
 inline MQuaternion getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
 {
     MDataHandle handle = dataBlock.inputValue(attribute.attr);
