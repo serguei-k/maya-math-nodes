@@ -30,7 +30,8 @@ endif()
 # Create target
 add_library(mayaMathNodes SHARED
     src/Absolute.h
-    src/Add.h
+    src/Add.h 
+    src/Array.h
     src/Condition.h
     src/Clamp.h
     src/Distance.h

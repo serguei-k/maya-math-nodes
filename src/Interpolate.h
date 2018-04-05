@@ -54,10 +54,10 @@ class LerpNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(input1Attr_, "input1", DefaultValue<TAttrType>(0.0));
-        createAttribute(input2Attr_, "input2", DefaultValue<TAttrType>(0.0));
+        createAttribute(input1Attr_, "input1", DefaultValue<TAttrType>());
+        createAttribute(input2Attr_, "input2", DefaultValue<TAttrType>());
         createAttribute(alphaAttr_, "alpha", 0.5);
-        createAttribute(outputAttr_, "output", DefaultValue<TAttrType>(0.0), false);
+        createAttribute(outputAttr_, "output", DefaultValue<TAttrType>(), false);
         
         MFnNumericAttribute attrFn(alphaAttr_);
         attrFn.setMin(0.0);
@@ -126,10 +126,10 @@ class SlerpNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(input1Attr_, "input1", DefaultValue<MQuaternion>(0.0));
-        createAttribute(input2Attr_, "input2", DefaultValue<MQuaternion>(0.0));
+        createAttribute(input1Attr_, "input1", DefaultValue<MQuaternion>());
+        createAttribute(input2Attr_, "input2", DefaultValue<MQuaternion>());
         createAttribute(alphaAttr_, "alpha", 0.5);
-        createAttribute(outputAttr_, "output", DefaultValue<MQuaternion>(0.0), false);
+        createAttribute(outputAttr_, "output", DefaultValue<MQuaternion>(), false);
         
         MFnNumericAttribute attrFn(alphaAttr_);
         attrFn.setMin(0.0);

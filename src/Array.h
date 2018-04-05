@@ -2,15 +2,27 @@
 // Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 #pragma once
 
+#include <numeric>
+
 #include "Utils.h"
 
+template<typename TType>
+inline TType average(const std::vector<TType>& values)
+{
+    if (values.empty()) return DefaultValue<TType>();
+    
+    TType sum = std::accumulate(values.begin(), values.end(), DefaultValue<TType>(),
+                                [](const TType& a, const TType& b){ return a + b; });
+    return TType(sum / int(values.size()));
+}
+
 template<typename TAttrType, typename TClass, const char* TTypeName>
-class InverseNode : public BaseNode<TClass, TTypeName>
+class AverageNode : public BaseNode<TClass, TTypeName>
 {
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAttr_, "input", DefaultValue<TAttrType>());
+        createAttribute(inputAttr_, "input", DefaultValue<TAttrType>(), true, true);
         createAttribute(outputAttr_, "output", DefaultValue<TAttrType>(), false);
         
         MPxNode::addAttribute(inputAttr_);
@@ -25,9 +37,9 @@ public:
     {
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
-            const auto inputValue = getAttribute<TAttrType>(dataBlock, inputAttr_);
+            const auto inputValue = getAttribute<std::vector<TAttrType>>(dataBlock, inputAttr_);
             
-            setAttribute(dataBlock, outputAttr_, inputValue.inverse());
+            setAttribute(dataBlock, outputAttr_, average(inputValue));
             
             return MS::kSuccess;
         }
@@ -41,15 +53,16 @@ private:
 };
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
-Attribute InverseNode<TAttrType, TClass, TTypeName>::inputAttr_;
+Attribute AverageNode<TAttrType, TClass, TTypeName>::inputAttr_;
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
-Attribute InverseNode<TAttrType, TClass, TTypeName>::outputAttr_;
+Attribute AverageNode<TAttrType, TClass, TTypeName>::outputAttr_;
 
-#define INVERSE_NODE(AttrType, NodeName) \
+#define AVERAGE_NODE(AttrType, NodeName) \
     TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
-    class NodeName : public InverseNode<AttrType, NodeName, name##NodeName> {};
+    class NodeName : public AverageNode<AttrType, NodeName, name##NodeName> {};
 
-INVERSE_NODE(MMatrix, InverseMatrix);
-INVERSE_NODE(MQuaternion, InverseQuaternion);
-INVERSE_NODE(MEulerRotation, InverseRotation);
+AVERAGE_NODE(double, Average);
+AVERAGE_NODE(int, AverageInt);
+AVERAGE_NODE(MAngle, AverageAngle);
+AVERAGE_NODE(MVector, AverageVector);

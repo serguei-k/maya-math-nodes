@@ -51,8 +51,8 @@ class GetRotationNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAttr_, "input", DefaultValue<TInAttrType>(0.0));
-        createAttribute(outputAttr_, "output", DefaultValue<TOutAttrType>(0.0), false);
+        createAttribute(inputAttr_, "input", DefaultValue<TInAttrType>());
+        createAttribute(outputAttr_, "output", DefaultValue<TOutAttrType>(), false);
         
         MFnEnumAttribute attrFn;
         rotationOrderAttr_ = attrFn.create("rotationOrder", "rotationOrder");
@@ -136,8 +136,8 @@ class GetVectorNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAttr_, "input", DefaultValue<MMatrix>(0.0));
-        createAttribute(outputAttr_, "output", DefaultValue<MVector>(0.0), false);
+        createAttribute(inputAttr_, "input", DefaultValue<MMatrix>());
+        createAttribute(outputAttr_, "output", DefaultValue<MVector>(), false);
         
         MPxNode::addAttribute(inputAttr_);
         MPxNode::addAttribute(outputAttr_);
@@ -186,10 +186,10 @@ class GetMatrixNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(translationAttr_, "translation", DefaultValue<MVector>(0.0));
-        createAttribute(rotationAttr_, "rotation", DefaultValue<MEulerRotation>(0.0));
-        createAttribute(scaleAttr_, "scale", DefaultValue<MVector>(1.0));
-        createAttribute(outputAttr_, "output", DefaultValue<MMatrix>(0.0), false);
+        createAttribute(translationAttr_, "translation", DefaultValue<MVector>());
+        createAttribute(rotationAttr_, "rotation", DefaultValue<MEulerRotation>());
+        createAttribute(scaleAttr_, "scale", DefaultValue<MVector>(1.0, 1.0, 1.0));
+        createAttribute(outputAttr_, "output", DefaultValue<MMatrix>(), false);
         
         MFnEnumAttribute attrFn;
         rotationOrderAttr_ = attrFn.create("rotationOrder", "rotationOrder", 1);
@@ -279,8 +279,8 @@ class GetAxisNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAttr_, "input", DefaultValue<MMatrix>(0.0));
-        createAttribute(outputAttr_, "output", DefaultValue<MVector>(0.0), false);
+        createAttribute(inputAttr_, "input", DefaultValue<MMatrix>());
+        createAttribute(outputAttr_, "output", DefaultValue<MVector>(), false);
     
         MFnEnumAttribute attrFn;
         axisAttr_ = attrFn.create("axis", "axis");

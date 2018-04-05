@@ -10,9 +10,9 @@ class PowerNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAttr_, "input", DefaultValue<double>(0.0));
-        createAttribute(exponentAttr_, "exponent", DefaultValue<double>(2.0));
-        createAttribute(outputAttr_, "output", DefaultValue<double>(0.0), false);
+        createAttribute(inputAttr_, "input", 0.0);
+        createAttribute(exponentAttr_, "exponent", 2.0);
+        createAttribute(outputAttr_, "output", 0.0, false);
         
         MPxNode::addAttribute(inputAttr_);
         MPxNode::addAttribute(exponentAttr_);
@@ -67,8 +67,8 @@ class SquareRootNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAttr_, "input", DefaultValue<double>(0.0));
-        createAttribute(outputAttr_, "output", DefaultValue<double>(0.0), false);
+        createAttribute(inputAttr_, "input", 0.0);
+        createAttribute(outputAttr_, "output", 0.0, false);
         
         MPxNode::addAttribute(inputAttr_);
         MPxNode::addAttribute(outputAttr_);

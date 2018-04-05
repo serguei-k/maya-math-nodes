@@ -24,7 +24,7 @@ public:
     {
         createAttribute(input1Attr_, "input1", MVector::xAxis);
         createAttribute(input2Attr_, "input2", MVector::yAxis);
-        createAttribute(outputAttr_, "output", DefaultValue<TOutAttrType>(0.0), false);
+        createAttribute(outputAttr_, "output", DefaultValue<TOutAttrType>(), false);
         
         MPxNode::addAttribute(input1Attr_);
         MPxNode::addAttribute(input2Attr_);
@@ -82,7 +82,7 @@ public:
     static MStatus initialize()
     {
         createAttribute(input1ttr_, "input", MVector::zero);
-        createAttribute(outputAttr_, "output", DefaultValue<TOutAttrType>(0.0), false);
+        createAttribute(outputAttr_, "output", DefaultValue<TOutAttrType>(), false);
         
         MPxNode::addAttribute(input1ttr_);
         MPxNode::addAttribute(outputAttr_);

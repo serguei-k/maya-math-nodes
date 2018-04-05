@@ -15,8 +15,8 @@ class TrigNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAttr_, "input", DefaultValue<TInputAttrType>(0.0));
-        createAttribute(outputAttr_, "output", DefaultValue<TOutputAttrType>(0.0), false);
+        createAttribute(inputAttr_, "input", DefaultValue<TInputAttrType>());
+        createAttribute(outputAttr_, "output", DefaultValue<TOutputAttrType>(), false);
         
         if (TSetLimits)
         {
@@ -81,9 +81,9 @@ class Atan2TrigNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(input1Attr_, "input1", DefaultValue<double>(0.0));
-        createAttribute(input2Attr_, "input2", DefaultValue<double>(1.0));
-        createAttribute(outputAttr_, "output", DefaultValue<MAngle>(0.0), false);
+        createAttribute(input1Attr_, "input1", 0.0);
+        createAttribute(input2Attr_, "input2", 1.0);
+        createAttribute(outputAttr_, "output", MAngle(0.0), false);
         
         MPxNode::addAttribute(input1Attr_);
         MPxNode::addAttribute(input2Attr_);

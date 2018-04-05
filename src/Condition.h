@@ -19,8 +19,8 @@ class ConditionNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(input1Attr_, "input1", DefaultValue<TAttrType>(0.0));
-        createAttribute(input2Attr_, "input2", DefaultValue<TAttrType>(0.0));
+        createAttribute(input1Attr_, "input1", DefaultValue<TAttrType>());
+        createAttribute(input2Attr_, "input2", DefaultValue<TAttrType>());
         createAttribute(outputAttr_, "output", true, false);
 
         MFnEnumAttribute attrFn;
@@ -130,10 +130,10 @@ class SelectNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(input1Attr_, "input1", DefaultValue<TAttrType>(0.0));
-        createAttribute(input2Attr_, "input2", DefaultValue<TAttrType>(0.0));
+        createAttribute(input1Attr_, "input1", DefaultValue<TAttrType>());
+        createAttribute(input2Attr_, "input2", DefaultValue<TAttrType>());
         createAttribute(condition_, "condition", false);
-        createAttribute(outputAttr_, "output", DefaultValue<TAttrType>(0.0), false);
+        createAttribute(outputAttr_, "output", DefaultValue<TAttrType>(), false);
 
         MPxNode::addAttribute(input1Attr_);
         MPxNode::addAttribute(input2Attr_);
