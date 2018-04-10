@@ -52,8 +52,15 @@ inline MQuaternion MatrixToQuaternion(const MMatrix& matrix)
     // w, x, y, z
     double out[4];
     
+    double3 scaleData = {1.0, 1.0, 1.0};
+    double3 shearData = {0.0, 0.0, 0.0};
+    
+    MTransformationMatrix xform(matrix);
+    xform.setScale(scaleData, MSpace::kObject);
+    xform.setShear(shearData, MSpace::kObject);
+    
     double in[4][4];
-    matrix.get(in);
+    xform.asRotateMatrix().get(in);
     
     out[0] = 0.5 * std::sqrt(std::max(0.0, 1.0 + in[0][0] + in[1][1] + in[2][2]));
     out[1] = 0.5 * std::sqrt(std::max(0.0, 1.0 + in[0][0] - in[1][1] - in[2][2]));
@@ -77,7 +84,9 @@ inline MMatrix average(const std::vector<MMatrix>& values)
     for (const auto& matrix : values) {
         const MTransformationMatrix xform(matrix);
         
-        double3 scaleData, shearData;
+        double3 scaleData = {1.0, 1.0, 1.0};
+        double3 shearData = {0.0, 0.0, 0.0};
+        
         xform.getScale(scaleData, MSpace::kObject);
         xform.getShear(shearData, MSpace::kObject);
         
