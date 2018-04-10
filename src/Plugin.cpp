@@ -124,8 +124,13 @@ initializePlugin(MObject pluginObj)
     Average::registerNode(pluginFn, typeId++);
     AverageAngle::registerNode(pluginFn, typeId++);
     AverageInt::registerNode(pluginFn, typeId++);
+    AverageMatrix::registerNode(pluginFn, typeId++);
     AverageRotation::registerNode(pluginFn, typeId++);
     AverageVector::registerNode(pluginFn, typeId++);
+    Sum::registerNode(pluginFn, typeId++);
+    SumAngle::registerNode(pluginFn, typeId++);
+    SumInt::registerNode(pluginFn, typeId++);
+    SumVector::registerNode(pluginFn, typeId++);
     
     return MS::kSuccess;
 }
@@ -228,8 +233,13 @@ uninitializePlugin(MObject pluginObj)
     Average::deregisterNode(pluginFn);
     AverageAngle::deregisterNode(pluginFn);
     AverageInt::deregisterNode(pluginFn);
+    AverageMatrix::deregisterNode(pluginFn);
     AverageRotation::deregisterNode(pluginFn);
     AverageVector::deregisterNode(pluginFn);
+    Sum::deregisterNode(pluginFn);
+    SumAngle::deregisterNode(pluginFn);
+    SumInt::deregisterNode(pluginFn);
+    SumVector::deregisterNode(pluginFn);
     
     return MS::kSuccess;
 }
