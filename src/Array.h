@@ -79,8 +79,12 @@ inline MMatrix average(const std::vector<MMatrix>& values)
         const MTransformationMatrix xform(matrix);
         
         double3 scaleData, shearData;
-        xform.getScale(scaleData, MSpace::kWorld);
-        xform.getShear(shearData, MSpace::kWorld);
+        xform.getScale(scaleData, MSpace::kObject);
+        xform.getShear(shearData, MSpace::kObject);
+        
+        if (scaleData[0] != 0.0) scaleData[0] = copysign(std::log(std::abs(scaleData[0])), scaleData[0]);
+        if (scaleData[1] != 0.0) scaleData[1] = copysign(std::log(std::abs(scaleData[1])), scaleData[1]);
+        if (scaleData[2] != 0.0) scaleData[2] = copysign(std::log(std::abs(scaleData[2])), scaleData[2]);
         
         scale += MVector(scaleData);
         shear += MVector(shearData);
@@ -93,24 +97,28 @@ inline MMatrix average(const std::vector<MMatrix>& values)
         
         position += xform.getTranslation(MSpace::kWorld);
     }
-
+    
     const MVector scaleAverage = scale / values.size();
     const MVector shearAverage = shear / values.size();
-
+    
     double3 scaleData, shearData;
     scaleAverage.get(scaleData);
     shearAverage.get(shearData);
-
+    
+    scaleData[0] = std::exp(scaleData[0]);
+    scaleData[1] = std::exp(scaleData[1]);
+    scaleData[2] = std::exp(scaleData[2]);
+    
     const MVector positionAverage = position / values.size();
     const MVector rotationAverage = rotation / values.size();
     const MQuaternion averageQuat(rotationAverage.length(), rotationAverage.normal());
-
+    
     MTransformationMatrix xform;
-    xform.setScale(scaleData, MSpace::kWorld);
-    xform.setShear(shearData, MSpace::kWorld);
+    xform.setScale(scaleData, MSpace::kObject);
+    xform.setShear(shearData, MSpace::kObject);
     xform.setToRotationAxis(rotationAverage.normal(), rotationAverage.length());
     xform.setTranslation(positionAverage, MSpace::kWorld);
-
+    
     return xform.asMatrix();
 }
 
