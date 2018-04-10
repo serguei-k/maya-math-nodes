@@ -74,17 +74,33 @@ inline MMatrix average(const std::vector<MMatrix>& values)
     
     MVector position, rotation, scale, shear;
     
-    for (const auto& matrix : values)
-    {
+    for (const auto& matrix : values) {
         const MTransformationMatrix xform(matrix);
         
         double3 scaleData, shearData;
         xform.getScale(scaleData, MSpace::kObject);
         xform.getShear(shearData, MSpace::kObject);
         
-        if (scaleData[0] != 0.0) scaleData[0] = copysign(std::log(std::abs(scaleData[0])), scaleData[0]);
-        if (scaleData[1] != 0.0) scaleData[1] = copysign(std::log(std::abs(scaleData[1])), scaleData[1]);
-        if (scaleData[2] != 0.0) scaleData[2] = copysign(std::log(std::abs(scaleData[2])), scaleData[2]);
+        if (scaleData[0] != 0.0)
+        {
+            scaleData[0] = scaleData[0] > 0.0 ?
+                           std::log(scaleData[0]) :
+                           copysign(std::log(std::abs(scaleData[0])), scaleData[0]);
+        }
+        
+        if (scaleData[1] != 0.0)
+        {
+            scaleData[1] = scaleData[1] > 0.0 ?
+                           std::log(scaleData[1]) :
+                           copysign(std::log(std::abs(scaleData[1])), scaleData[1]);
+        }
+        
+        if (scaleData[2] != 0.0)
+        {
+            scaleData[2] = scaleData[2] > 0.0 ?
+                           std::log(scaleData[2]) :
+                           copysign(std::log(std::abs(scaleData[2])), scaleData[2]);
+        }
         
         scale += MVector(scaleData);
         shear += MVector(shearData);
