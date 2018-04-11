@@ -52,15 +52,8 @@ inline MQuaternion MatrixToQuaternion(const MMatrix& matrix)
     // w, x, y, z
     double out[4];
     
-    double3 scaleData = {1.0, 1.0, 1.0};
-    double3 shearData = {0.0, 0.0, 0.0};
-    
-    MTransformationMatrix xform(matrix);
-    xform.setScale(scaleData, MSpace::kObject);
-    xform.setShear(shearData, MSpace::kObject);
-    
     double in[4][4];
-    xform.asRotateMatrix().get(in);
+    matrix.get(in);
     
     out[0] = 0.5 * std::sqrt(std::max(0.0, 1.0 + in[0][0] + in[1][1] + in[2][2]));
     out[1] = 0.5 * std::sqrt(std::max(0.0, 1.0 + in[0][0] - in[1][1] - in[2][2]));
@@ -71,9 +64,10 @@ inline MQuaternion MatrixToQuaternion(const MMatrix& matrix)
     out[2] = copysign(out[2], in[0][2] - in[2][0]);
     out[3] = copysign(out[3], in[1][0] - in[0][1]);
     
-    return MQuaternion(out[1], out[2], out[3], out[0]).conjugate();
+    return MQuaternion(out[1], out[2], out[3], out[0]).normal().conjugate();
 }
 
+// Note: this algorithm does not consider negative scaling
 template<>
 inline MMatrix average(const std::vector<MMatrix>& values)
 {
@@ -92,23 +86,17 @@ inline MMatrix average(const std::vector<MMatrix>& values)
         
         if (scaleData[0] != 0.0)
         {
-            scaleData[0] = scaleData[0] > 0.0 ?
-                           std::log(scaleData[0]) :
-                           copysign(std::log(std::abs(scaleData[0])), scaleData[0]);
+            scaleData[0] = std::log(std::abs(scaleData[0]));
         }
         
         if (scaleData[1] != 0.0)
         {
-            scaleData[1] = scaleData[1] > 0.0 ?
-                           std::log(scaleData[1]) :
-                           copysign(std::log(std::abs(scaleData[1])), scaleData[1]);
+            scaleData[1] = std::log(std::abs(scaleData[1]));
         }
         
         if (scaleData[2] != 0.0)
         {
-            scaleData[2] = scaleData[2] > 0.0 ?
-                           std::log(scaleData[2]) :
-                           copysign(std::log(std::abs(scaleData[2])), scaleData[2]);
+            scaleData[2] = std::log(std::abs(scaleData[2]));
         }
         
         scale += MVector(scaleData);
@@ -126,7 +114,9 @@ inline MMatrix average(const std::vector<MMatrix>& values)
     const MVector scaleAverage = scale / values.size();
     const MVector shearAverage = shear / values.size();
     
-    double3 scaleData, shearData;
+    double3 scaleData = {1.0, 1.0, 1.0};
+    double3 shearData = {0.0, 0.0, 0.0};
+    
     scaleAverage.get(scaleData);
     shearAverage.get(shearData);
     
