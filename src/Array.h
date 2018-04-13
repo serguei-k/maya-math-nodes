@@ -30,19 +30,16 @@ inline MEulerRotation average(const std::vector<MEulerRotation>& values)
 {
     if (values.empty()) return MEulerRotation::identity;
     
-    MVector axes;
+    MQuaternion sum;
     for (const auto& rotation : values)
     {
-        MVector axis = MVector::zAxis;
-        double angle = 0.0;
-        
-        rotation.asQuaternion().getAxisAngle(axis, angle);
-        axes += axis.normal() * angle;
+        sum = sum + rotation.asQuaternion().log();
     }
-    axes /= values.size();
     
-    const MQuaternion average(axes.length(), axes.normal());
-    return average.asEulerRotation();
+    const auto count = values.size();
+    const MQuaternion average(sum.x / count, sum.y / count, sum.z / count, sum.w / count);
+    
+    return average.exp().asEulerRotation();
 }
 
 // Alternative matrix to quaternion conversion to overcome some numerical instability
@@ -72,8 +69,9 @@ template<>
 inline MMatrix average(const std::vector<MMatrix>& values)
 {
     if (values.empty()) return MMatrix::identity;
-    
-    MVector position, rotation, scale, shear;
+
+    MQuaternion rotation;
+    MVector position, scale, shear;
     
     for (const auto& matrix : values) {
         const MTransformationMatrix xform(matrix);
@@ -102,17 +100,13 @@ inline MMatrix average(const std::vector<MMatrix>& values)
         scale += MVector(scaleData);
         shear += MVector(shearData);
         
-        MVector axis = MVector::zAxis;
-        double angle = 0.0;
-        MatrixToQuaternion(matrix).getAxisAngle(axis, angle);
-        
-        rotation += axis * angle;
-        
+        rotation = rotation + MatrixToQuaternion(matrix).log();
         position += xform.getTranslation(MSpace::kWorld);
     }
-    
-    const MVector scaleAverage = scale / values.size();
-    const MVector shearAverage = shear / values.size();
+
+    const auto count = values.size();
+    const MVector scaleAverage = scale / count;
+    const MVector shearAverage = shear / count;
     
     double3 scaleData = {1.0, 1.0, 1.0};
     double3 shearData = {0.0, 0.0, 0.0};
@@ -124,14 +118,16 @@ inline MMatrix average(const std::vector<MMatrix>& values)
     scaleData[1] = std::exp(scaleData[1]);
     scaleData[2] = std::exp(scaleData[2]);
     
-    const MVector positionAverage = position / values.size();
-    const MVector rotationAverage = rotation / values.size();
-    const MQuaternion averageQuat(rotationAverage.length(), rotationAverage.normal());
+    const MVector positionAverage = position / count;
+    const auto rotationAverage = MQuaternion(rotation.x / count,
+                                             rotation.y / count,
+                                             rotation.z / count,
+                                             rotation.w / count).exp();
     
     MTransformationMatrix xform;
     xform.setScale(scaleData, MSpace::kObject);
     xform.setShear(shearData, MSpace::kObject);
-    xform.setToRotationAxis(rotationAverage.normal(), rotationAverage.length());
+    xform.setRotationQuaternion(rotationAverage.x, rotationAverage.y, rotationAverage.z, rotationAverage.w);
     xform.setTranslation(positionAverage, MSpace::kWorld);
     
     return xform.asMatrix();
