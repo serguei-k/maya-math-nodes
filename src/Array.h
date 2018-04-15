@@ -42,6 +42,23 @@ inline MEulerRotation average(const std::vector<MEulerRotation>& values)
     return average.exp().asEulerRotation();
 }
 
+template<>
+inline MQuaternion average(const std::vector<MQuaternion>& values)
+{
+    if (values.empty()) return MQuaternion::identity;
+    
+    MQuaternion sum;
+    for (const auto& rotation : values)
+    {
+        sum = sum + rotation.log();
+    }
+    
+    const auto count = values.size();
+    const MQuaternion average(sum.x / count, sum.y / count, sum.z / count, sum.w / count);
+    
+    return average.exp();
+}
+
 // Alternative matrix to quaternion conversion to overcome some numerical instability
 // observed with the output from MTransformationMatrix.rotation()
 inline MQuaternion MatrixToQuaternion(const MMatrix& matrix)
@@ -188,6 +205,7 @@ ARRAY_OP_NODE(MAngle, AverageAngle, &average);
 ARRAY_OP_NODE(MVector, AverageVector, &average);
 ARRAY_OP_NODE(MEulerRotation, AverageRotation, &average);
 ARRAY_OP_NODE(MMatrix, AverageMatrix, &average);
+ARRAY_OP_NODE(MQuaternion, AverageQuaternion, &average);
 
 ARRAY_OP_NODE(double, Sum, &sum);
 ARRAY_OP_NODE(int, SumInt, &sum);

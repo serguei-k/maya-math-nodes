@@ -416,6 +416,29 @@ inline MQuaternion getAttribute(MDataBlock& dataBlock, const Attribute& attribut
     return MQuaternion(x, y, z, w);
 }
 
+template <>
+inline std::vector<MQuaternion> getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
+{
+    std::vector<MQuaternion> out;
+    MArrayDataHandle arrayHandle = dataBlock.inputArrayValue(attribute);
+    
+    out.resize(arrayHandle.elementCount());
+    for (unsigned index = 0u; index < arrayHandle.elementCount(); ++index)
+    {
+        MDataHandle handle = arrayHandle.inputValue();
+        
+        const double x = handle.child(attribute.attrX).asDouble();
+        const double y = handle.child(attribute.attrY).asDouble();
+        const double z = handle.child(attribute.attrZ).asDouble();
+        const double w = handle.child(attribute.attrW).asDouble();
+        
+        out[index] = MQuaternion(x, y, z, w);
+        arrayHandle.next();
+    }
+    
+    return out;
+}
+
 template <typename TInputType, typename TOutputType>
 inline TOutputType getAttribute(MDataBlock& dataBlock, const Attribute& attribute);
 

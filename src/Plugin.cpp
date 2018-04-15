@@ -127,6 +127,7 @@ initializePlugin(MObject pluginObj)
     AverageMatrix::registerNode(pluginFn, typeId++);
     AverageRotation::registerNode(pluginFn, typeId++);
     AverageVector::registerNode(pluginFn, typeId++);
+    AverageQuaternion::registerNode(pluginFn, typeId++);
     Sum::registerNode(pluginFn, typeId++);
     SumAngle::registerNode(pluginFn, typeId++);
     SumInt::registerNode(pluginFn, typeId++);
@@ -236,6 +237,7 @@ uninitializePlugin(MObject pluginObj)
     AverageMatrix::deregisterNode(pluginFn);
     AverageRotation::deregisterNode(pluginFn);
     AverageVector::deregisterNode(pluginFn);
+    AverageQuaternion::deregisterNode(pluginFn);
     Sum::deregisterNode(pluginFn);
     SumAngle::deregisterNode(pluginFn);
     SumInt::deregisterNode(pluginFn);

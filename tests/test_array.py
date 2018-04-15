@@ -32,11 +32,17 @@ class TestArray(NodeTestCase):
         self.create_node('AverageVector', {'input[0]': [1.0, 0.0, 0.0],
                                            'input[1]': [0.0, 1.0, 0.0],
                                            'input[2]': [0.0, 0.0, 1.0]}, [third, third, third])
-
+    
     def test_average_rotation(self):
         self.create_node('AverageRotation', {'input[0]': [0.0, 0.0, 0.0],
                                              'input[1]': [0.0, 90.0, 0.0],
                                              'input[2]': [-90.0, 0.0, 0.0]}, [-32.874, 28.493, -8.567], 3)
+    
+    def test_average_quaternion(self):
+        self.create_node('AverageQuaternion', {'input[0]': [0.0, 0.0, 0.0, 1.0],
+                                               'input[1]': [0, 0.7071068, 0, 0.7071068],
+                                               'input[2]': [-0.7071068, 0, 0, 0.7071068]},
+                         [-0.256, 0.256, 0.0, 0.932], 3)
     
     def test_average_matrix(self):
         matrix1 = [1.0, 0.0, 0.0, 0.0,
