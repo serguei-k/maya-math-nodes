@@ -15,14 +15,14 @@ inline TType sum(const std::vector<TType>& values)
                            [](const TType& a, const TType& b){ return a + b; });
 }
 
-template<typename TType>
-inline TType average(const std::vector<TType>& values)
+template<typename TInType, typename TOutType>
+inline TOutType average(const std::vector<TInType>& values)
 {
-    if (values.empty()) return DefaultValue<TType>();
+    if (values.empty()) return DefaultValue<TOutType>();
     
-    TType sum = std::accumulate(values.begin(), values.end(), DefaultValue<TType>(),
-                                [](const TType& a, const TType& b){ return a + b; });
-    return TType(sum / int(values.size()));
+    TInType sum = std::accumulate(values.begin(), values.end(), DefaultValue<TInType>(),
+                                  [](const TInType& a, const TInType& b){ return a + b; });
+    return TOutType(sum / int(values.size()));
 }
 
 template<typename TInType, typename TOutType>
@@ -302,15 +302,15 @@ inline MMatrix average(const std::vector<MMatrix>& values, const std::vector<dou
 }
 
 
-template<typename TAttrType, typename TClass, const char* TTypeName,
-        TAttrType (*TFuncPtr)(const std::vector<TAttrType>&)>
+template<typename TInAttrType, typename TOutAttrType, typename TClass, const char* TTypeName,
+    TOutAttrType (*TFuncPtr)(const std::vector<TInAttrType>&)>
 class ArrayOpNode : public BaseNode<TClass, TTypeName>
 {
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAttr_, "input", DefaultValue<TAttrType>(), true, true);
-        createAttribute(outputAttr_, "output", DefaultValue<TAttrType>(), false);
+        createAttribute(inputAttr_, "input", DefaultValue<TInAttrType>(), true, true);
+        createAttribute(outputAttr_, "output", DefaultValue<TOutAttrType>(), false);
         
         MPxNode::addAttribute(inputAttr_);
         MPxNode::addAttribute(outputAttr_);
@@ -324,7 +324,7 @@ public:
     {
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
-            const auto inputValue = getAttribute<std::vector<TAttrType>>(dataBlock, inputAttr_);
+            const auto inputValue = getAttribute<std::vector<TInAttrType>>(dataBlock, inputAttr_);
             
             setAttribute(dataBlock, outputAttr_, TFuncPtr(inputValue));
             
@@ -339,29 +339,31 @@ private:
     static Attribute outputAttr_;
 };
 
-template<typename TAttrType, typename TClass, const char* TTypeName, TAttrType (*TFuncPtr)(const std::vector<TAttrType>&)>
-Attribute ArrayOpNode<TAttrType, TClass, TTypeName, TFuncPtr>::inputAttr_;
+template<typename TInAttrType, typename TOutAttrType, typename TClass, const char* TTypeName,
+    TOutAttrType (*TFuncPtr)(const std::vector<TInAttrType>&)>
+Attribute ArrayOpNode<TInAttrType, TOutAttrType, TClass, TTypeName, TFuncPtr>::inputAttr_;
 
-template<typename TAttrType, typename TClass, const char* TTypeName, TAttrType (*TFuncPtr)(const std::vector<TAttrType>&)>
-Attribute ArrayOpNode<TAttrType, TClass, TTypeName, TFuncPtr>::outputAttr_;
+template<typename TInAttrType, typename TOutAttrType, typename TClass, const char* TTypeName,
+    TOutAttrType (*TFuncPtr)(const std::vector<TInAttrType>&)>
+Attribute ArrayOpNode<TInAttrType, TOutAttrType, TClass, TTypeName, TFuncPtr>::outputAttr_;
 
 
-#define ARRAY_OP_NODE(AttrType, NodeName, FuncPtr) \
+#define ARRAY_OP_NODE(InAttrType, OutAttrType, NodeName, FuncPtr) \
     TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
-    class NodeName : public ArrayOpNode<AttrType, NodeName, name##NodeName, FuncPtr> {};
+    class NodeName : public ArrayOpNode<InAttrType, OutAttrType, NodeName, name##NodeName, FuncPtr> {};
 
-ARRAY_OP_NODE(double, Average, &average);
-ARRAY_OP_NODE(int, AverageInt, &average);
-ARRAY_OP_NODE(MAngle, AverageAngle, &average);
-ARRAY_OP_NODE(MVector, AverageVector, &average);
-ARRAY_OP_NODE(MEulerRotation, AverageRotation, &average);
-ARRAY_OP_NODE(MMatrix, AverageMatrix, &average);
-ARRAY_OP_NODE(MQuaternion, AverageQuaternion, &average);
+ARRAY_OP_NODE(double, double, Average, &average);
+ARRAY_OP_NODE(int, double, AverageInt, &average);
+ARRAY_OP_NODE(MAngle, MAngle, AverageAngle, &average);
+ARRAY_OP_NODE(MVector, MVector, AverageVector, &average);
+ARRAY_OP_NODE(MEulerRotation, MEulerRotation, AverageRotation, &average);
+ARRAY_OP_NODE(MMatrix, MMatrix, AverageMatrix, &average);
+ARRAY_OP_NODE(MQuaternion, MQuaternion, AverageQuaternion, &average);
 
-ARRAY_OP_NODE(double, Sum, &sum);
-ARRAY_OP_NODE(int, SumInt, &sum);
-ARRAY_OP_NODE(MAngle, SumAngle, &sum);
-ARRAY_OP_NODE(MVector, SumVector, &sum);
+ARRAY_OP_NODE(double, double, Sum, &sum);
+ARRAY_OP_NODE(int, int, SumInt, &sum);
+ARRAY_OP_NODE(MAngle, MAngle, SumAngle, &sum);
+ARRAY_OP_NODE(MVector, MVector, SumVector, &sum);
 
 
 template<typename TInAttrType, typename TOutAttrType, typename TClass, const char* TTypeName,
