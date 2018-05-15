@@ -132,6 +132,13 @@ initializePlugin(MObject pluginObj)
     SumAngle::registerNode(pluginFn, typeId++);
     SumInt::registerNode(pluginFn, typeId++);
     SumVector::registerNode(pluginFn, typeId++);
+    WeightedAverage::registerNode(pluginFn, typeId++);
+    WeightedAverageAngle::registerNode(pluginFn, typeId++);
+    WeightedAverageInt::registerNode(pluginFn, typeId++);
+    WeightedAverageMatrix::registerNode(pluginFn, typeId++);
+    WeightedAverageQuaternion::registerNode(pluginFn, typeId++);
+    WeightedAverageRotation::registerNode(pluginFn, typeId++);
+    WeightedAverageVector::registerNode(pluginFn, typeId++);
     
     return MS::kSuccess;
 }
@@ -242,6 +249,13 @@ uninitializePlugin(MObject pluginObj)
     SumAngle::deregisterNode(pluginFn);
     SumInt::deregisterNode(pluginFn);
     SumVector::deregisterNode(pluginFn);
+    WeightedAverage::deregisterNode(pluginFn);
+    WeightedAverageAngle::deregisterNode(pluginFn);
+    WeightedAverageInt::deregisterNode(pluginFn);
+    WeightedAverageMatrix::deregisterNode(pluginFn);
+    WeightedAverageQuaternion::deregisterNode(pluginFn);
+    WeightedAverageRotation::deregisterNode(pluginFn);
+    WeightedAverageVector::deregisterNode(pluginFn);
     
     return MS::kSuccess;
 }
