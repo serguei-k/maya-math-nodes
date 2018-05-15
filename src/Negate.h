@@ -20,8 +20,8 @@ class NegateNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAttr_, "input", DefaultValue<typename TOperator::argument_type>(0.0));
-        createAttribute(outputAttr_, "output", DefaultValue<typename TOperator::result_type>(0.0), false);
+        createAttribute(inputAttr_, "input", DefaultValue<typename TOperator::argument_type>());
+        createAttribute(outputAttr_, "output", DefaultValue<typename TOperator::result_type>(), false);
         
         MPxNode::addAttribute(inputAttr_);
         MPxNode::addAttribute(outputAttr_);

@@ -32,8 +32,8 @@ class AbsoluteNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAttr_, "input", TAttrType(0.0));
-        createAttribute(outputAttr_, "output", TAttrType(0.0), false);
+        createAttribute(inputAttr_, "input", DefaultValue<TAttrType>());
+        createAttribute(outputAttr_, "output", DefaultValue<TAttrType>(), false);
         
         MPxNode::addAttribute(inputAttr_);
         MPxNode::addAttribute(outputAttr_);

@@ -10,9 +10,9 @@ class SubtractNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(input1Attr_, "input1", DefaultValue<TInOutAttrType>(0.0));
-        createAttribute(input2Attr_, "input2", DefaultValue<TInAttrType>(0.0));
-        createAttribute(outputAttr_, "output", DefaultValue<TInOutAttrType>(0.0), false);
+        createAttribute(input1Attr_, "input1", DefaultValue<TInOutAttrType>());
+        createAttribute(input2Attr_, "input2", DefaultValue<TInAttrType>());
+        createAttribute(outputAttr_, "output", DefaultValue<TInOutAttrType>(), false);
         
         MPxNode::addAttribute(input1Attr_);
         MPxNode::addAttribute(input2Attr_);

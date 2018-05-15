@@ -14,8 +14,8 @@ class GetTwistNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAttr_, "input", DefaultValue<TInAttrType>(0.0));
-        createAttribute(outputAttr_, "output", DefaultValue<MAngle>(0.0), false);
+        createAttribute(inputAttr_, "input", DefaultValue<TInAttrType>());
+        createAttribute(outputAttr_, "output", DefaultValue<MAngle>(), false);
         
         MFnEnumAttribute attrFn;
         axisAttr_ = attrFn.create("axis", "axis");

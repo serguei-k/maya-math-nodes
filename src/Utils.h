@@ -5,6 +5,7 @@
 #include <cmath>
 #include <string>
 #include <type_traits>
+#include <vector>
 
 #include <maya/MAngle.h>
 #include <maya/MEulerRotation.h>
@@ -44,73 +45,91 @@ struct Attribute
 // Default value templates
 // Note that complex types are always defaulted to zero/identity
 template <typename TType>
-inline TType DefaultValue(double from)
+inline TType DefaultValue()
 {
-    return TType(from);
+    static TType defaultT;
+    return defaultT;
 }
 
 template <>
-inline MVector DefaultValue(double from)
-{
-    return MVector(from, from, from);
-}
-
-template <>
-inline MMatrix DefaultValue(double)
+inline MMatrix DefaultValue()
 {
     return MMatrix::identity;
 }
 
 template <>
-inline MEulerRotation DefaultValue(double)
+inline MEulerRotation DefaultValue()
 {
     return MEulerRotation::identity;
 }
 
 template <>
-inline MQuaternion DefaultValue(double)
+inline MQuaternion DefaultValue()
 {
     return MQuaternion::identity;
 }
 
+template <typename TType>
+inline TType DefaultValue(double x, double y, double z);
+
+template <>
+inline MVector DefaultValue(double x, double y, double z)
+{
+    return MVector(x, y, z);
+}
+
+template <>
+inline MEulerRotation DefaultValue(double x, double y, double z)
+{
+    return MEulerRotation(x, y, z);
+}
+
 // Overloads for createAttribute
-inline void createAttribute(Attribute& attr, const char* name, double value, bool isInput = true)
+inline void createAttribute(Attribute& attr, const char* name, double value, bool isInput = true, bool isArray = false)
 {
     MFnNumericAttribute attrFn;
     attr.attr = attrFn.create(name, name, MFnNumericData::kDouble, value);
     attrFn.setKeyable(isInput);
     attrFn.setStorable(isInput);
     attrFn.setWritable(isInput);
+    attrFn.setArray(isArray);
+    attrFn.setUsesArrayDataBuilder(isArray);
 }
 
-inline void createAttribute(Attribute& attr, const char* name, int value, bool isInput = true)
+inline void createAttribute(Attribute& attr, const char* name, int value, bool isInput = true, bool isArray = false)
 {
     MFnNumericAttribute attrFn;
     attr.attr = attrFn.create(name, name, MFnNumericData::kInt, value);
     attrFn.setKeyable(isInput);
     attrFn.setStorable(isInput);
     attrFn.setWritable(isInput);
+    attrFn.setArray(isArray);
+    attrFn.setUsesArrayDataBuilder(isArray);
 }
 
-inline void createAttribute(Attribute& attr, const char* name, bool value, bool isInput = true)
+inline void createAttribute(Attribute& attr, const char* name, bool value, bool isInput = true, bool isArray = false)
 {
     MFnNumericAttribute attrFn;
     attr.attr = attrFn.create(name, name, MFnNumericData::kBoolean, value);
     attrFn.setKeyable(isInput);
     attrFn.setStorable(isInput);
     attrFn.setWritable(isInput);
+    attrFn.setArray(isArray);
+    attrFn.setUsesArrayDataBuilder(isArray);
 }
 
-inline void createAttribute(Attribute& attr, const char* name, const MAngle& value, bool isInput = true)
+inline void createAttribute(Attribute& attr, const char* name, const MAngle& value, bool isInput = true, bool isArray = false)
 {
     MFnUnitAttribute attrFn;
     attr.attr = attrFn.create(name, name, value);
     attrFn.setKeyable(isInput);
     attrFn.setStorable(isInput);
     attrFn.setWritable(isInput);
+    attrFn.setArray(isArray);
+    attrFn.setUsesArrayDataBuilder(isArray);
 }
 
-inline void createAttribute(Attribute& attr, const char* name, const MVector& value, bool isInput = true)
+inline void createAttribute(Attribute& attr, const char* name, const MVector& value, bool isInput = true, bool isArray = false)
 {
     MFnNumericAttribute attrFn;
     
@@ -136,9 +155,11 @@ inline void createAttribute(Attribute& attr, const char* name, const MVector& va
     attrFn.setKeyable(isInput);
     attrFn.setStorable(isInput);
     attrFn.setWritable(isInput);
+    attrFn.setArray(isArray);
+    attrFn.setUsesArrayDataBuilder(isArray);
 }
 
-inline void createAttribute(Attribute& attr, const char* name, const MMatrix& value, bool isInput = true)
+inline void createAttribute(Attribute& attr, const char* name, const MMatrix& value, bool isInput = true, bool isArray = false)
 {
     MFnMatrixAttribute attrFn;
     attr.attr = attrFn.create(name, name);
@@ -146,9 +167,11 @@ inline void createAttribute(Attribute& attr, const char* name, const MMatrix& va
     attrFn.setKeyable(isInput);
     attrFn.setStorable(isInput);
     attrFn.setWritable(isInput);
+    attrFn.setArray(isArray);
+    attrFn.setUsesArrayDataBuilder(isArray);
 }
 
-inline void createAttribute(Attribute& attr, const char* name, const MQuaternion& value, bool isInput = true)
+inline void createAttribute(Attribute& attr, const char* name, const MQuaternion& value, bool isInput = true, bool isArray = false)
 {
     MFnCompoundAttribute cAttrFn;
     MFnNumericAttribute attrFn;
@@ -185,9 +208,11 @@ inline void createAttribute(Attribute& attr, const char* name, const MQuaternion
     cAttrFn.setKeyable(isInput);
     cAttrFn.setStorable(isInput);
     cAttrFn.setWritable(isInput);
+    cAttrFn.setArray(isArray);
+    cAttrFn.setUsesArrayDataBuilder(isArray);
 }
 
-inline void createAttribute(Attribute& attr, const char* name, const MEulerRotation& value, bool isInput = true)
+inline void createAttribute(Attribute& attr, const char* name, const MEulerRotation& value, bool isInput = true, bool isArray = false)
 {
     MFnNumericAttribute attrFn;
     MFnUnitAttribute uAttrFn;
@@ -214,11 +239,33 @@ inline void createAttribute(Attribute& attr, const char* name, const MEulerRotat
     attrFn.setKeyable(isInput);
     attrFn.setStorable(isInput);
     attrFn.setWritable(isInput);
+    attrFn.setArray(isArray);
+    attrFn.setUsesArrayDataBuilder(isArray);
+}
+
+inline void createCompoundAttribute(Attribute& attr, const std::vector<Attribute>& children, const char* name, bool isInput = true, bool isArray = false)
+{
+    MFnCompoundAttribute cAttrFn;
+    attr.attr = cAttrFn.create(name, name);
+    
+    for (const Attribute& child : children)
+    {
+        cAttrFn.addChild(child);
+    }
+    
+    cAttrFn.setKeyable(isInput);
+    cAttrFn.setStorable(isInput);
+    cAttrFn.setWritable(isInput);
+    cAttrFn.setArray(isArray);
+    cAttrFn.setUsesArrayDataBuilder(isArray);
 }
 
 // Explicit specializations for getAttribute
 template <typename TType>
 inline TType getAttribute(MDataBlock& dataBlock, const Attribute& attribute);
+
+template <typename TType>
+inline TType getAttribute(MDataBlock& dataBlock, const Attribute& attribute, const Attribute& childAttribute);
 
 template <>
 inline double getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
@@ -228,10 +275,76 @@ inline double getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
 }
 
 template <>
+inline std::vector<double> getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
+{
+    std::vector<double> out;
+    MArrayDataHandle arrayHandle = dataBlock.inputArrayValue(attribute);
+    
+    out.resize(arrayHandle.elementCount());
+    for (unsigned index = 0u; index < arrayHandle.elementCount(); ++index)
+    {
+        out[index] = arrayHandle.inputValue().asDouble();
+        arrayHandle.next();
+    }
+    
+    return out;
+}
+
+template <>
+inline std::vector<double> getAttribute(MDataBlock& dataBlock, const Attribute& attribute, const Attribute& childAttribute)
+{
+    std::vector<double> out;
+    MArrayDataHandle arrayHandle = dataBlock.inputArrayValue(attribute);
+    
+    out.resize(arrayHandle.elementCount());
+    for (unsigned index = 0u; index < arrayHandle.elementCount(); ++index)
+    {
+        MDataHandle handle = arrayHandle.inputValue();
+        out[index] = handle.child(childAttribute).asDouble();
+        arrayHandle.next();
+    }
+    
+    return out;
+}
+
+template <>
 inline int getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
 {
     MDataHandle handle = dataBlock.inputValue(attribute);
     return handle.asInt();
+}
+
+template <>
+inline std::vector<int> getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
+{
+    std::vector<int> out;
+    MArrayDataHandle arrayHandle = dataBlock.inputArrayValue(attribute);
+    
+    out.resize(arrayHandle.elementCount());
+    for (unsigned index = 0u; index < arrayHandle.elementCount(); ++index)
+    {
+        out[index] = arrayHandle.inputValue().asInt();
+        arrayHandle.next();
+    }
+    
+    return out;
+}
+
+template <>
+inline std::vector<int> getAttribute(MDataBlock& dataBlock, const Attribute& attribute, const Attribute& childAttribute)
+{
+    std::vector<int> out;
+    MArrayDataHandle arrayHandle = dataBlock.inputArrayValue(attribute);
+    
+    out.resize(arrayHandle.elementCount());
+    for (unsigned index = 0u; index < arrayHandle.elementCount(); ++index)
+    {
+        MDataHandle handle = arrayHandle.inputValue();
+        out[index] = handle.child(childAttribute).asInt();
+        arrayHandle.next();
+    }
+    
+    return out;
 }
 
 template <>
@@ -249,6 +362,39 @@ inline MAngle getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
 }
 
 template <>
+inline std::vector<MAngle> getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
+{
+    std::vector<MAngle> out;
+    MArrayDataHandle arrayHandle = dataBlock.inputArrayValue(attribute);
+    
+    out.resize(arrayHandle.elementCount());
+    for (unsigned index = 0u; index < arrayHandle.elementCount(); ++index)
+    {
+        out[index] = arrayHandle.inputValue().asAngle();
+        arrayHandle.next();
+    }
+    
+    return out;
+}
+
+template <>
+inline std::vector<MAngle> getAttribute(MDataBlock& dataBlock, const Attribute& attribute, const Attribute& childAttribute)
+{
+    std::vector<MAngle> out;
+    MArrayDataHandle arrayHandle = dataBlock.inputArrayValue(attribute);
+    
+    out.resize(arrayHandle.elementCount());
+    for (unsigned index = 0u; index < arrayHandle.elementCount(); ++index)
+    {
+        MDataHandle handle = arrayHandle.inputValue();
+        out[index] = handle.child(childAttribute).asAngle();
+        arrayHandle.next();
+    }
+    
+    return out;
+}
+
+template <>
 inline MVector getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
 {
     MDataHandle handle = dataBlock.inputValue(attribute);
@@ -256,10 +402,76 @@ inline MVector getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
 }
 
 template <>
+inline std::vector<MVector> getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
+{
+    std::vector<MVector> out;
+    MArrayDataHandle arrayHandle = dataBlock.inputArrayValue(attribute);
+    
+    out.resize(arrayHandle.elementCount());
+    for (unsigned index = 0u; index < arrayHandle.elementCount(); ++index)
+    {
+        out[index] = arrayHandle.inputValue().asVector();
+        arrayHandle.next();
+    }
+    
+    return out;
+}
+
+template <>
+inline std::vector<MVector> getAttribute(MDataBlock& dataBlock, const Attribute& attribute, const Attribute& childAttribute)
+{
+    std::vector<MVector> out;
+    MArrayDataHandle arrayHandle = dataBlock.inputArrayValue(attribute);
+    
+    out.resize(arrayHandle.elementCount());
+    for (unsigned index = 0u; index < arrayHandle.elementCount(); ++index)
+    {
+        MDataHandle handle = arrayHandle.inputValue();
+        out[index] = handle.child(childAttribute).asVector();
+        arrayHandle.next();
+    }
+    
+    return out;
+}
+
+template <>
 inline MMatrix getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
 {
     MDataHandle handle = dataBlock.inputValue(attribute);
     return handle.asMatrix();
+}
+
+template <>
+inline std::vector<MMatrix> getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
+{
+    std::vector<MMatrix> out;
+    MArrayDataHandle arrayHandle = dataBlock.inputArrayValue(attribute);
+    
+    out.resize(arrayHandle.elementCount());
+    for (unsigned index = 0u; index < arrayHandle.elementCount(); ++index)
+    {
+        out[index] = arrayHandle.inputValue().asMatrix();
+        arrayHandle.next();
+    }
+    
+    return out;
+}
+
+template <>
+inline std::vector<MMatrix> getAttribute(MDataBlock& dataBlock, const Attribute& attribute, const Attribute& childAttribute)
+{
+    std::vector<MMatrix> out;
+    MArrayDataHandle arrayHandle = dataBlock.inputArrayValue(attribute);
+    
+    out.resize(arrayHandle.elementCount());
+    for (unsigned index = 0u; index < arrayHandle.elementCount(); ++index)
+    {
+        MDataHandle handle = arrayHandle.inputValue();
+        out[index] = handle.child(childAttribute).asMatrix();
+        arrayHandle.next();
+    }
+    
+    return out;
 }
 
 template <>
@@ -275,6 +487,51 @@ inline MEulerRotation getAttribute(MDataBlock& dataBlock, const Attribute& attri
 }
 
 template <>
+inline std::vector<MEulerRotation> getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
+{
+    std::vector<MEulerRotation> out;
+    MArrayDataHandle arrayHandle = dataBlock.inputArrayValue(attribute);
+    
+    out.resize(arrayHandle.elementCount());
+    for (unsigned index = 0u; index < arrayHandle.elementCount(); ++index)
+    {
+        MDataHandle handle = arrayHandle.inputValue();
+        
+        const double x = handle.child(attribute.attrX).asAngle().asRadians();
+        const double y = handle.child(attribute.attrY).asAngle().asRadians();
+        const double z = handle.child(attribute.attrZ).asAngle().asRadians();
+        
+        out[index] = MEulerRotation(x, y, z);
+        arrayHandle.next();
+    }
+    
+    return out;
+}
+
+template <>
+inline std::vector<MEulerRotation> getAttribute(MDataBlock& dataBlock, const Attribute& attribute, const Attribute& childAttribute)
+{
+    std::vector<MEulerRotation> out;
+    MArrayDataHandle arrayHandle = dataBlock.inputArrayValue(attribute);
+    
+    out.resize(arrayHandle.elementCount());
+    for (unsigned index = 0u; index < arrayHandle.elementCount(); ++index)
+    {
+        MDataHandle handle = arrayHandle.inputValue();
+        MDataHandle childHandle = handle.child(childAttribute);
+        
+        const double x = childHandle.child(childAttribute.attrX).asAngle().asRadians();
+        const double y = childHandle.child(childAttribute.attrY).asAngle().asRadians();
+        const double z = childHandle.child(childAttribute.attrZ).asAngle().asRadians();
+        
+        out[index] = MEulerRotation(x, y, z);
+        arrayHandle.next();
+    }
+    
+    return out;
+}
+
+template <>
 inline MQuaternion getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
 {
     MDataHandle handle = dataBlock.inputValue(attribute.attr);
@@ -285,6 +542,53 @@ inline MQuaternion getAttribute(MDataBlock& dataBlock, const Attribute& attribut
     const double w = handle.child(attribute.attrW).asDouble();
     
     return MQuaternion(x, y, z, w);
+}
+
+template <>
+inline std::vector<MQuaternion> getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
+{
+    std::vector<MQuaternion> out;
+    MArrayDataHandle arrayHandle = dataBlock.inputArrayValue(attribute);
+    
+    out.resize(arrayHandle.elementCount());
+    for (unsigned index = 0u; index < arrayHandle.elementCount(); ++index)
+    {
+        MDataHandle handle = arrayHandle.inputValue();
+        
+        const double x = handle.child(attribute.attrX).asDouble();
+        const double y = handle.child(attribute.attrY).asDouble();
+        const double z = handle.child(attribute.attrZ).asDouble();
+        const double w = handle.child(attribute.attrW).asDouble();
+        
+        out[index] = MQuaternion(x, y, z, w);
+        arrayHandle.next();
+    }
+    
+    return out;
+}
+
+template <>
+inline std::vector<MQuaternion> getAttribute(MDataBlock& dataBlock, const Attribute& attribute, const Attribute& childAttribute)
+{
+    std::vector<MQuaternion> out;
+    MArrayDataHandle arrayHandle = dataBlock.inputArrayValue(attribute);
+    
+    out.resize(arrayHandle.elementCount());
+    for (unsigned index = 0u; index < arrayHandle.elementCount(); ++index)
+    {
+        MDataHandle handle = arrayHandle.inputValue();
+        MDataHandle childHandle = handle.child(childAttribute);
+        
+        const double x = childHandle.child(childAttribute.attrX).asDouble();
+        const double y = childHandle.child(childAttribute.attrY).asDouble();
+        const double z = childHandle.child(childAttribute.attrZ).asDouble();
+        const double w = childHandle.child(childAttribute.attrW).asDouble();
+        
+        out[index] = MQuaternion(x, y, z, w);
+        arrayHandle.next();
+    }
+    
+    return out;
 }
 
 template <typename TInputType, typename TOutputType>
@@ -382,6 +686,11 @@ MAngle operator/(const MAngle& a, int b)
 MAngle operator-(const MAngle& a)
 {
     return MAngle(-a.asRadians());
+}
+
+MQuaternion operator*(const MQuaternion& a, double b)
+{
+    return MQuaternion(a.x * b, a.y * b, a.z * b, a.w * b);
 }
 
 // Base node type definition used for all math nodes in this library

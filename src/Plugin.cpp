@@ -4,6 +4,7 @@
 
 #include "Absolute.h"
 #include "Add.h"
+#include "Array.h"
 #include "Clamp.h"
 #include "Condition.h"
 #include "Convert.h"
@@ -27,7 +28,8 @@ initializePlugin(MObject pluginObj)
     
     int typeId = 0x0012c340;
     
-    // Do not change the registration order after a major release, start a new alphabetized block below instead
+    // 1.0.0
+    // Do not change the registration order after a release, start a new alphabetized block below instead
     Absolute::registerNode(pluginFn, typeId++);
     AbsoluteAngle::registerNode(pluginFn, typeId++);
     AbsoluteInt::registerNode(pluginFn, typeId++);
@@ -116,7 +118,27 @@ initializePlugin(MObject pluginObj)
     TwistFromMatrix::registerNode(pluginFn, typeId++);
     TwistFromRotation::registerNode(pluginFn, typeId++);
     VectorLength::registerNode(pluginFn, typeId++);
-    VectorLengthSquared::registerNode(pluginFn, typeId);
+    VectorLengthSquared::registerNode(pluginFn, typeId++);
+    
+    // 1.1.0
+    Average::registerNode(pluginFn, typeId++);
+    AverageAngle::registerNode(pluginFn, typeId++);
+    AverageInt::registerNode(pluginFn, typeId++);
+    AverageMatrix::registerNode(pluginFn, typeId++);
+    AverageRotation::registerNode(pluginFn, typeId++);
+    AverageVector::registerNode(pluginFn, typeId++);
+    AverageQuaternion::registerNode(pluginFn, typeId++);
+    Sum::registerNode(pluginFn, typeId++);
+    SumAngle::registerNode(pluginFn, typeId++);
+    SumInt::registerNode(pluginFn, typeId++);
+    SumVector::registerNode(pluginFn, typeId++);
+    WeightedAverage::registerNode(pluginFn, typeId++);
+    WeightedAverageAngle::registerNode(pluginFn, typeId++);
+    WeightedAverageInt::registerNode(pluginFn, typeId++);
+    WeightedAverageMatrix::registerNode(pluginFn, typeId++);
+    WeightedAverageQuaternion::registerNode(pluginFn, typeId++);
+    WeightedAverageRotation::registerNode(pluginFn, typeId++);
+    WeightedAverageVector::registerNode(pluginFn, typeId++);
     
     return MS::kSuccess;
 }
@@ -215,6 +237,25 @@ uninitializePlugin(MObject pluginObj)
     TwistFromRotation::deregisterNode(pluginFn);
     VectorLength::deregisterNode(pluginFn);
     VectorLengthSquared::deregisterNode(pluginFn);
+    
+    Average::deregisterNode(pluginFn);
+    AverageAngle::deregisterNode(pluginFn);
+    AverageInt::deregisterNode(pluginFn);
+    AverageMatrix::deregisterNode(pluginFn);
+    AverageRotation::deregisterNode(pluginFn);
+    AverageVector::deregisterNode(pluginFn);
+    AverageQuaternion::deregisterNode(pluginFn);
+    Sum::deregisterNode(pluginFn);
+    SumAngle::deregisterNode(pluginFn);
+    SumInt::deregisterNode(pluginFn);
+    SumVector::deregisterNode(pluginFn);
+    WeightedAverage::deregisterNode(pluginFn);
+    WeightedAverageAngle::deregisterNode(pluginFn);
+    WeightedAverageInt::deregisterNode(pluginFn);
+    WeightedAverageMatrix::deregisterNode(pluginFn);
+    WeightedAverageQuaternion::deregisterNode(pluginFn);
+    WeightedAverageRotation::deregisterNode(pluginFn);
+    WeightedAverageVector::deregisterNode(pluginFn);
     
     return MS::kSuccess;
 }
