@@ -193,3 +193,83 @@ SELECT_NODE(MVector, SelectVector);
 SELECT_NODE(MMatrix, SelectMatrix);
 SELECT_NODE(MEulerRotation, SelectRotation);
 SELECT_NODE(MQuaternion, SelectQuaternion);
+
+
+template <typename TType>
+inline bool logical_and(TType a, TType b)
+{
+    return a && b;
+}
+
+template <typename TType>
+inline bool logical_or(TType a, TType b)
+{
+    return a || b;
+}
+
+template <typename TType>
+inline bool logical_xor(TType a, TType b)
+{
+    return !a != !b;
+}
+
+template<typename TAttrType, typename TClass, const char* TTypeName, bool (*TFuncPtr)(TAttrType, TAttrType)>
+class LogicalNode : public BaseNode<TClass, TTypeName>
+{
+public:
+    static MStatus initialize()
+    {
+        createAttribute(input1Attr_, "input1", DefaultValue<TAttrType>());
+        createAttribute(input2Attr_, "input2", DefaultValue<TAttrType>());
+        createAttribute(outputAttr_, "output", DefaultValue<bool>(), false);
+        
+        MPxNode::addAttribute(input1Attr_);
+        MPxNode::addAttribute(input2Attr_);
+        MPxNode::addAttribute(outputAttr_);
+        
+        MPxNode::attributeAffects(input1Attr_, outputAttr_);
+        MPxNode::attributeAffects(input2Attr_, outputAttr_);
+        
+        return MS::kSuccess;
+    }
+    
+    MStatus compute(const MPlug& plug, MDataBlock& dataBlock) override
+    {
+        if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
+        {
+            const auto input1Value = getAttribute<TAttrType>(dataBlock, input1Attr_);
+            const auto input2Value = getAttribute<TAttrType>(dataBlock, input2Attr_);
+            
+            setAttribute(dataBlock, outputAttr_, TFuncPtr(input1Value, input2Value));
+            
+            return MS::kSuccess;
+        }
+        
+        return MS::kUnknownParameter;
+    }
+
+private:
+    static Attribute input1Attr_;
+    static Attribute input2Attr_;
+    static Attribute outputAttr_;
+};
+
+template<typename TAttrType, typename TClass, const char* TTypeName, bool (*TFuncPtr)(TAttrType, TAttrType)>
+Attribute LogicalNode<TAttrType, TClass, TTypeName, TFuncPtr>::input1Attr_;
+
+template<typename TAttrType, typename TClass, const char* TTypeName, bool (*TFuncPtr)(TAttrType, TAttrType)>
+Attribute LogicalNode<TAttrType, TClass, TTypeName, TFuncPtr>::input2Attr_;
+
+template<typename TAttrType, typename TClass, const char* TTypeName, bool (*TFuncPtr)(TAttrType, TAttrType)>
+Attribute LogicalNode<TAttrType, TClass, TTypeName, TFuncPtr>::outputAttr_;
+
+#define LOGICAL_NODE(AttrType, NodeName, FuncPtr) \
+    TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
+    class NodeName : public LogicalNode<AttrType, NodeName, name##NodeName, FuncPtr> {};
+
+LOGICAL_NODE(bool, AndBool, &logical_and);
+LOGICAL_NODE(bool, OrBool, &logical_or);
+LOGICAL_NODE(bool, XorBool, &logical_xor);
+LOGICAL_NODE(int, AndInt, &logical_and);
+LOGICAL_NODE(int, OrInt, &logical_or);
+LOGICAL_NODE(int, XorInt, &logical_xor);

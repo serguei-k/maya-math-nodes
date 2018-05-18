@@ -54,3 +54,21 @@ class TestCondition(NodeTestCase):
     
     def test_select_quaternion(self):
         self.create_node('SelectQuaternion', {'input2': [1.0, 0.0, 0.0, 1.0], 'condition': True}, [1.0, 0.0, 0.0, 1.0])
+
+    def test_and_bool(self):
+        self.create_node('AndBool', {'input1': True, 'input2': True}, True)
+
+    def test_and_int(self):
+        self.create_node('AndInt', {'input1': 1, 'input2': 0}, False)
+
+    def test_or_bool(self):
+        self.create_node('OrBool', {'input1': True, 'input2': True}, True)
+
+    def test_or_int(self):
+        self.create_node('OrInt', {'input1': 0, 'input2': 0}, False)
+
+    def test_xor_bool(self):
+        self.create_node('XorBool', {'input1': True, 'input2': True}, False)
+
+    def test_xor_int(self):
+        self.create_node('XorInt', {'input1': 1, 'input2': 0}, True)

@@ -121,6 +121,8 @@ initializePlugin(MObject pluginObj)
     VectorLengthSquared::registerNode(pluginFn, typeId++);
     
     // 1.1.0
+    AndBool::registerNode(pluginFn, typeId++);
+    AndInt::registerNode(pluginFn, typeId++);
     Average::registerNode(pluginFn, typeId++);
     AverageAngle::registerNode(pluginFn, typeId++);
     AverageInt::registerNode(pluginFn, typeId++);
@@ -128,6 +130,8 @@ initializePlugin(MObject pluginObj)
     AverageRotation::registerNode(pluginFn, typeId++);
     AverageVector::registerNode(pluginFn, typeId++);
     AverageQuaternion::registerNode(pluginFn, typeId++);
+    OrBool::registerNode(pluginFn, typeId++);
+    OrInt::registerNode(pluginFn, typeId++);
     Sum::registerNode(pluginFn, typeId++);
     SumAngle::registerNode(pluginFn, typeId++);
     SumInt::registerNode(pluginFn, typeId++);
@@ -139,6 +143,8 @@ initializePlugin(MObject pluginObj)
     WeightedAverageQuaternion::registerNode(pluginFn, typeId++);
     WeightedAverageRotation::registerNode(pluginFn, typeId++);
     WeightedAverageVector::registerNode(pluginFn, typeId++);
+    XorBool::registerNode(pluginFn, typeId++);
+    XorInt::registerNode(pluginFn, typeId++);
     
     return MS::kSuccess;
 }
@@ -238,6 +244,8 @@ uninitializePlugin(MObject pluginObj)
     VectorLength::deregisterNode(pluginFn);
     VectorLengthSquared::deregisterNode(pluginFn);
     
+    AndBool::deregisterNode(pluginFn);
+    AndInt::deregisterNode(pluginFn);
     Average::deregisterNode(pluginFn);
     AverageAngle::deregisterNode(pluginFn);
     AverageInt::deregisterNode(pluginFn);
@@ -245,6 +253,8 @@ uninitializePlugin(MObject pluginObj)
     AverageRotation::deregisterNode(pluginFn);
     AverageVector::deregisterNode(pluginFn);
     AverageQuaternion::deregisterNode(pluginFn);
+    OrBool::deregisterNode(pluginFn);
+    OrInt::deregisterNode(pluginFn);
     Sum::deregisterNode(pluginFn);
     SumAngle::deregisterNode(pluginFn);
     SumInt::deregisterNode(pluginFn);
@@ -256,6 +266,8 @@ uninitializePlugin(MObject pluginObj)
     WeightedAverageQuaternion::deregisterNode(pluginFn);
     WeightedAverageRotation::deregisterNode(pluginFn);
     WeightedAverageVector::deregisterNode(pluginFn);
+    XorBool::deregisterNode(pluginFn);
+    XorInt::deregisterNode(pluginFn);
     
     return MS::kSuccess;
 }
