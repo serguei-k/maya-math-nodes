@@ -146,6 +146,9 @@ initializePlugin(MObject pluginObj)
     XorBool::registerNode(pluginFn, typeId++);
     XorInt::registerNode(pluginFn, typeId++);
     
+    // 1.1.1
+    NormalizeArray::registerNode(pluginFn, typeId++);
+    
     return MS::kSuccess;
 }
 
@@ -268,6 +271,8 @@ uninitializePlugin(MObject pluginObj)
     WeightedAverageVector::deregisterNode(pluginFn);
     XorBool::deregisterNode(pluginFn);
     XorInt::deregisterNode(pluginFn);
+    
+    NormalizeArray::deregisterNode(pluginFn);
     
     return MS::kSuccess;
 }

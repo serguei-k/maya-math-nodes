@@ -8,6 +8,7 @@
 #include <vector>
 
 #include <maya/MAngle.h>
+#include <maya/MArrayDataBuilder.h>
 #include <maya/MEulerRotation.h>
 #include <maya/MMatrix.h>
 #include <maya/MFnCompoundAttribute.h>
@@ -651,6 +652,22 @@ inline void setAttribute(MDataBlock& dataBlock, const Attribute& attribute, MQua
     outputWHandle.set(value.w);
     outputWHandle.setClean();
 }
+
+template <typename TType>
+inline void setAttribute(MDataBlock& dataBlock, const Attribute& attribute, const std::vector<TType>& values)
+{
+    MArrayDataHandle handle = dataBlock.outputArrayValue(attribute);
+    MArrayDataBuilder builder = handle.builder();
+    
+    for (const auto& value : values)
+    {
+        MDataHandle itemHandle = builder.addLast();
+        itemHandle.set(value);
+    }
+    
+    handle.setClean();
+}
+
 
 // MAngle operator overloads
 MAngle operator+(const MAngle& a, const MAngle& b)

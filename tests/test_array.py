@@ -126,3 +126,6 @@ class TestArray(NodeTestCase):
         self.create_node('WeightedAverageMatrix', {'input[0].value': matrix1, 'input[0].weight': 1.0 / 3,
                                                    'input[1].value': matrix2, 'input[1].weight': 1.0 / 3,
                                                    'input[2].value': matrix3, 'input[2].weight': 1.0 / 3}, result, 3)
+    
+    def test_normalize_array(self):
+        self.create_node('NormalizeArray', {'input[0]': 40.0, 'input[1]': 20.0}, [0.8, 0.2])

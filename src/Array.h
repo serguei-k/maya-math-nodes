@@ -302,6 +302,24 @@ inline MMatrix average(const std::vector<MMatrix>& values, const std::vector<dou
     return xform.asMatrix();
 }
 
+inline std::vector<double> normalize(const std::vector<double>& values)
+{
+    std::vector<double> out;
+    out.reserve(values.size());
+    
+//    const double squaredSum = std::accumulate(values.begin(), values.end(), 0.0,
+//                                              [](const double& a, const double& b){ return a + b * b; });
+//    const double length = std::sqrt(squaredSum);
+    
+    const double s = sum(values);
+    for (const auto& value : values)
+    {
+        out.push_back(value / s);
+    }
+    
+    return out;
+}
+
 
 template<typename TInAttrType, typename TOutAttrType, typename TClass, const char* TTypeName,
     TOutAttrType (*TFuncPtr)(const std::vector<TInAttrType>&)>
@@ -439,3 +457,55 @@ ARRAY_WEIGHTED_OP_NODE(MVector, MVector, WeightedAverageVector, &average);
 ARRAY_WEIGHTED_OP_NODE(MMatrix, MMatrix, WeightedAverageMatrix, &average);
 ARRAY_WEIGHTED_OP_NODE(MEulerRotation, MEulerRotation, WeightedAverageRotation, &average);
 ARRAY_WEIGHTED_OP_NODE(MQuaternion, MQuaternion, WeightedAverageQuaternion, &average);
+
+
+template<typename TAttrType, typename TClass, const char* TTypeName,
+    std::vector<TAttrType> (*TFuncPtr)(const std::vector<TAttrType>&)>
+class ArrayMapOpNode : public BaseNode<TClass, TTypeName>
+{
+public:
+    static MStatus initialize()
+    {
+        createAttribute(inputAttr_, "input", DefaultValue<TAttrType>(), true, true);
+        createAttribute(outputAttr_, "output", DefaultValue<TAttrType>(), false, true);
+        
+        MPxNode::addAttribute(inputAttr_);
+        MPxNode::addAttribute(outputAttr_);
+        
+        MPxNode::attributeAffects(inputAttr_, outputAttr_);
+        
+        return MS::kSuccess;
+    }
+    
+    MStatus compute(const MPlug& plug, MDataBlock& dataBlock) override
+    {
+        if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
+        {
+            const auto inputValue = getAttribute<std::vector<TAttrType>>(dataBlock, inputAttr_);
+            
+            setAttribute(dataBlock, outputAttr_, TFuncPtr(inputValue));
+            
+            return MS::kSuccess;
+        }
+        
+        return MS::kUnknownParameter;
+    }
+
+private:
+    static Attribute inputAttr_;
+    static Attribute outputAttr_;
+};
+
+template<typename TAttrType, typename TClass, const char* TTypeName,
+    std::vector<TAttrType> (*TFuncPtr)(const std::vector<TAttrType>&)>
+Attribute ArrayMapOpNode<TAttrType, TClass, TTypeName, TFuncPtr>::inputAttr_;
+
+template<typename TAttrType, typename TClass, const char* TTypeName,
+    std::vector<TAttrType> (*TFuncPtr)(const std::vector<TAttrType>&)>
+Attribute ArrayMapOpNode<TAttrType, TClass, TTypeName, TFuncPtr>::outputAttr_;
+
+#define ARRAY_MAP_OP_NODE(AttrType, NodeName, FuncPtr) \
+    TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
+    class NodeName : public ArrayMapOpNode<AttrType, NodeName, name##NodeName, FuncPtr> {};
+
+ARRAY_MAP_OP_NODE(double, NormalizeArray, &normalize);
