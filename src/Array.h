@@ -336,10 +336,10 @@ inline std::vector<double> clamp(const std::vector<double>& values)
 inline std::vector<double> normalizeWeights(const std::vector<double>& values)
 {
     std::vector<double> out = clamp(values);
-    if (values.empty()) return out;
+    if (out.empty()) return out;
     
     const double s = sum(out);
-    if (s < 1.0) return values;
+    if (s < 1.0) return out;
     
     for (unsigned i = 0; i < out.size(); ++i)
     {
