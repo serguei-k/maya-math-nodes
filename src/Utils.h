@@ -657,7 +657,7 @@ template <typename TType>
 inline void setAttribute(MDataBlock& dataBlock, const Attribute& attribute, const std::vector<TType>& values)
 {
     MArrayDataHandle handle = dataBlock.outputArrayValue(attribute);
-    MArrayDataBuilder builder = handle.builder();
+    MArrayDataBuilder builder(attribute, unsigned(values.size()));
     
     for (const auto& value : values)
     {
@@ -665,7 +665,8 @@ inline void setAttribute(MDataBlock& dataBlock, const Attribute& attribute, cons
         itemHandle.set(value);
     }
     
-    handle.setClean();
+    handle.set(builder);
+    handle.setAllClean();
 }
 
 
