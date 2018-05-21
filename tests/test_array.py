@@ -129,3 +129,6 @@ class TestArray(NodeTestCase):
     
     def test_normalize_array(self):
         self.create_node('NormalizeArray', {'input[0]': 40.0, 'input[1]': 10.0}, [0.8, 0.2])
+    
+    def test_normalize_weights_array(self):
+        self.create_node('NormalizeWeightsArray', {'input[0]': 0.8, 'input[1]': 0.2, 'input[2]': -0.2, 'input[3]': 1.2}, [0.4, 0.1, 0.0, 0.5])

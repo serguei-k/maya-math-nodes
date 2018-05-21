@@ -319,6 +319,36 @@ inline std::vector<double> normalize(const std::vector<double>& values)
     return out;
 }
 
+inline std::vector<double> clamp(const std::vector<double>& values)
+{
+    std::vector<double> out;
+    if (values.empty()) return out;
+    
+    out.reserve(values.size());
+    for (const auto& value : values)
+    {
+        out.push_back(std::max(0.0, std::min(value, 1.0)));
+    }
+    
+    return out;
+}
+
+inline std::vector<double> normalizeWeights(const std::vector<double>& values)
+{
+    std::vector<double> out = clamp(values);
+    if (values.empty()) return out;
+    
+    const double s = sum(out);
+    if (s < 1.0) return values;
+    
+    for (unsigned i = 0; i < out.size(); ++i)
+    {
+        out[i] /= s;
+    }
+    
+    return out;
+}
+
 
 template<typename TInAttrType, typename TOutAttrType, typename TClass, const char* TTypeName,
     TOutAttrType (*TFuncPtr)(const std::vector<TInAttrType>&)>
@@ -508,3 +538,4 @@ Attribute ArrayMapOpNode<TAttrType, TClass, TTypeName, TFuncPtr>::outputAttr_;
     class NodeName : public ArrayMapOpNode<AttrType, NodeName, name##NodeName, FuncPtr> {};
 
 ARRAY_MAP_OP_NODE(double, NormalizeArray, &normalize);
+ARRAY_MAP_OP_NODE(double, NormalizeWeightsArray, &normalizeWeights);

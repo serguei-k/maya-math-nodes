@@ -148,6 +148,7 @@ initializePlugin(MObject pluginObj)
     
     // 1.1.1
     NormalizeArray::registerNode(pluginFn, typeId++);
+    NormalizeWeightsArray::registerNode(pluginFn, typeId++);
     SelectArray::registerNode(pluginFn, typeId++);
     SelectAngleArray::registerNode(pluginFn, typeId++);
     SelectIntArray::registerNode(pluginFn, typeId++);
@@ -278,6 +279,7 @@ uninitializePlugin(MObject pluginObj)
     XorInt::deregisterNode(pluginFn);
     
     NormalizeArray::deregisterNode(pluginFn);
+    NormalizeWeightsArray::deregisterNode(pluginFn);
     SelectArray::deregisterNode(pluginFn);
     SelectAngleArray::deregisterNode(pluginFn);
     SelectIntArray::deregisterNode(pluginFn);
