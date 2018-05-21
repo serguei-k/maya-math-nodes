@@ -307,10 +307,6 @@ inline std::vector<double> normalize(const std::vector<double>& values)
     std::vector<double> out;
     out.reserve(values.size());
     
-//    const double squaredSum = std::accumulate(values.begin(), values.end(), 0.0,
-//                                              [](const double& a, const double& b){ return a + b * b; });
-//    const double length = std::sqrt(squaredSum);
-    
     const double s = sum(values);
     for (const auto& value : values)
     {
