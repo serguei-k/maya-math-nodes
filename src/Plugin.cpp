@@ -148,6 +148,11 @@ initializePlugin(MObject pluginObj)
     
     // 1.1.1
     NormalizeArray::registerNode(pluginFn, typeId++);
+    SelectArray::registerNode(pluginFn, typeId++);
+    SelectAngleArray::registerNode(pluginFn, typeId++);
+    SelectIntArray::registerNode(pluginFn, typeId++);
+    SelectMatrixArray::registerNode(pluginFn, typeId++);
+    SelectVectorArray::registerNode(pluginFn, typeId++);
     
     return MS::kSuccess;
 }
@@ -273,6 +278,11 @@ uninitializePlugin(MObject pluginObj)
     XorInt::deregisterNode(pluginFn);
     
     NormalizeArray::deregisterNode(pluginFn);
+    SelectArray::deregisterNode(pluginFn);
+    SelectAngleArray::deregisterNode(pluginFn);
+    SelectIntArray::deregisterNode(pluginFn);
+    SelectMatrixArray::deregisterNode(pluginFn);
+    SelectVectorArray::deregisterNode(pluginFn);
     
     return MS::kSuccess;
 }

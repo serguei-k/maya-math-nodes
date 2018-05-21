@@ -195,6 +195,76 @@ SELECT_NODE(MEulerRotation, SelectRotation);
 SELECT_NODE(MQuaternion, SelectQuaternion);
 
 
+template<typename TAttrType, typename TClass, const char* TTypeName>
+class SelectArrayNode : public BaseNode<TClass, TTypeName>
+{
+public:
+    static MStatus initialize()
+    {
+        createAttribute(input1Attr_, "input1", DefaultValue<TAttrType>(), true, true);
+        createAttribute(input2Attr_, "input2", DefaultValue<TAttrType>(), true, true);
+        createAttribute(condition_, "condition", false);
+        createAttribute(outputAttr_, "output", DefaultValue<TAttrType>(), false, true);
+        
+        MPxNode::addAttribute(input1Attr_);
+        MPxNode::addAttribute(input2Attr_);
+        MPxNode::addAttribute(condition_);
+        MPxNode::addAttribute(outputAttr_);
+        
+        MPxNode::attributeAffects(input1Attr_, outputAttr_);
+        MPxNode::attributeAffects(input2Attr_, outputAttr_);
+        MPxNode::attributeAffects(condition_, outputAttr_);
+        
+        return MS::kSuccess;
+    }
+    
+    MStatus compute(const MPlug& plug, MDataBlock& dataBlock) override
+    {
+        if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
+        {
+            const auto input1Value = getAttribute<std::vector<TAttrType>>(dataBlock, input1Attr_);
+            const auto input2Value = getAttribute<std::vector<TAttrType>>(dataBlock, input2Attr_);
+            const auto conditionValue = getAttribute<bool>(dataBlock, condition_);
+            
+            setAttribute(dataBlock, outputAttr_, conditionValue ? input2Value : input1Value);
+            
+            return MS::kSuccess;
+        }
+        
+        return MS::kUnknownParameter;
+    }
+
+private:
+    static Attribute input1Attr_;
+    static Attribute input2Attr_;
+    static Attribute condition_;
+    static Attribute outputAttr_;
+};
+
+template<typename TAttrType, typename TClass, const char* TTypeName>
+Attribute SelectArrayNode<TAttrType, TClass, TTypeName>::input1Attr_;
+
+template<typename TAttrType, typename TClass, const char* TTypeName>
+Attribute SelectArrayNode<TAttrType, TClass, TTypeName>::input2Attr_;
+
+template<typename TAttrType, typename TClass, const char* TTypeName>
+Attribute SelectArrayNode<TAttrType, TClass, TTypeName>::condition_;
+
+template<typename TAttrType, typename TClass, const char* TTypeName>
+Attribute SelectArrayNode<TAttrType, TClass, TTypeName>::outputAttr_;
+
+#define SELECT_ARRAY_NODE(AttrType, NodeName) \
+    TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
+    class NodeName : public SelectArrayNode<AttrType, NodeName, name##NodeName> {};
+
+// TODO: add selector for euler and quaternion arrays
+SELECT_ARRAY_NODE(double, SelectArray);
+SELECT_ARRAY_NODE(int, SelectIntArray);
+SELECT_ARRAY_NODE(MAngle, SelectAngleArray);
+SELECT_ARRAY_NODE(MVector, SelectVectorArray);
+SELECT_ARRAY_NODE(MMatrix, SelectMatrixArray);
+
+
 template <typename TType>
 inline bool logical_and(TType a, TType b)
 {

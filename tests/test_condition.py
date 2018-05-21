@@ -32,11 +32,29 @@ class TestCondition(NodeTestCase):
         cmds.setAttr('{0}.{1}'.format(node, 'condition'), True)
         self.assertAlmostEqual(cmds.getAttr('{0}.output'.format(node)), 2.0)
     
+    def test_select_array(self):
+        node = self.create_node('SelectArray', {'input1[0]': 1.0, 'input1[1]': 2.0,
+                                                'input2[0]': -1.0, 'input2[1]': -2.0}, [1.0, 2.0])
+        
+        cmds.setAttr('{0}.{1}'.format(node, 'condition'), True)
+        self.assertAlmostEqual(cmds.getAttr('{0}.output[0]'.format(node)), -1.0)
+    
     def test_select_int(self):
-        self.create_node('SelectInt', {'input1': 1.0, 'input2': 2.0, 'condition': True}, 2.0)
+        self.create_node('SelectInt', {'input1': 1, 'input2': 2, 'condition': True}, 2)
+    
+    def test_select_int_array(self):
+        self.create_node('SelectIntArray', {'input1[0]': 1, 'input1[1]': 2,
+                                            'input2[0]': -1, 'input2[1]': -2,
+                                            'condition': True}, [-1, -2])
     
     def test_select_angle(self):
         self.create_node('SelectAngle', {'input1': 1.0, 'input2': 2.0, 'condition': True}, 2.0)
+    
+    def test_select_angle_array(self):
+        # seems like output angle array does NOT respect the angle unit preference
+        self.create_node('SelectAngleArray', {'input1[0]': 1.0, 'input1[1]': 2.0,
+                                              'input2[0]': 45.0, 'input2[1]': 90.0,
+                                              'condition': True}, [0.785398, 1.570796])
     
     def test_select_vector(self):
         self.create_node('SelectVector', {'input1': [0.0, 1.0, 0.0], 'condition': False}, [0.0, 1.0, 0.0])
