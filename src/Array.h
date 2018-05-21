@@ -305,9 +305,12 @@ inline MMatrix average(const std::vector<MMatrix>& values, const std::vector<dou
 inline std::vector<double> normalize(const std::vector<double>& values)
 {
     std::vector<double> out;
-    out.reserve(values.size());
+    if (values.empty()) return out;
     
     const double s = sum(values);
+    if (s == 0.0) return values;
+    
+    out.reserve(values.size());
     for (const auto& value : values)
     {
         out.push_back(value / s);
