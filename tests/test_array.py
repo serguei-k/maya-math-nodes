@@ -18,6 +18,24 @@ class TestArray(NodeTestCase):
                                        'input[1]': [-3.0, -2.0, 1.0],
                                        'input[2]': [2.0, 0.0, 3.0]}, [4.0, -1.0, 4.0])
     
+    def test_max_element(self):
+        self.create_node('MaxElement', {'input[0]': 5.0, 'input[1]': -3.0, 'input[2]': 2.0}, 5.0)
+    
+    def test_max_int_element(self):
+        self.create_node('MaxIntElement', {'input[0]': 5, 'input[1]': -3, 'input[2]': 2}, 5)
+    
+    def test_max_angle_element(self):
+        self.create_node('MaxAngleElement', {'input[0]': 5.0, 'input[1]': -3.0, 'input[2]': 2.0}, 5.0)
+    
+    def test_min_element(self):
+        self.create_node('MinElement', {'input[0]': 5.0, 'input[1]': -3.0, 'input[2]': 2.0}, -3.0)
+    
+    def test_min_int_element(self):
+        self.create_node('MinIntElement', {'input[0]': 5, 'input[1]': -3, 'input[2]': 2}, -3)
+    
+    def test_min_angle_element(self):
+        self.create_node('MinAngleElement', {'input[0]': 5.0, 'input[1]': -3.0, 'input[2]': 2.0}, -3.0)
+    
     def test_average(self):
         self.create_node('Average', {'input[0]': 5.0, 'input[1]': 5.0, 'input[2]': 5.0}, 5.0)
     

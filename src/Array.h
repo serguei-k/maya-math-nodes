@@ -349,6 +349,52 @@ inline std::vector<double> normalizeWeights(const std::vector<double>& values)
     return out;
 }
 
+template<typename TType>
+TType min_array_element(const std::vector<TType>& values)
+{
+    if (values.empty()) return DefaultValue<TType>();
+    return *std::min_element(values.begin(), values.end());
+}
+
+template<>
+MAngle min_array_element(const std::vector<MAngle>& values)
+{
+    if (values.empty()) return MAngle();
+    
+    std::vector<double> angleValues;
+    angleValues.reserve(values.size());
+    
+    for (const auto value : values)
+    {
+        angleValues.push_back(value.asRadians());
+    }
+    
+    return MAngle(*std::min_element(angleValues.begin(), angleValues.end()));
+}
+
+template<typename TType>
+TType max_array_element(const std::vector<TType>& values)
+{
+    if (values.empty()) return DefaultValue<TType>();
+    return *std::max_element(values.begin(), values.end());
+}
+
+template<>
+MAngle max_array_element(const std::vector<MAngle>& values)
+{
+    if (values.empty()) return MAngle();
+    
+    std::vector<double> angleValues;
+    angleValues.reserve(values.size());
+    
+    for (const auto value : values)
+    {
+        angleValues.push_back(value.asRadians());
+    }
+    
+    return MAngle(*std::max_element(angleValues.begin(), angleValues.end()));
+}
+
 
 template<typename TInAttrType, typename TOutAttrType, typename TClass, const char* TTypeName,
     TOutAttrType (*TFuncPtr)(const std::vector<TInAttrType>&)>
@@ -412,6 +458,13 @@ ARRAY_OP_NODE(double, double, Sum, &sum);
 ARRAY_OP_NODE(int, int, SumInt, &sum);
 ARRAY_OP_NODE(MAngle, MAngle, SumAngle, &sum);
 ARRAY_OP_NODE(MVector, MVector, SumVector, &sum);
+
+ARRAY_OP_NODE(double, double, MaxElement, &max_array_element);
+ARRAY_OP_NODE(int, int, MaxIntElement, &max_array_element);
+ARRAY_OP_NODE(MAngle, MAngle, MaxAngleElement, &max_array_element);
+ARRAY_OP_NODE(double, double, MinElement, &min_array_element);
+ARRAY_OP_NODE(int, int, MinIntElement, &min_array_element);
+ARRAY_OP_NODE(MAngle, MAngle, MinAngleElement, &min_array_element);
 
 
 template<typename TInAttrType, typename TOutAttrType, typename TClass, const char* TTypeName,

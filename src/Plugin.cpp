@@ -146,7 +146,13 @@ initializePlugin(MObject pluginObj)
     XorBool::registerNode(pluginFn, typeId++);
     XorInt::registerNode(pluginFn, typeId++);
     
-    // 1.1.1
+    // 1.2.0
+    MaxElement::registerNode(pluginFn, typeId++);
+    MaxAngleElement::registerNode(pluginFn, typeId++);
+    MaxIntElement::registerNode(pluginFn, typeId++);
+    MinElement::registerNode(pluginFn, typeId++);
+    MinAngleElement::registerNode(pluginFn, typeId++);
+    MinIntElement::registerNode(pluginFn, typeId++);
     NormalizeArray::registerNode(pluginFn, typeId++);
     NormalizeWeightsArray::registerNode(pluginFn, typeId++);
     SelectArray::registerNode(pluginFn, typeId++);
@@ -278,6 +284,12 @@ uninitializePlugin(MObject pluginObj)
     XorBool::deregisterNode(pluginFn);
     XorInt::deregisterNode(pluginFn);
     
+    MaxElement::deregisterNode(pluginFn);
+    MaxAngleElement::deregisterNode(pluginFn);
+    MaxIntElement::deregisterNode(pluginFn);
+    MinElement::deregisterNode(pluginFn);
+    MinAngleElement::deregisterNode(pluginFn);
+    MinIntElement::deregisterNode(pluginFn);
     NormalizeArray::deregisterNode(pluginFn);
     NormalizeWeightsArray::deregisterNode(pluginFn);
     SelectArray::deregisterNode(pluginFn);
