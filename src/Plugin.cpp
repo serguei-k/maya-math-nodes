@@ -4,8 +4,11 @@
 
 #include "Absolute.h"
 #include "Add.h"
+#include "Array.h"
 #include "Clamp.h"
+#include "Condition.h"
 #include "Convert.h"
+#include "Distance.h"
 #include "Divide.h"
 #include "Inverse.h"
 #include "Interpolate.h"
@@ -21,11 +24,12 @@
 MStatus
 initializePlugin(MObject pluginObj)
 {
-    MFnPlugin pluginFn(pluginObj, "Serguei Kalentchouk, et al.", "0.0.1", "Any");
+    MFnPlugin pluginFn(pluginObj, "Serguei Kalentchouk, et al.", "1.2.0", "Any");
     
     int typeId = 0x0012c340;
     
-    // Do not change the registration order after a major release, start a new alphabetized block below instead
+    // 1.0.0
+    // Do not change the registration order after a release, start a new alphabetized block below instead
     Absolute::registerNode(pluginFn, typeId++);
     AbsoluteAngle::registerNode(pluginFn, typeId++);
     AbsoluteInt::registerNode(pluginFn, typeId++);
@@ -44,6 +48,8 @@ initializePlugin(MObject pluginObj)
     Clamp::registerNode(pluginFn, typeId++);
     ClampAngle::registerNode(pluginFn, typeId++);
     ClampInt::registerNode(pluginFn, typeId++);
+    Compare::registerNode(pluginFn, typeId++);
+    CompareAngle::registerNode(pluginFn, typeId++);
     CosAngle::registerNode(pluginFn, typeId++);
     CrossProduct::registerNode(pluginFn, typeId++);
     Divide::registerNode(pluginFn, typeId++);
@@ -51,12 +57,16 @@ initializePlugin(MObject pluginObj)
     DivideAngleByInt::registerNode(pluginFn, typeId++);
     DivideByInt::registerNode(pluginFn, typeId++);
     DotProduct::registerNode(pluginFn, typeId++);
+    DistancePoints::registerNode(pluginFn, typeId++);
+    DistanceTransforms::registerNode(pluginFn, typeId++);
     Floor::registerNode(pluginFn, typeId++);
     FloorAngle::registerNode(pluginFn, typeId++);
     InverseMatrix::registerNode(pluginFn, typeId++);
     InverseQuaternion::registerNode(pluginFn, typeId++);
+    InverseRotation::registerNode(pluginFn, typeId++);
     Lerp::registerNode(pluginFn, typeId++);
     LerpAngle::registerNode(pluginFn, typeId++);
+    LerpMatrix::registerNode(pluginFn, typeId++);
     LerpVector::registerNode(pluginFn, typeId++);
     MatrixFromTRS::registerNode(pluginFn, typeId++);
     Max::registerNode(pluginFn, typeId++);
@@ -75,6 +85,7 @@ initializePlugin(MObject pluginObj)
     MultiplyVector::registerNode(pluginFn, typeId++);
     MultiplyVectorByMatrix::registerNode(pluginFn, typeId++);
     MultiplyQuaternion::registerNode(pluginFn, typeId++);
+    MultiplyRotation::registerNode(pluginFn, typeId++);
     Negate::registerNode(pluginFn, typeId++);
     NegateAngle::registerNode(pluginFn, typeId++);
     NegateInt::registerNode(pluginFn, typeId++);
@@ -88,6 +99,13 @@ initializePlugin(MObject pluginObj)
     RotationFromMatrix::registerNode(pluginFn, typeId++);
     RotationFromQuaternion::registerNode(pluginFn, typeId++);
     ScaleFromMatrix::registerNode(pluginFn, typeId++);
+    Select::registerNode(pluginFn, typeId++);
+    SelectAngle::registerNode(pluginFn, typeId++);
+    SelectInt::registerNode(pluginFn, typeId++);
+    SelectMatrix::registerNode(pluginFn, typeId++);
+    SelectQuaternion::registerNode(pluginFn, typeId++);
+    SelectRotation::registerNode(pluginFn, typeId++);
+    SelectVector::registerNode(pluginFn, typeId++);
     SinAngle::registerNode(pluginFn, typeId++);
     SlerpQuaternion::registerNode(pluginFn, typeId++);
     Subtract::registerNode(pluginFn, typeId++);
@@ -100,7 +118,48 @@ initializePlugin(MObject pluginObj)
     TwistFromMatrix::registerNode(pluginFn, typeId++);
     TwistFromRotation::registerNode(pluginFn, typeId++);
     VectorLength::registerNode(pluginFn, typeId++);
-    VectorLengthSquared::registerNode(pluginFn, typeId);
+    VectorLengthSquared::registerNode(pluginFn, typeId++);
+    
+    // 1.1.0
+    AndBool::registerNode(pluginFn, typeId++);
+    AndInt::registerNode(pluginFn, typeId++);
+    Average::registerNode(pluginFn, typeId++);
+    AverageAngle::registerNode(pluginFn, typeId++);
+    AverageInt::registerNode(pluginFn, typeId++);
+    AverageMatrix::registerNode(pluginFn, typeId++);
+    AverageRotation::registerNode(pluginFn, typeId++);
+    AverageVector::registerNode(pluginFn, typeId++);
+    AverageQuaternion::registerNode(pluginFn, typeId++);
+    OrBool::registerNode(pluginFn, typeId++);
+    OrInt::registerNode(pluginFn, typeId++);
+    Sum::registerNode(pluginFn, typeId++);
+    SumAngle::registerNode(pluginFn, typeId++);
+    SumInt::registerNode(pluginFn, typeId++);
+    SumVector::registerNode(pluginFn, typeId++);
+    WeightedAverage::registerNode(pluginFn, typeId++);
+    WeightedAverageAngle::registerNode(pluginFn, typeId++);
+    WeightedAverageInt::registerNode(pluginFn, typeId++);
+    WeightedAverageMatrix::registerNode(pluginFn, typeId++);
+    WeightedAverageQuaternion::registerNode(pluginFn, typeId++);
+    WeightedAverageRotation::registerNode(pluginFn, typeId++);
+    WeightedAverageVector::registerNode(pluginFn, typeId++);
+    XorBool::registerNode(pluginFn, typeId++);
+    XorInt::registerNode(pluginFn, typeId++);
+    
+    // 1.2.0
+    MaxElement::registerNode(pluginFn, typeId++);
+    MaxAngleElement::registerNode(pluginFn, typeId++);
+    MaxIntElement::registerNode(pluginFn, typeId++);
+    MinElement::registerNode(pluginFn, typeId++);
+    MinAngleElement::registerNode(pluginFn, typeId++);
+    MinIntElement::registerNode(pluginFn, typeId++);
+    NormalizeArray::registerNode(pluginFn, typeId++);
+    NormalizeWeightsArray::registerNode(pluginFn, typeId++);
+    SelectArray::registerNode(pluginFn, typeId++);
+    SelectAngleArray::registerNode(pluginFn, typeId++);
+    SelectIntArray::registerNode(pluginFn, typeId++);
+    SelectMatrixArray::registerNode(pluginFn, typeId++);
+    SelectVectorArray::registerNode(pluginFn, typeId++);
     
     return MS::kSuccess;
 }
@@ -128,6 +187,8 @@ uninitializePlugin(MObject pluginObj)
     Clamp::deregisterNode(pluginFn);
     ClampAngle::deregisterNode(pluginFn);
     ClampInt::deregisterNode(pluginFn);
+    Compare::deregisterNode(pluginFn);
+    CompareAngle::deregisterNode(pluginFn);
     CosAngle::deregisterNode(pluginFn);
     CrossProduct::deregisterNode(pluginFn);
     Divide::deregisterNode(pluginFn);
@@ -135,12 +196,16 @@ uninitializePlugin(MObject pluginObj)
     DivideAngleByInt::deregisterNode(pluginFn);
     DivideByInt::deregisterNode(pluginFn);
     DotProduct::deregisterNode(pluginFn);
+    DistancePoints::deregisterNode(pluginFn);
+    DistanceTransforms::deregisterNode(pluginFn);
     Floor::deregisterNode(pluginFn);
     FloorAngle::deregisterNode(pluginFn);
     InverseMatrix::deregisterNode(pluginFn);
     InverseQuaternion::deregisterNode(pluginFn);
+    InverseRotation::deregisterNode(pluginFn);
     Lerp::deregisterNode(pluginFn);
     LerpAngle::deregisterNode(pluginFn);
+    LerpMatrix::deregisterNode(pluginFn);
     LerpVector::deregisterNode(pluginFn);
     MatrixFromTRS::deregisterNode(pluginFn);
     Max::deregisterNode(pluginFn);
@@ -159,6 +224,7 @@ uninitializePlugin(MObject pluginObj)
     MultiplyVector::deregisterNode(pluginFn);
     MultiplyVectorByMatrix::deregisterNode(pluginFn);
     MultiplyQuaternion::deregisterNode(pluginFn);
+    MultiplyRotation::deregisterNode(pluginFn);
     Negate::deregisterNode(pluginFn);
     NegateAngle::deregisterNode(pluginFn);
     NegateInt::deregisterNode(pluginFn);
@@ -172,6 +238,13 @@ uninitializePlugin(MObject pluginObj)
     RotationFromMatrix::deregisterNode(pluginFn);
     RotationFromQuaternion::deregisterNode(pluginFn);
     ScaleFromMatrix::deregisterNode(pluginFn);
+    Select::deregisterNode(pluginFn);
+    SelectAngle::deregisterNode(pluginFn);
+    SelectInt::deregisterNode(pluginFn);
+    SelectMatrix::deregisterNode(pluginFn);
+    SelectQuaternion::deregisterNode(pluginFn);
+    SelectRotation::deregisterNode(pluginFn);
+    SelectVector::deregisterNode(pluginFn);
     SinAngle::deregisterNode(pluginFn);
     SlerpQuaternion::deregisterNode(pluginFn);
     Subtract::deregisterNode(pluginFn);
@@ -185,6 +258,45 @@ uninitializePlugin(MObject pluginObj)
     TwistFromRotation::deregisterNode(pluginFn);
     VectorLength::deregisterNode(pluginFn);
     VectorLengthSquared::deregisterNode(pluginFn);
+    
+    AndBool::deregisterNode(pluginFn);
+    AndInt::deregisterNode(pluginFn);
+    Average::deregisterNode(pluginFn);
+    AverageAngle::deregisterNode(pluginFn);
+    AverageInt::deregisterNode(pluginFn);
+    AverageMatrix::deregisterNode(pluginFn);
+    AverageRotation::deregisterNode(pluginFn);
+    AverageVector::deregisterNode(pluginFn);
+    AverageQuaternion::deregisterNode(pluginFn);
+    OrBool::deregisterNode(pluginFn);
+    OrInt::deregisterNode(pluginFn);
+    Sum::deregisterNode(pluginFn);
+    SumAngle::deregisterNode(pluginFn);
+    SumInt::deregisterNode(pluginFn);
+    SumVector::deregisterNode(pluginFn);
+    WeightedAverage::deregisterNode(pluginFn);
+    WeightedAverageAngle::deregisterNode(pluginFn);
+    WeightedAverageInt::deregisterNode(pluginFn);
+    WeightedAverageMatrix::deregisterNode(pluginFn);
+    WeightedAverageQuaternion::deregisterNode(pluginFn);
+    WeightedAverageRotation::deregisterNode(pluginFn);
+    WeightedAverageVector::deregisterNode(pluginFn);
+    XorBool::deregisterNode(pluginFn);
+    XorInt::deregisterNode(pluginFn);
+    
+    MaxElement::deregisterNode(pluginFn);
+    MaxAngleElement::deregisterNode(pluginFn);
+    MaxIntElement::deregisterNode(pluginFn);
+    MinElement::deregisterNode(pluginFn);
+    MinAngleElement::deregisterNode(pluginFn);
+    MinIntElement::deregisterNode(pluginFn);
+    NormalizeArray::deregisterNode(pluginFn);
+    NormalizeWeightsArray::deregisterNode(pluginFn);
+    SelectArray::deregisterNode(pluginFn);
+    SelectAngleArray::deregisterNode(pluginFn);
+    SelectIntArray::deregisterNode(pluginFn);
+    SelectMatrixArray::deregisterNode(pluginFn);
+    SelectVectorArray::deregisterNode(pluginFn);
     
     return MS::kSuccess;
 }

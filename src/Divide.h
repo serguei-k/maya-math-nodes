@@ -33,9 +33,9 @@ class DivideNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(input1Attr_, "input1", DefaultValue<typename TOperator::first_argument_type>(0.0));
-        createAttribute(input2Attr_, "input2", DefaultValue<typename TOperator::second_argument_type>(0.0));
-        createAttribute(outputAttr_, "output", DefaultValue<typename TOperator::result_type>(0.0), false);
+        createAttribute(input1Attr_, "input1", DefaultValue<typename TOperator::first_argument_type>());
+        createAttribute(input2Attr_, "input2", DefaultValue<typename TOperator::second_argument_type>());
+        createAttribute(outputAttr_, "output", DefaultValue<typename TOperator::result_type>(), false);
         
         MPxNode::addAttribute(input1Attr_);
         MPxNode::addAttribute(input2Attr_);

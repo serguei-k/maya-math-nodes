@@ -20,7 +20,7 @@ class NodeTestCase(unittest.TestCase):
     def setUp(self):
         cmds.file(new=True, force=True)
     
-    def create_node(self, node_type, inputs, output):
+    def create_node(self, node_type, inputs, output, places=4):
         """Node test utility
         
         Simple utility that creates a new node, sets input attribute values and tests against expected output result.
@@ -42,14 +42,16 @@ class NodeTestCase(unittest.TestCase):
             else:
                 cmds.setAttr('{0}.{1}'.format(node, attr), inputs[attr])
         
-        if isinstance(output, list):
+        if isinstance(output, bool):
+            self.assertEquals(cmds.getAttr('{0}.output'.format(node)), output)
+        elif isinstance(output, list):
             result = cmds.getAttr('{0}.output'.format(node))
             if isinstance(result[0], tuple):
                 result = result[0]
             
-            self.assertItemsAlmostEqual(result, output, 4)
+            self.assertItemsAlmostEqual(result, output, places)
         else:
-            self.assertAlmostEqual(cmds.getAttr('{0}.output'.format(node)), output, 4)
+            self.assertAlmostEqual(cmds.getAttr('{0}.output'.format(node)), output, places)
         
         return node
     

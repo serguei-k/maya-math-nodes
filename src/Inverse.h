@@ -10,8 +10,8 @@ class InverseNode : public BaseNode<TClass, TTypeName>
 public:
     static MStatus initialize()
     {
-        createAttribute(inputAttr_, "input", DefaultValue<TAttrType>(0.0));
-        createAttribute(outputAttr_, "output", DefaultValue<TAttrType>(0.0), false);
+        createAttribute(inputAttr_, "input", DefaultValue<TAttrType>());
+        createAttribute(outputAttr_, "output", DefaultValue<TAttrType>(), false);
         
         MPxNode::addAttribute(inputAttr_);
         MPxNode::addAttribute(outputAttr_);
@@ -52,3 +52,4 @@ Attribute InverseNode<TAttrType, TClass, TTypeName>::outputAttr_;
 
 INVERSE_NODE(MMatrix, InverseMatrix);
 INVERSE_NODE(MQuaternion, InverseQuaternion);
+INVERSE_NODE(MEulerRotation, InverseRotation);

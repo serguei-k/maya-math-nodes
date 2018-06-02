@@ -19,3 +19,6 @@ class TestInverse(NodeTestCase):
     
     def test_inverse_quaternion(self):
         self.create_node('InverseQuaternion', {'input': [1.0, 0.0, 0.0, 0.0]}, [-1.0, 0.0, 0.0, 0.0])
+    
+    def test_inverse_rotation(self):
+        self.create_node('InverseRotation', {'input': [45.0, 0.0, -15.0]}, [-45.0, 0.0, 15.0])
