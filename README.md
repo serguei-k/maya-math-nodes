@@ -2,6 +2,8 @@
 Collection of math nodes for Autodesk Maya
 
 #### Building
+[![Build Status](https://travis-ci.org/serguei-k/maya-math-nodes.svg?branch=master)](https://travis-ci.org/serguei-k/maya-math-nodes)
+
 To build the library on Windows, clone the repository and navigate to the cloned directory,
 then run the following:
 
