@@ -32,14 +32,16 @@ class AST(list):
 class Number(object):
     def __init__(self, value):
         self.value = value
+    
+    def __str__(self):
+        return 'Number: {0}'.format(self.value)
 
-class MayaReference(object):
+class String(object):
     def __init__(self, value):
         self.value = value
-
-class Bool(object):
-    def __init__(self, value):
-        self.value = value
+    
+    def __str__(self):
+        return 'String: {0}'.format(self.value)
 
 class NodeFunction(object):
     def __init__(self, value, args):
@@ -51,6 +53,10 @@ class Binary(object):
         self.value = value
         self.left = left
         self.right = right
+    
+    def __str__(self):
+        return 'Binary: {0} {1} {2}'.format(self.left, self.value, self.right)
+
 
 class ExpressionStream(object):
     """Expression Stream"""
@@ -75,23 +81,25 @@ class ExpressionStream(object):
     def error(self, message):
         raise RuntimeError('{0} at {1}'.format(message, self._pos))
 
+
 class ExpressionLexer(object):
     """Expression Lexer"""
     def __init__(self, input_stream):
         self._data = ExpressionStream(input_stream)
         self._current = None
+        self._next = None
     
     def next(self):
         """Read next token from stream"""
-        token = self._current
-        self._current = None
-        return token or self.read_next()
+        self._next = None
+        self._current = self.read_next()
+        return self._current
 
     def peek(self):
         """Look ahead at next token in stream"""
-        if not self._current:
-            self._current = self.read_next()
-        return self._current
+        if not self._next:
+            self._next = self.read_next()
+        return self._next
     
     def end(self):
         """Check for end of expression"""
@@ -162,40 +170,59 @@ class ExpressionLexer(object):
         """Read string from stream"""
         return Token(StringToken, self.read_while(self.is_not_string))
 
+
 class ExpressionParser(object):
     def __init__(self, token_stream):
         self._data = ExpressionLexer(token_stream)
 
-    def error(self, token):
-        self._data.error(token)
-    
+    @property
+    def token(self):
+        return self._data._current
+
+    def error(self, message):
+        self._data.error(message)
+
     def parse(self):
         """Parse the entire expression"""
+        self._data.next()
         return self.parse_expression()
 
-    def get_precedence(self, token):
-        """Get operator precedence"""
-        if not token or token.type is not OperatorToken:
+    def get_precedence(self):
+        """Get operator precedence from current token"""
+        if not self.token or self.token.type is not OperatorToken:
             return -1
         
-        return PRECEDENCE[token.value]
+        return PRECEDENCE[self.token.value]
 
-    def parse_number(self, token):
-        """Parse number token"""
-        return Number(token.value)
+    def parse_number(self):
+        """Parse current token as number
+        
+        Consumes current token!
+        """
+        num = Number(self.token.value)
+        self._data.next()
+        return num
+
+    def parse_string(self):
+        """Parse current token as string
+
+        Consumes current token!
+        """
+        string = String(self.token.value)
+        self._data.next()
+        return string
 
     def parse_element(self):
         """Parse token element"""
-        token = self._data.next()
-        if not token:
-            self.error(token)
+        if not self.token:
+            self.error('Expected a valid token, got None instead')
         
-        if token.type == NumberToken:
-            self.parse_number(token)
-        elif token.type == StringToken:
-            self.parse_string()
-        
-        return token
+        if self.token.type == NumberToken:
+            return self.parse_number()
+        elif self.token.type == StringToken:
+            return self.parse_string()
+        else:
+            self.error('Could not handle token {0}'.format(self.token))
     
     def parse_expression(self):
         """Parse expression"""
@@ -203,16 +230,20 @@ class ExpressionParser(object):
         return self.parse_binary_right(0, left)
     
     def parse_binary_right(self, prec, left):
-        """Parse binary expression with precendence"""
+        """Parse binary expression with precendence
+        
+        Consumes current operator token!
+        """
         while True:
-            op_token = self._data.next()
-            left_prec = self.get_precedence(op_token)
+            left_prec = self.get_precedence()
             if left_prec < prec:
                 return left
             
+            op_value = self.token.value
+            self._data.next()
+
             right = self.parse_element()
-            next_op_token = self._data.peek()
-            if left_prec < self.get_precedence(next_op_token):
+            if left_prec < self.get_precedence():
                 right = self.parse_binary_right(left_prec + 1, right)
             
-            left = Binary(op_token.value, left, right)
+            left = Binary(op_value, left, right)
