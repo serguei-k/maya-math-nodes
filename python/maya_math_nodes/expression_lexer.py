@@ -160,15 +160,11 @@ class ExpressionLexer(object):
     
     def is_string(self, char):
         """Check for string character"""
-        return char.isalpha()
-    
-    def is_not_string(self, char):
-        """Check for non-string character"""
-        return not self.is_string(char)
+        return char.isalpha() or char == '.'
     
     def read_string(self):
         """Read string from stream"""
-        return Token(StringToken, self.read_while(self.is_not_string))
+        return Token(StringToken, self.read_while(self.is_string))
 
 
 class ExpressionParser(object):
