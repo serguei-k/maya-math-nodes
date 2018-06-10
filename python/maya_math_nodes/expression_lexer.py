@@ -11,7 +11,9 @@ import copy
 import functools
 import re
 
-OPERATORS = ['+', '/', '%', '*', '-', '<', '>', '<=', '>=', '==', '!=', '?', ':']
+OPERATORS = ['+', '/', '%', '*', '-']
+CONDITION = ['<', '>', '=', '!']
+TERNARY = ['?', ':']
 
 PRECEDENCE = {
     "<": 10, ">": 10, "<=": 10, ">=": 10, "==": 10, "!=": 10,
@@ -24,7 +26,9 @@ Token = collections.namedtuple('Token', ['type', 'value'])
 BraketToken = 0
 NumberToken = 1
 OperatorToken = 2
-StringToken = 3
+ConditionToken = 3
+TernaryToken = 4
+StringToken = 6
 
 class AST(list):
     pass
@@ -34,14 +38,14 @@ class Number(object):
         self.value = value
     
     def __str__(self):
-        return 'Number: {0}'.format(self.value)
+        return '(Number: {0})'.format(self.value)
 
 class String(object):
     def __init__(self, value):
         self.value = value
     
     def __str__(self):
-        return 'String: {0}'.format(self.value)
+        return '(String: {0})'.format(self.value)
 
 class NodeFunction(object):
     def __init__(self, value, args):
@@ -55,7 +59,18 @@ class Binary(object):
         self.right = right
     
     def __str__(self):
-        return 'Binary: {0} {1} {2}'.format(self.left, self.value, self.right)
+        return '(Binary: {0} {1} {2})'.format(self.left, self.value, self.right)
+
+class Conditional(object):
+    def __init__(self, value, left, right, true, false):
+        self.value = value
+        self.left = left
+        self.right = right
+        self.true = true
+        self.false = false
+    
+    def __str__(self):
+        return '(Conditional: {0} {1} {2} ? {3} : {4})'.format(self.left, self.value, self.right, self.true, self.false)
 
 
 class ExpressionStream(object):
@@ -121,6 +136,10 @@ class ExpressionLexer(object):
             return self.read_number()
         if self.is_operator(char):
             return self.read_operator()
+        if self.is_conditional(char):
+            return self.read_conditional()
+        if self.is_ternary(char):
+            return self.read_ternary()
         
         self._data.error('Failed to handle character: {0}'.format(char))
 
@@ -153,6 +172,22 @@ class ExpressionLexer(object):
     def read_operator(self):
         """Read operator from stream"""
         return Token(OperatorToken, self.read_while(self.is_operator))
+
+    def is_conditional(self, char):
+        """Check for conditional character"""
+        return char in CONDITION
+
+    def read_conditional(self):
+        """Read conditional from stream"""
+        return Token(ConditionToken, self.read_while(self.is_conditional))
+    
+    def is_ternary(self, char):
+        """Check for ternary character"""
+        return char in TERNARY
+
+    def read_ternary(self):
+        """Read ternary from stream"""
+        return Token(TernaryToken, self.read_while(self.is_ternary))
 
     def is_bracket(self, char):
         """Check for bracket character"""
@@ -209,7 +244,10 @@ class ExpressionParser(object):
         return string
 
     def parse_element(self):
-        """Parse token element"""
+        """Parse token element
+        
+        Consumes current token!
+        """
         if not self.token:
             self.error('Expected a valid token, got None instead')
         
@@ -218,12 +256,19 @@ class ExpressionParser(object):
         elif self.token.type == StringToken:
             return self.parse_string()
         else:
-            self.error('Could not handle token {0}'.format(self.token))
+            self.error('Could not handle token "{0}"'.format(self.token))
     
     def parse_expression(self):
         """Parse expression"""
         left = self.parse_element()
-        return self.parse_binary_right(0, left)
+
+        if self.token and self.token.type == OperatorToken:
+            left = self.parse_binary_right(0, left)
+        
+        if self.token and self.token.type == ConditionToken:
+            left = self.parse_conditional(left)
+
+        return left
     
     def parse_binary_right(self, prec, left):
         """Parse binary expression with precendence
@@ -236,10 +281,34 @@ class ExpressionParser(object):
                 return left
             
             op_value = self.token.value
-            self._data.next()
+            self._data.next()  # consume op
 
             right = self.parse_element()
             if left_prec < self.get_precedence():
                 right = self.parse_binary_right(left_prec + 1, right)
             
             left = Binary(op_value, left, right)
+
+    def parse_conditional(self, left):
+        """Parse conditional expression"""
+        op_value = self.token.value
+        self._data.next()  # consume op
+
+        right = self.parse_expression()
+        if not self.token.type == TernaryToken:
+            self.error('Expected ternary operator, got "{0}" instead'.format(self.token.value))
+        
+        self._data.next()  # consume op
+        true = self.parse_expression()
+        false = None
+        if self.token.type == TernaryToken:
+            self._data.next()  # consume op
+            false = self.parse_expression()
+        
+        return Conditional(op_value, left, right, true, false)
+
+
+str = '1.0 + node.attr * 55'
+str = '1.0 + node.attr > 55 - 2 ? 2.5 + 3 : node.attr * 1'
+exp = ExpressionParser(str).parse()
+print exp
