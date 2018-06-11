@@ -29,28 +29,22 @@ OperatorToken = 2
 ConditionToken = 3
 TernaryToken = 4
 StringToken = 6
-
-class AST(list):
-    pass
+FunctionToken = 7
+CommaToken = 8
 
 class Number(object):
     def __init__(self, value):
         self.value = value
     
-    def __str__(self):
+    def __repr__(self):
         return '(Number: {0})'.format(self.value)
 
 class String(object):
     def __init__(self, value):
         self.value = value
     
-    def __str__(self):
+    def __repr__(self):
         return '(String: {0})'.format(self.value)
-
-class NodeFunction(object):
-    def __init__(self, value, args):
-        self.value = value
-        self.args = args
 
 class Binary(object):
     def __init__(self, value, left, right):
@@ -58,7 +52,7 @@ class Binary(object):
         self.left = left
         self.right = right
     
-    def __str__(self):
+    def __repr__(self):
         return '(Binary: {0} {1} {2})'.format(self.left, self.value, self.right)
 
 class Conditional(object):
@@ -69,9 +63,16 @@ class Conditional(object):
         self.true = true
         self.false = false
     
-    def __str__(self):
+    def __repr__(self):
         return '(Conditional: {0} {1} {2} ? {3} : {4})'.format(self.left, self.value, self.right, self.true, self.false)
 
+class Function(object):
+    def __init__(self, value, args):
+        self.value = value
+        self.args = args
+    
+    def __repr__(self):
+        return '(Function: {0}({1}))'.format(self.value, self.args)
 
 class ExpressionStream(object):
     """Expression Stream"""
@@ -131,7 +132,10 @@ class ExpressionLexer(object):
 
         char = self._data.peek()
         if self.is_string(char):
-            return self.read_string()
+            token = self.read_string()
+            if self._data.peek() == '(':
+                token = Token(FunctionToken, token.value)
+            return token
         if self.is_digit(char):
             return self.read_number()
         if self.is_operator(char):
@@ -140,6 +144,10 @@ class ExpressionLexer(object):
             return self.read_conditional()
         if self.is_ternary(char):
             return self.read_ternary()
+        if self.is_bracket(char):
+            return self.read_bracket()
+        if char == ',':
+            return Token(CommaToken, self._data.next())
         
         self._data.error('Failed to handle character: {0}'.format(char))
 
@@ -192,6 +200,10 @@ class ExpressionLexer(object):
     def is_bracket(self, char):
         """Check for bracket character"""
         return char in ['(', ')', '[', ']']
+    
+    def read_bracket(self):
+        """Read bracket from stream"""
+        return Token(BraketToken, self._data.next())
     
     def is_string(self, char):
         """Check for string character"""
@@ -255,6 +267,11 @@ class ExpressionParser(object):
             return self.parse_number()
         elif self.token.type == StringToken:
             return self.parse_string()
+        elif self.token.type == FunctionToken:
+            return self.parse_function()
+        elif self.token.type == BraketToken:
+            if self.token.value == '(':
+                return self.parse_parentheses()
         else:
             self.error('Could not handle token "{0}"'.format(self.token))
     
@@ -270,6 +287,47 @@ class ExpressionParser(object):
 
         return left
     
+    def parse_parentheses(self):
+        """Parse parentheses"""
+        self._data.next()  # consume open paren
+        result = self.parse_expression()
+
+        if not result:
+            self.error('Encountered empty parentheses')
+
+        if not self.token or self.token.value != ')':
+            self.error('Expected closing parenthesis, got "{0}" instead'.format(self.token))
+        
+        self._data.next()  # consume closing paren
+        return result
+    
+    def parse_function(self):
+        """Parse function expression"""
+        function = self.token.value
+        self._data.next()  # consume function
+        
+        if not self.token or self.token.value != '(':
+            self.error('Expected function call parentheses, got "{0}" instead'.format(self.token))
+        
+        args = []
+        self._data.next()  # consume open paren
+        while True:
+            arg = self.parse_expression()
+            if not arg:
+                self.error('Expected a valid argument, got "None" istead')
+            
+            args.append(arg)
+
+            if self.token and self.token.value == ')':
+                self._data.next()  # consume close paren
+                break
+            elif self.token and self.token.value == ',':
+                self._data.next()  # consume comma
+            else:
+                self.error('Expected closing parenthesis, got "{0}" instead'.format(self.token))
+        
+        return Function(function, args)
+
     def parse_binary_right(self, prec, left):
         """Parse binary expression with precendence
         
@@ -307,8 +365,9 @@ class ExpressionParser(object):
         
         return Conditional(op_value, left, right, true, false)
 
+# str = '1.0 + node.attr * 55'
+# str = '1.0 + node.attr > 55 - 2 ? 2.5 + 3 : node.attr * 1'
 
-str = '1.0 + node.attr * 55'
-str = '1.0 + node.attr > 55 - 2 ? 2.5 + 3 : node.attr * 1'
+str = 'powers(2, 1)'
 exp = ExpressionParser(str).parse()
 print exp
