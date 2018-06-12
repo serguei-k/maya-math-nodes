@@ -40,11 +40,12 @@ class Number(object):
         return '(Number: {0})'.format(self.value)
 
 class String(object):
-    def __init__(self, value):
+    def __init__(self, value, index=None):
         self.value = value
+        self.index = index
     
     def __repr__(self):
-        return '(String: {0})'.format(self.value)
+        return '(String: {0}{1})'.format(self.value, '[{0}]'.format(self.index) if self.index else '')
 
 class Binary(object):
     def __init__(self, value, left, right):
@@ -67,12 +68,13 @@ class Conditional(object):
         return '(Conditional: {0} {1} {2} ? {3} : {4})'.format(self.left, self.value, self.right, self.true, self.false)
 
 class Function(object):
-    def __init__(self, value, args):
+    def __init__(self, value, args, index=None):
         self.value = value
         self.args = args
+        self.index = index
     
     def __repr__(self):
-        return '(Function: {0}({1}))'.format(self.value, self.args)
+        return '(Function: {0}({1}){2})'.format(self.value, self.args, '[{0}]'.format(self.index) if self.index else '')
 
 class ExpressionStream(object):
     """Expression Stream"""
@@ -253,6 +255,18 @@ class ExpressionParser(object):
         """
         string = String(self.token.value)
         self._data.next()
+
+        if self.token and self.token.value == '[':
+            self._data.next()  # consume open bracket
+            if not self.token or self.token.type != NumberToken:
+                self.error('Expected a numeric index, got "{0}" instead'.format(self.token))
+            string.index = self.token.value
+            self._data.next() # consume index bracket
+            
+            if not self.token or self.token.value != ']':
+                self.error('Expected a closing bracket, got "{0}" instead'.format(self.token))
+            self._data.next() # consume close bracket
+
         return string
 
     def parse_element(self):
@@ -269,9 +283,8 @@ class ExpressionParser(object):
             return self.parse_string()
         elif self.token.type == FunctionToken:
             return self.parse_function()
-        elif self.token.type == BraketToken:
-            if self.token.value == '(':
-                return self.parse_parentheses()
+        elif self.token.type == BraketToken and self.token.value == '(':
+            return self.parse_parentheses()
         else:
             self.error('Could not handle token "{0}"'.format(self.token))
     
@@ -284,6 +297,9 @@ class ExpressionParser(object):
         
         if self.token and self.token.type == ConditionToken:
             left = self.parse_conditional(left)
+
+        if self.token:
+            self.error('Expected end of expression or another operator, got "{0}" instead'.format(self.token))
 
         return left
     
@@ -326,7 +342,19 @@ class ExpressionParser(object):
             else:
                 self.error('Expected closing parenthesis, got "{0}" instead'.format(self.token))
         
-        return Function(function, args)
+        index = None
+        if self.token and self.token.value == '[':
+            self._data.next()  # consume open bracket
+            if not self.token or self.token.type != NumberToken:
+                self.error('Expected a numeric index, got "{0}" instead'.format(self.token))
+            index = self.token.value
+            self._data.next() # consume index bracket
+
+            if not self.token or self.token.value != ']':
+                self.error('Expected a closing bracket, got "{0}" instead'.format(self.token))
+            self._data.next() # consume close bracket
+
+        return Function(function, args, index)
 
     def parse_binary_right(self, prec, left):
         """Parse binary expression with precendence
@@ -365,9 +393,9 @@ class ExpressionParser(object):
         
         return Conditional(op_value, left, right, true, false)
 
-# str = '1.0 + node.attr * 55'
+# str = '1.0 + node.attr'
 # str = '1.0 + node.attr > 55 - 2 ? 2.5 + 3 : node.attr * 1'
 
-str = 'powers(2, 1)'
+str = 'powers(2, node.attr[0])[1] - 12.3'
 exp = ExpressionParser(str).parse()
 print exp
