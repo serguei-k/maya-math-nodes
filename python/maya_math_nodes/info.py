@@ -13,6 +13,13 @@ TYPE_SUFFIX_PER_TYPE = {
 
 OPERATORS = ['+', '/', '%', '*', '-']
 
+CompareOp = {
+    'name': 'math_Compare',
+    'attributes': ['input1', 'input2'],
+    'types': ['double', 'doubleAngle'],
+    'mixed_types': {}
+}
+
 FUNCTIONS = {
     # operators
     '+': {
@@ -45,7 +52,13 @@ FUNCTIONS = {
         'types': ['double', 'double3', 'doubleAngle', 'doubleLinear', 'int'],
         'mixed_types': {}
     },
-    
+    '>': CompareOp,
+    '<': CompareOp,
+    '>=': CompareOp,
+    '<=': CompareOp,
+    '==': CompareOp,
+    '!=': CompareOp,
+
     # functions
     'abs': {
         'name': 'math_Absolute',
@@ -71,5 +84,11 @@ FUNCTIONS = {
         'name': 'math_VectorLength',
         'attributes': ['input'],
         'types': ['double3']
+    },
+
+    'select': {
+        'name': 'math_Select',
+        'attributes': ['input1', 'input2'],
+        'types': ['double', 'double3', 'doubleAngle', 'doubleLinear', 'int']
     }
 }

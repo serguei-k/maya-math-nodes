@@ -11,6 +11,8 @@ import copy
 import functools
 import re
 
+from info import *
+
 OPERATORS = ['+', '/', '%', '*', '-']
 CONDITION = ['<', '>', '=', '!']
 TERNARY = ['?', ':']
@@ -35,9 +37,10 @@ CommaToken = 8
 class Number(object):
     def __init__(self, value):
         self.value = value
+        self.type = 'double' if '.' in value else 'int'
     
     def __repr__(self):
-        return '(Number: {0})'.format(self.value)
+        return '(Number: {0}({1}))'.format(self.type, self.value)
 
 class String(object):
     def __init__(self, value, index=None):
@@ -298,8 +301,8 @@ class ExpressionParser(object):
         if self.token and self.token.type == ConditionToken:
             left = self.parse_conditional(left)
 
-        if self.token:
-            self.error('Expected end of expression or another operator, got "{0}" instead'.format(self.token))
+        # if self.token:
+        #     self.error('Expected end of expression or another operator, got "{0}" instead'.format(self.token))
 
         return left
     
@@ -393,9 +396,150 @@ class ExpressionParser(object):
         
         return Conditional(op_value, left, right, true, false)
 
-# str = '1.0 + node.attr'
+str = '1 + 2.5 * 3'
 # str = '1.0 + node.attr > 55 - 2 ? 2.5 + 3 : node.attr * 1'
 
-str = 'powers(2, node.attr[0])[1] - 12.3'
+# str = 'powers(2, node.attr[0])[1] - 12.3'
+
+# str = '1 < 2.5 ? 3 : 1'
+
 exp = ExpressionParser(str).parse()
 print exp
+
+class NameGenerator(object):
+    """Name Generator"""
+    def __init__(self, base):
+        self._base = base
+        
+        self._counter_per_type = dict()
+        for node_type in [value['name'] for value in FUNCTIONS.values()]:
+            self._counter_per_type[node_type] = 0
+    
+    def get_name(self, node_type):
+        """Get last name for node of given type"""
+        index = self._counter_per_type[node_type]
+        suffix = node_type.split('_')[1][:3].upper()
+        return '{0}{1}_{2}'.format(self._base, index, suffix)
+    
+    def create_name(self, node_type):
+        """Create unique name for node of given type"""
+        index = self._counter_per_type[node_type]
+        self._counter_per_type[node_type] = index + 1
+        suffix = node_type.split('_')[1][:3].upper()
+        
+        return '{0}{1}_{2}'.format(self._base, index, suffix)
+
+class ExpresionBuilder(object):
+    """Expression Builder"""
+    def __init__(self, base_name):
+        self._nodes = []
+        self._connections = []
+        self._values = []
+        self._namer = NameGenerator(base_name)
+    
+    def generate(self, ast):
+        """Generate Maya data from AST"""
+        if isinstance(ast, Binary):
+            return self.generate_binary(ast)
+        elif isinstance(ast, Conditional):
+            return self.generate_conditional(ast)
+        elif isinstance(ast, Function):
+            pass
+        else:
+            return ast
+    
+    def set_node_values(self, attr, input):
+        """Set node values"""
+        if isinstance(input, Number):
+            self._values.append((attr, input.value))
+        elif isinstance(input, String):
+            self._connections.append((input.value, attr))
+        elif isinstance(input, basestring):
+            self._connections.append((input, attr))
+    
+    def get_value_type(self, value):
+        """Get value type"""
+        if isinstance(value, Number):
+            return value.type
+        elif isinstance(input, String):
+            node, attr = input.value.split('.')
+            return cmds.attributeQuery(attr, type=node, attributeType=True)
+        elif isinstance(input, basestring):
+            node, attr = input.split('.')
+            return cmds.attributeQuery(attr, type=node, attributeType=True)
+
+    def generate_conditional(self, ast):
+        """Generate Maya data for conditional abstract"""
+        operator_node_base_type = FUNCTIONS[ast.value]['name']
+        operator_node_name = self._namer.create_name(operator_node_base_type)
+        operator_node_type = '{0}'.format(operator_node_base_type)
+        self._nodes.append((operator_node_type, operator_node_name))
+
+        operations = ['==', '<', '>', '!=', '<=', '>=']
+        self._values.append((operations.index(ast.value), '{0}.operation'.format(operator_node_name)))
+
+        left = self.generate(ast.left)
+        self.set_node_values('{0}.input1'.format(operator_node_name), left)
+
+        right = self.generate(ast.right)
+        self.set_node_values('{0}.input2'.format(operator_node_name), right)
+        
+        select_node_base_type = 'math_Select'
+        select_node_name = self._namer.create_name(select_node_base_type)
+        select_node_type = '{0}'.format(select_node_base_type)
+        self._nodes.append((select_node_type, select_node_name))
+        self._values.append(('{0}.output'.format(operator_node_name), '{0}.condition'.format(select_node_name)))
+
+        true = self.generate(ast.true)
+        self.set_node_values('{0}.input1'.format(select_node_name), true)
+
+        false = self.generate(ast.false)
+        self.set_node_values('{0}.input2'.format(select_node_name), false)
+
+        return '{0}.output'.format(select_node_name)
+
+    def generate_binary(self, ast):
+        """Generate Maya data for binary abstract"""
+        left = self.generate(ast.left)
+        right = self.generate(ast.right)
+
+        left_type = self.get_value_type(left)
+        right_type = self.get_value_type(right)
+
+        operator_node_base_type = FUNCTIONS[ast.value]['name']
+        operator_node_name = self._namer.create_name(operator_node_base_type)
+        operator_node_type = '{0}{1}'.format(operator_node_base_type, TYPE_SUFFIX_PER_TYPE[left.type])
+        # operator_node_type = '{0}'.format(operator_node_base_type)
+        self._nodes.append((operator_node_type, operator_node_name))
+
+        self.set_node_values('{0}.input1'.format(operator_node_name), left)
+        self.set_node_values('{0}.input2'.format(operator_node_name), right)
+        
+        return '{0}.output'.format(operator_node_name)
+    
+    def build(self):
+        """Build Maya node network"""
+        import maya.cmds as cmds
+
+        for node_type, node_name in self._nodes:
+            cmds.createNode(node_type, name=node_name)
+        
+        for source, target in self._connections:
+            cmds.connectAttr(source, target, force=True)
+        
+        for attr, value in self._values:
+            if isinstance(value, list):
+                if len(value) == 16:
+                    cmds.setAttr(attr, *value, type='matrix')
+                else:
+                    cmds.setAttr(attr, *value)
+            else:
+                cmds.setAttr(attr, value)
+        
+        return self
+
+bld = ExpresionBuilder('test')
+bld.generate(exp)
+print bld._nodes
+print bld._connections
+print bld._values
