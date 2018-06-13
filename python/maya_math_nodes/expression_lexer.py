@@ -37,7 +37,16 @@ CommaToken = 8
 class Number(object):
     def __init__(self, value):
         self.value = value
-        self.type = 'double' if '.' in value else 'int'
+
+        if isinstance(value, list):
+            if len(value) == 3:
+                self.type = 'vector'
+            elif len(value) == 4:
+                self.type = 'quaternion'
+            else:
+                self.type = 'matrix'
+        else:
+            self.type = 'double' if '.' in value else 'int'
     
     def __repr__(self):
         return '(Number: {0}({1}))'.format(self.type, self.value)
@@ -93,6 +102,9 @@ class ExpressionStream(object):
     
     def peek(self):
         """Look ahead at next character in the stream"""
+        if self.end():
+            return None
+        
         return self._data[self._pos]
     
     def end(self):
@@ -151,6 +163,8 @@ class ExpressionLexer(object):
             return self.read_ternary()
         if self.is_bracket(char):
             return self.read_bracket()
+        if self.is_open_curly(char):
+            return self.read_curly()
         if char == ',':
             return Token(CommaToken, self._data.next())
         
@@ -217,7 +231,29 @@ class ExpressionLexer(object):
     def read_string(self):
         """Read string from stream"""
         return Token(StringToken, self.read_while(self.is_string))
+    
+    def is_open_curly(self, char):
+        """Check for open curly brance character"""
+        return char == '{'
+    
+    def is_not_close_curly(self, char):
+        """Check for close curly brance character"""
+        return char != '}'
+    
+    def read_curly(self):
+        """Read curly brace value from stream"""
+        self._data.next()  # ear open brace
+        value = self.read_while(self.is_not_close_curly)
+        
+        if self._data.peek() != '}':
+            self.error('Expected closing curly brance, got "{0}" instead'.format(self._data.peek()))
 
+        value = value.replace(' ', '').split(',')
+        if len(value) not in [3, 4, 16]:
+            self.error('Expected a vector, quaternion or matrix, got "{0}" instead'.format(value))
+        
+        self._data.next()  # ear close brace
+        return Token(NumberToken, value)
 
 class ExpressionParser(object):
     def __init__(self, token_stream):
@@ -396,7 +432,7 @@ class ExpressionParser(object):
         
         return Conditional(op_value, left, right, true, false)
 
-str = '1 + 2.5 * 3'
+str = '{0, 1, 0, 1} * 3'
 # str = '1.0 + node.attr > 55 - 2 ? 2.5 + 3 : node.attr * 1'
 
 # str = 'powers(2, node.attr[0])[1] - 12.3'
@@ -538,8 +574,8 @@ class ExpresionBuilder(object):
         
         return self
 
-bld = ExpresionBuilder('test')
-bld.generate(exp)
-print bld._nodes
-print bld._connections
-print bld._values
+# bld = ExpresionBuilder('test')
+# bld.generate(exp)
+# print bld._nodes
+# print bld._connections
+# print bld._values
