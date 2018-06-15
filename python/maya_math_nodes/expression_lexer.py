@@ -40,9 +40,9 @@ class Number(object):
 
         if isinstance(value, list):
             if len(value) == 3:
-                self.type = 'vector'
+                self.type = 'double3'
             elif len(value) == 4:
-                self.type = 'quaternion'
+                self.type = 'double4'
             else:
                 self.type = 'matrix'
         else:
@@ -432,15 +432,15 @@ class ExpressionParser(object):
         
         return Conditional(op_value, left, right, true, false)
 
-str = '{0, 1, 0, 1} * 3'
+# str = '{0, 1, 0, 1} * 3'
 # str = '1.0 + node.attr > 55 - 2 ? 2.5 + 3 : node.attr * 1'
 
 # str = 'powers(2, node.attr[0])[1] - 12.3'
 
 # str = '1 < 2.5 ? 3 : 1'
 
-exp = ExpressionParser(str).parse()
-print exp
+# exp = ExpressionParser(str).parse()
+# print exp
 
 class NameGenerator(object):
     """Name Generator"""
@@ -473,6 +473,9 @@ class ExpresionBuilder(object):
         self._values = []
         self._namer = NameGenerator(base_name)
     
+    def error(self, message):
+        raise RuntimeError(message)
+    
     def generate(self, ast):
         """Generate Maya data from AST"""
         if isinstance(ast, Binary):
@@ -480,7 +483,7 @@ class ExpresionBuilder(object):
         elif isinstance(ast, Conditional):
             return self.generate_conditional(ast)
         elif isinstance(ast, Function):
-            pass
+            return self.generate_function(ast)
         else:
             return ast
     
@@ -492,7 +495,7 @@ class ExpresionBuilder(object):
             self._connections.append((input.value, attr))
         elif isinstance(input, basestring):
             self._connections.append((input, attr))
-    
+
     def get_value_type(self, value):
         """Get value type"""
         if isinstance(value, Number):
@@ -503,28 +506,72 @@ class ExpresionBuilder(object):
         elif isinstance(input, basestring):
             node, attr = input.split('.')
             return cmds.attributeQuery(attr, type=node, attributeType=True)
-
-    def generate_conditional(self, ast):
-        """Generate Maya data for conditional abstract"""
+    
+    def is_type_compatible(self, node, left_type, right_type):
+        """Is value types compatible with a given node"""
+        if left_type in node['mixed_types'] and right_type in node['mixed_types'][left_type]:
+            return True
+        
+        return False
+    
+    def generate_function(self, ast):
+        """Generate Maya data for function abstract"""
+        if ast.value not in FUNCTIONS:
+            self.error('Function "{0}" does not exist'.format(ast.value))
+        
+        attributes = FUNCTIONS[ast.value]['attributes']
+        if len(ast.args) != len(attributes):
+            self.error('Number of arguments does not match, expected {0} got {1} instead'.format(len(attributes), len(ast.args)))
+        
+        primary_value_type = self.get_value_type(ast.args[0])
+        
         operator_node_base_type = FUNCTIONS[ast.value]['name']
         operator_node_name = self._namer.create_name(operator_node_base_type)
-        operator_node_type = '{0}'.format(operator_node_base_type)
+        operator_node_type = '{0}{1}'.format(operator_node_base_type, TYPE_SUFFIX_PER_TYPE[primary_value_type])
+        self._nodes.append((operator_node_type, operator_node_name))
+        
+        for index, arg_ast in enumerate(ast.args):
+            arg = self.generate(arg_ast)
+            arg_type = self.get_value_type(arg)
+            
+            self.set_node_values('{0}.{1}'.format(operator_node_name, attributes[index]), arg)
+        
+        return '{0}.output'.format(operator_node_name)
+            
+    
+    def generate_conditional(self, ast):
+        """Generate Maya data for conditional abstract"""
+        left = self.generate(ast.left)
+        right = self.generate(ast.right)
+
+        left_type = self.get_value_type(left)
+        right_type = self.get_value_type(right)
+        
+        if left_type not in FUNCTIONS[ast.value]['types']:
+            self.error('Operator "{0}" does not support left operand of type {1}'.format(ast.value, left_type))
+        
+        if left_type not in FUNCTIONS['select']['types']:
+            self.error('No selector found for values of type {0}'.format(left_type))
+        
+        if left_type != right_type:
+            self.error('Cannot compare values of different type "{0}" and {1}'.format(ast.value, left_type))
+        
+        operator_node_base_type = FUNCTIONS[ast.value]['name']
+        operator_node_name = self._namer.create_name(operator_node_base_type)
+        operator_node_type = '{0}{1}'.format(operator_node_base_type, TYPE_SUFFIX_PER_TYPE[left_type])
         self._nodes.append((operator_node_type, operator_node_name))
 
         operations = ['==', '<', '>', '!=', '<=', '>=']
         self._values.append((operations.index(ast.value), '{0}.operation'.format(operator_node_name)))
-
-        left = self.generate(ast.left)
+        
         self.set_node_values('{0}.input1'.format(operator_node_name), left)
-
-        right = self.generate(ast.right)
         self.set_node_values('{0}.input2'.format(operator_node_name), right)
         
         select_node_base_type = 'math_Select'
         select_node_name = self._namer.create_name(select_node_base_type)
-        select_node_type = '{0}'.format(select_node_base_type)
+        select_node_type = '{0}{1}'.format(select_node_base_type, TYPE_SUFFIX_PER_TYPE[left_type])
         self._nodes.append((select_node_type, select_node_name))
-        self._values.append(('{0}.output'.format(operator_node_name), '{0}.condition'.format(select_node_name)))
+        self.set_node_values('{0}.output'.format(operator_node_name), '{0}.condition'.format(select_node_name))
 
         true = self.generate(ast.true)
         self.set_node_values('{0}.input1'.format(select_node_name), true)
@@ -541,11 +588,19 @@ class ExpresionBuilder(object):
 
         left_type = self.get_value_type(left)
         right_type = self.get_value_type(right)
-
+        
+        if left_type not in FUNCTIONS[ast.value]['types']:
+            self.error('Operator "{0}" does not support left operand of type {1}'.format(ast.value, left_type))
+        
+        if left_type != right_type and not self.is_type_compatible(FUNCTIONS[ast.value], left_type, right_type):
+            self.error('Operator "{0}" does not support right operand of type {1}'.format(ast.value, left_type))
+        
         operator_node_base_type = FUNCTIONS[ast.value]['name']
         operator_node_name = self._namer.create_name(operator_node_base_type)
-        operator_node_type = '{0}{1}'.format(operator_node_base_type, TYPE_SUFFIX_PER_TYPE[left.type])
-        # operator_node_type = '{0}'.format(operator_node_base_type)
+        operator_node_type = '{0}{1}'.format(operator_node_base_type, TYPE_SUFFIX_PER_TYPE[left_type])
+        if left_type != right_type:
+            operator_node_type += 'By{0}'.format(TYPE_SUFFIX_PER_TYPE[right_type])
+        
         self._nodes.append((operator_node_type, operator_node_name))
 
         self.set_node_values('{0}.input1'.format(operator_node_name), left)

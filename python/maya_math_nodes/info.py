@@ -63,32 +63,38 @@ FUNCTIONS = {
     'abs': {
         'name': 'math_Absolute',
         'attributes': ['input'],
-        'types': ['double', 'doubleAngle', 'doubleLinear', 'int']
+        'types': ['double', 'doubleAngle', 'doubleLinear', 'int'],
+        'mixed_types': {}
     },
     'clamp': {
         'name': 'math_Clamp',
         'attributes': ['input', 'inputMin', 'inputMax'],
-        'types': ['double', 'doubleAngle', 'doubleLinear', 'int']
+        'types': ['double', 'doubleAngle', 'doubleLinear', 'int'],
+        'mixed_types': {}
     },
     'cross': {
         'name': 'math_CrossProduct',
         'attributes': ['input1', 'input2'],
-        'types': ['double3']
+        'types': ['double3'],
+        'mixed_types': {}
     },
     'dot': {
         'name': 'math_DotProduct',
         'attributes': ['input1', 'input2'],
-        'types': ['double3']
+        'types': ['double3'],
+        'mixed_types': {}
     },
     'length': {
         'name': 'math_VectorLength',
         'attributes': ['input'],
-        'types': ['double3']
+        'types': ['double3'],
+        'mixed_types': {}
     },
 
     'select': {
         'name': 'math_Select',
         'attributes': ['input1', 'input2'],
-        'types': ['double', 'double3', 'doubleAngle', 'doubleLinear', 'int']
+        'types': ['double', 'double3', 'doubleAngle', 'doubleLinear', 'int'],
+        'mixed_types': {}
     }
 }
