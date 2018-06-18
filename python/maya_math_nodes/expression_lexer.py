@@ -11,6 +11,8 @@ import copy
 import functools
 import re
 
+import maya.cmds as cmds
+
 from info import *
 
 OPERATORS = ['+', '/', '%', '*', '-']
@@ -24,6 +26,7 @@ PRECEDENCE = {
 }
 
 Token = collections.namedtuple('Token', ['type', 'value'])
+Attribute = collections.namedtuple('Attribute', ['type', 'value'])
 
 BraketToken = 0
 NumberToken = 1
@@ -45,8 +48,10 @@ class Number(object):
                 self.type = 'double4'
             else:
                 self.type = 'matrix'
+            self.value = [float(v) for v in value]
         else:
             self.type = 'double' if '.' in value else 'int'
+            self.value = float(value) if self.type == 'double' else int(value)
     
     def __repr__(self):
         return '(Number: {0}({1}))'.format(self.type, self.value)
@@ -491,24 +496,33 @@ class ExpresionBuilder(object):
         """Set node values"""
         if isinstance(input, Number):
             self._values.append((attr, input.value))
-        elif isinstance(input, String):
+        elif isinstance(input, String) or isinstance(input, Attribute):
             self._connections.append((input.value, attr))
         elif isinstance(input, basestring):
             self._connections.append((input, attr))
 
-    def get_value_type(self, value):
+    def get_value_type(self, input):
         """Get value type"""
-        if isinstance(value, Number):
-            return value.type
+        if isinstance(input, Number) or isinstance(input, Attribute):
+            return input.type
         elif isinstance(input, String):
             node, attr = input.value.split('.')
-            return cmds.attributeQuery(attr, type=node, attributeType=True)
+            attr_type = cmds.attributeQuery(attr, node=node, attributeType=True)
+            if attr_type == 'doubleLinear':
+                attr_type = 'double'
+            return attr_type
         elif isinstance(input, basestring):
             node, attr = input.split('.')
-            return cmds.attributeQuery(attr, type=node, attributeType=True)
+            attr_type = cmds.attributeQuery(attr, node=node, attributeType=True)
+            if attr_type == 'doubleLinear':
+                attr_type = 'double'
+            return attr_type
     
     def is_type_compatible(self, node, left_type, right_type):
         """Is value types compatible with a given node"""
+        if left_type == right_type:
+            return True
+        
         if left_type in node['mixed_types'] and right_type in node['mixed_types'][left_type]:
             return True
         
@@ -527,7 +541,11 @@ class ExpresionBuilder(object):
         
         operator_node_base_type = FUNCTIONS[ast.value]['name']
         operator_node_name = self._namer.create_name(operator_node_base_type)
-        operator_node_type = '{0}{1}'.format(operator_node_base_type, TYPE_SUFFIX_PER_TYPE[primary_value_type])
+        
+        if len(FUNCTIONS[ast.value]['types']) == 1:
+	  operator_node_type = operator_node_base_type
+        else:
+	  operator_node_type = '{0}{1}'.format(operator_node_base_type, TYPE_SUFFIX_PER_TYPE[primary_value_type])
         self._nodes.append((operator_node_type, operator_node_name))
         
         for index, arg_ast in enumerate(ast.args):
@@ -536,8 +554,8 @@ class ExpresionBuilder(object):
             
             self.set_node_values('{0}.{1}'.format(operator_node_name, attributes[index]), arg)
         
-        return '{0}.output'.format(operator_node_name)
-            
+        attr_type = cmds.attributeQuery('output', type=operator_node_type, attributeType=True)
+        return Attribute(attr_type, '{0}.output'.format(operator_node_name))
     
     def generate_conditional(self, ast):
         """Generate Maya data for conditional abstract"""
@@ -554,7 +572,7 @@ class ExpresionBuilder(object):
             self.error('No selector found for values of type {0}'.format(left_type))
         
         if left_type != right_type:
-            self.error('Cannot compare values of different type "{0}" and {1}'.format(ast.value, left_type))
+            self.error('Cannot compare values of different type "{0}" and {1}'.format(left_type, right_type))
         
         operator_node_base_type = FUNCTIONS[ast.value]['name']
         operator_node_name = self._namer.create_name(operator_node_base_type)
@@ -562,7 +580,7 @@ class ExpresionBuilder(object):
         self._nodes.append((operator_node_type, operator_node_name))
 
         operations = ['==', '<', '>', '!=', '<=', '>=']
-        self._values.append((operations.index(ast.value), '{0}.operation'.format(operator_node_name)))
+        self._values.append(('{0}.operation'.format(operator_node_name), operations.index(ast.value)))
         
         self.set_node_values('{0}.input1'.format(operator_node_name), left)
         self.set_node_values('{0}.input2'.format(operator_node_name), right)
@@ -571,7 +589,7 @@ class ExpresionBuilder(object):
         select_node_name = self._namer.create_name(select_node_base_type)
         select_node_type = '{0}{1}'.format(select_node_base_type, TYPE_SUFFIX_PER_TYPE[left_type])
         self._nodes.append((select_node_type, select_node_name))
-        self.set_node_values('{0}.output'.format(operator_node_name), '{0}.condition'.format(select_node_name))
+        self.set_node_values('{0}.condition'.format(select_node_name), '{0}.output'.format(operator_node_name))
 
         true = self.generate(ast.true)
         self.set_node_values('{0}.input1'.format(select_node_name), true)
@@ -579,7 +597,7 @@ class ExpresionBuilder(object):
         false = self.generate(ast.false)
         self.set_node_values('{0}.input2'.format(select_node_name), false)
 
-        return '{0}.output'.format(select_node_name)
+        return Attribute(left_type, '{0}.output'.format(select_node_name))
 
     def generate_binary(self, ast):
         """Generate Maya data for binary abstract"""
@@ -590,10 +608,10 @@ class ExpresionBuilder(object):
         right_type = self.get_value_type(right)
         
         if left_type not in FUNCTIONS[ast.value]['types']:
-            self.error('Operator "{0}" does not support left operand of type {1}'.format(ast.value, left_type))
+            self.error('Operator "{0}" does not support left operand of type "{1}"'.format(ast.value, left_type))
         
-        if left_type != right_type and not self.is_type_compatible(FUNCTIONS[ast.value], left_type, right_type):
-            self.error('Operator "{0}" does not support right operand of type {1}'.format(ast.value, left_type))
+        if not self.is_type_compatible(FUNCTIONS[ast.value], left_type, right_type):
+            self.error('Operator "{0} {1}" does not support right operand of type "{2}"'.format(left_type, ast.value, right_type))
         
         operator_node_base_type = FUNCTIONS[ast.value]['name']
         operator_node_name = self._namer.create_name(operator_node_base_type)
@@ -606,7 +624,7 @@ class ExpresionBuilder(object):
         self.set_node_values('{0}.input1'.format(operator_node_name), left)
         self.set_node_values('{0}.input2'.format(operator_node_name), right)
         
-        return '{0}.output'.format(operator_node_name)
+        return Attribute(left_type, '{0}.output'.format(operator_node_name))
     
     def build(self):
         """Build Maya node network"""
