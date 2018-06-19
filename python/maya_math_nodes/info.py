@@ -1,6 +1,8 @@
 # Copyright (c) 2018 Serguei Kalentchouk et al. All rights reserved.
 # Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 
+NUMERIC_POD_TYPES = ['double', 'int', 'doubleAngle', 'doubleLinear']
+
 TYPE_SUFFIX_PER_TYPE = {
     'double': '',
     'double3': 'Vector',

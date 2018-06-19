@@ -28,7 +28,7 @@ PRECEDENCE = {
 Token = collections.namedtuple('Token', ['type', 'value'])
 Attribute = collections.namedtuple('Attribute', ['type', 'value'])
 
-BraketToken = 0
+BracketToken = 0
 NumberToken = 1
 OperatorToken = 2
 ConditionToken = 3
@@ -132,8 +132,11 @@ class ExpressionLexer(object):
     
     def next(self):
         """Read next token from stream"""
-        self._next = None
-        self._current = self.read_next()
+        if self._next:
+            self._current = self._next
+            self._next = None
+        else:
+            self._current = self.read_next()
         return self._current
 
     def peek(self):
@@ -157,10 +160,7 @@ class ExpressionLexer(object):
 
         char = self._data.peek()
         if self.is_string(char):
-            token = self.read_string()
-            if self._data.peek() == '(':
-                token = Token(FunctionToken, token.value)
-            return token
+            return self.read_string()
         if self.is_digit(char):
             return self.read_number()
         if self.is_operator(char):
@@ -230,7 +230,7 @@ class ExpressionLexer(object):
     
     def read_bracket(self):
         """Read bracket from stream"""
-        return Token(BraketToken, self._data.next())
+        return Token(BracketToken, self._data.next())
     
     def is_string(self, char):
         """Check for string character"""
@@ -327,10 +327,14 @@ class ExpressionParser(object):
         if self.token.type == NumberToken:
             return self.parse_number()
         elif self.token.type == StringToken:
+            # special case for function calls
+            next = self._data.peek()
+            if next and next.type == BracketToken and next.value == '(':
+                return self.parse_function()
             return self.parse_string()
         elif self.token.type == FunctionToken:
             return self.parse_function()
-        elif self.token.type == BraketToken and self.token.value == '(':
+        elif self.token.type == BracketToken and self.token.value == '(':
             return self.parse_parentheses()
         elif self.token.type == OperatorToken and self.token.value == '-':
             # special case for negative values
@@ -531,10 +535,14 @@ class ExpresionBuilder(object):
                 attr_type = 'double'
             return attr_type
     
-    def is_type_compatible(self, node, left_type, right_type):
+    def is_type_compatible(self, node, left_type, right_type, cast_ok=False):
         """Is value types compatible with a given node"""
         if left_type == right_type:
             return True
+        
+        if cast_ok:
+            if left_type in NUMERIC_POD_TYPES and right_type in NUMERIC_POD_TYPES:
+                return True 
         
         if left_type in node['mixed_types'] and right_type in node['mixed_types'][left_type]:
             return True
@@ -623,8 +631,8 @@ class ExpresionBuilder(object):
         if left_type not in FUNCTIONS[ast.value]['types']:
             self.error('Operator "{0}" does not support left operand of type "{1}"'.format(ast.value, left_type))
         
-        if not self.is_type_compatible(FUNCTIONS[ast.value], left_type, right_type):
-            self.error('Operator "{0} {1}" does not support right operand of type "{2}"'.format(left_type, ast.value, right_type))
+        if not self.is_type_compatible(FUNCTIONS[ast.value], left_type, right_type, isinstance(right, Number)):
+            self.error('Operands of different types "{0} {1} {2}" are not support'.format(left_type, ast.value, right_type))
         
         operator_node_base_type = FUNCTIONS[ast.value]['name']
         operator_node_name = self._namer.create_name(operator_node_base_type)
