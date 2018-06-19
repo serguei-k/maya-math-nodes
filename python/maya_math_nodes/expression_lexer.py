@@ -523,14 +523,12 @@ class ExpresionBuilder(object):
         if isinstance(input, Number) or isinstance(input, Attribute):
             return input.type
         elif isinstance(input, String):
-            node, attr = input.value.split('.')
-            attr_type = cmds.attributeQuery(attr, node=node, attributeType=True)
+            attr_type = cmds.getAttr(input.value, type=True)
             if attr_type == 'doubleLinear':
                 attr_type = 'double'
             return attr_type
         elif isinstance(input, basestring):
-            node, attr = input.split('.')
-            attr_type = cmds.attributeQuery(attr, node=node, attributeType=True)
+            attr_type = cmds.getAttr(input, type=True)
             if attr_type == 'doubleLinear':
                 attr_type = 'double'
             return attr_type
@@ -556,7 +554,7 @@ class ExpresionBuilder(object):
         
         attributes = FUNCTIONS[ast.value]['attributes']
         if len(ast.args) != len(attributes):
-            self.error('Number of arguments does not match, expected {0} got {1} instead'.format(len(attributes), len(ast.args)))
+            self.error('Number of arguments does not match, expected "{0}" got "{1}" instead'.format(len(attributes), len(ast.args)))
         
         primary_value_type = self.get_value_type(ast.args[0])
         
@@ -564,9 +562,9 @@ class ExpresionBuilder(object):
         operator_node_name = self._namer.create_name(operator_node_base_type)
         
         if len(FUNCTIONS[ast.value]['types']) == 1:
-	  operator_node_type = operator_node_base_type
+            operator_node_type = operator_node_base_type
         else:
-	  operator_node_type = '{0}{1}'.format(operator_node_base_type, TYPE_SUFFIX_PER_TYPE[primary_value_type])
+            operator_node_type = '{0}{1}'.format(operator_node_base_type, TYPE_SUFFIX_PER_TYPE[primary_value_type])
         self._nodes.append((operator_node_type, operator_node_name))
         
         for index, arg_ast in enumerate(ast.args):

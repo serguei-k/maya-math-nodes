@@ -92,7 +92,12 @@ FUNCTIONS = {
         'types': ['double3'],
         'mixed_types': {}
     },
-
+    'maxelement': {
+        'name': 'math_MaxElement',
+        'attributes': ['input'],
+        'types': ['double', 'doubleAngle', 'int'],
+        'mixed_types': {}
+    },
     'select': {
         'name': 'math_Select',
         'attributes': ['input1', 'input2'],
