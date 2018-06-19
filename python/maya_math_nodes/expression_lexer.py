@@ -53,6 +53,9 @@ class Number(object):
             self.type = 'double' if '.' in value else 'int'
             self.value = float(value) if self.type == 'double' else int(value)
     
+    def negate(self):
+        self.value = self.value * -1
+    
     def __repr__(self):
         return '(Number: {0}({1}))'.format(self.type, self.value)
 
@@ -193,9 +196,9 @@ class ExpressionLexer(object):
             return True
         return char.isdigit()
     
-    def read_number(self):
+    def read_number(self, negate=''):
         """Read number from stream"""
-        return Token(NumberToken, self.read_while(functools.partial(self.is_digit, dot_ok=True)))
+        return Token(NumberToken, negate + self.read_while(functools.partial(self.is_digit, dot_ok=True)))
 
     def is_operator(self, char):
         """Check for operator character"""
@@ -319,7 +322,7 @@ class ExpressionParser(object):
         Consumes current token!
         """
         if not self.token:
-            self.error('Expected a valid token, got None instead')
+            self.error('Expected a valid token, got "None" instead')
         
         if self.token.type == NumberToken:
             return self.parse_number()
@@ -329,13 +332,23 @@ class ExpressionParser(object):
             return self.parse_function()
         elif self.token.type == BraketToken and self.token.value == '(':
             return self.parse_parentheses()
+        elif self.token.type == OperatorToken and self.token.value == '-':
+            # special case for negative values
+            self._data.next()  # consume negate
+            
+            if self.token.type == NumberToken:
+                number = self.parse_number()
+                number.negate()
+                return number
+            else:
+                self.error('Expected a number after negate, got "{0}" instead'.format(self.token.value))
         else:
             self.error('Could not handle token "{0}"'.format(self.token))
     
     def parse_expression(self):
         """Parse expression"""
         left = self.parse_element()
-
+        
         if self.token and self.token.type == OperatorToken:
             left = self.parse_binary_right(0, left)
         
