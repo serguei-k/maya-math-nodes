@@ -236,13 +236,16 @@ class ExpressionLexer(object):
         """Read bracket from stream"""
         return Token(BracketToken, self._data.next())
     
-    def is_string(self, char):
+    def is_string(self, char, strict=True):
         """Check for string character"""
-        return char.isalpha() or char == '.'
+        if strict:
+            return char.isalpha()
+        
+        return char.isalnum() or char in ['.', '_', ':']
     
     def read_string(self):
         """Read string from stream"""
-        return Token(StringToken, self.read_while(self.is_string))
+        return Token(StringToken, self.read_while(functools.partial(self.is_string, strict=False)))
     
     def is_open_curly(self, char):
         """Check for open curly brance character"""
