@@ -16,7 +16,7 @@ TYPE_SUFFIX_PER_TYPE = {
 OPERATORS = ['+', '/', '%', '*', '-']
 
 CompareOp = {
-    'name': 'math_Compare',
+    'name': 'math_Compare{0}',
     'attributes': ['input1', 'input2'],
     'types': ['double', 'doubleAngle'],
     'mixed_types': {}
@@ -25,13 +25,13 @@ CompareOp = {
 FUNCTIONS = {
     # operators
     '+': {
-        'name': 'math_Add',
+        'name': 'math_Add{0}',
         'attributes': ['input1', 'input2'],
         'types': ['double', 'double3', 'doubleAngle', 'doubleLinear', 'int'],
         'mixed_types': {}
     },
     '/': {
-        'name': 'math_Divide',
+        'name': 'math_Divide{0}',
         'attributes': ['input1', 'input2'],
         'types': ['double', 'doubleAngle', 'doubleLinear', 'int'],
         'mixed_types': {'double': ['int'], 'doubleAngle': ['int']}
@@ -43,13 +43,13 @@ FUNCTIONS = {
         'mixed_types': {}
     },
     '*': {
-        'name': 'math_Multiply',
+        'name': 'math_Multiply{0}',
         'attributes': ['input1', 'input2'],
         'types': ['double', 'double3', 'doubleAngle', 'doubleLinear', 'int', 'matrix', 'quaternion'],
         'mixed_types': {'double': ['int'], 'double3': ['matrix'], 'doubleAngle': ['int'], 'doubleLinear': ['int']}
     },
     '-': {
-        'name': 'math_Subtract',
+        'name': 'math_Subtract{0}',
         'attributes': ['input1', 'input2'],
         'types': ['double', 'double3', 'doubleAngle', 'doubleLinear', 'int'],
         'mixed_types': {}
@@ -63,13 +63,13 @@ FUNCTIONS = {
 
     # functions
     'abs': {
-        'name': 'math_Absolute',
+        'name': 'math_Absolute{0}',
         'attributes': ['input'],
         'types': ['double', 'doubleAngle', 'doubleLinear', 'int'],
         'mixed_types': {}
     },
     'clamp': {
-        'name': 'math_Clamp',
+        'name': 'math_Clamp{0}',
         'attributes': ['input', 'inputMin', 'inputMax'],
         'types': ['double', 'doubleAngle', 'doubleLinear', 'int'],
         'mixed_types': {}
@@ -93,13 +93,19 @@ FUNCTIONS = {
         'mixed_types': {}
     },
     'maxelement': {
-        'name': 'math_MaxElement',
+        'name': 'math_Max{0}Element',
         'attributes': ['input'],
         'types': ['double', 'doubleAngle', 'int'],
         'mixed_types': {}
     },
+    'normalizearray': {
+        'name': 'math_NormalizeArray',
+        'attributes': ['input'],
+        'types': ['double'],
+        'mixed_types': {}
+    },
     'select': {
-        'name': 'math_Select',
+        'name': 'math_Select{0}',
         'attributes': ['input1', 'input2'],
         'types': ['double', 'double3', 'doubleAngle', 'doubleLinear', 'int'],
         'mixed_types': {}

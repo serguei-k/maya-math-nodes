@@ -61,11 +61,15 @@ class Number(object):
 
 class String(object):
     def __init__(self, value, index=None):
-        self.value = value
+        self._value = value
         self.index = index
     
+    @property
+    def value(self):
+        return '{0}{1}'.format(self._value, '[{0}]'.format(self.index) if self.index else '')
+    
     def __repr__(self):
-        return '(String: {0}{1})'.format(self.value, '[{0}]'.format(self.index) if self.index else '')
+        return '(String: {0})'.format(self.value)
 
 class Binary(object):
     def __init__(self, value, left, right):
@@ -387,15 +391,37 @@ class ExpressionParser(object):
             self.error('Expected function call parentheses, got "{0}" instead'.format(self.token))
         
         args = []
+        args_nested = []
+        arg_is_list = False
         self._data.next()  # consume open paren
         while True:
+            if self.token and self.token.value == '[':
+                arg_is_list = True
+                self._data.next()  # consume open bracket
+            
             arg = self.parse_expression()
             if not arg:
-                self.error('Expected a valid argument, got "None" istead')
+                self.error('Expected a valid argument, got "None" instead')
             
-            args.append(arg)
-
-            if self.token and self.token.value == ')':
+            if arg_is_list:
+                args_nested.append(arg)
+            else:
+                args.append(arg)
+            
+            if self.token and self.token.value == ']':
+                self._data.next()  # consume close bracket
+                
+                if self.token and self.token.value in [',', ')']:
+                    prev_token = self.token
+                    self._data.next()  # consume comma or close paren
+                    args.append(args_nested)
+                    arts_nested = []
+                    arg_is_list = False
+                    if prev_token.value == ')':
+                        break
+                else:
+                    self.error('Expected comma or closing parenthesis, got "{0}" instead'.format(next)) 
+            elif self.token and self.token.value == ')':
                 self._data.next()  # consume close paren
                 break
             elif self.token and self.token.value == ',':
@@ -409,11 +435,11 @@ class ExpressionParser(object):
             if not self.token or self.token.type != NumberToken:
                 self.error('Expected a numeric index, got "{0}" instead'.format(self.token))
             index = self.token.value
-            self._data.next() # consume index bracket
+            self._data.next()  # consume index
 
             if not self.token or self.token.value != ']':
                 self.error('Expected a closing bracket, got "{0}" instead'.format(self.token))
-            self._data.next() # consume close bracket
+            self._data.next()  # consume close bracket
 
         return Function(function, args, index)
 
@@ -556,7 +582,10 @@ class ExpresionBuilder(object):
         if len(ast.args) != len(attributes):
             self.error('Number of arguments does not match, expected "{0}" got "{1}" instead'.format(len(attributes), len(ast.args)))
         
-        primary_value_type = self.get_value_type(ast.args[0])
+        if isinstance(ast.args[0], list):
+            primary_value_type = self.get_value_type(ast.args[0][0])
+        else:
+            primary_value_type = self.get_value_type(ast.args[0])
         
         operator_node_base_type = FUNCTIONS[ast.value]['name']
         operator_node_name = self._namer.create_name(operator_node_base_type)
@@ -564,17 +593,25 @@ class ExpresionBuilder(object):
         if len(FUNCTIONS[ast.value]['types']) == 1:
             operator_node_type = operator_node_base_type
         else:
-            operator_node_type = '{0}{1}'.format(operator_node_base_type, TYPE_SUFFIX_PER_TYPE[primary_value_type])
+            operator_node_type = operator_node_base_type.format(TYPE_SUFFIX_PER_TYPE[primary_value_type])
         self._nodes.append((operator_node_type, operator_node_name))
         
         for index, arg_ast in enumerate(ast.args):
-            arg = self.generate(arg_ast)
-            arg_type = self.get_value_type(arg)
-            
-            self.set_node_values('{0}.{1}'.format(operator_node_name, attributes[index]), arg)
+            if isinstance(arg_ast, list):
+                for array_index, array_arg_ast in enumerate(arg_ast):
+                    arg = self.generate(array_arg_ast)
+                    arg_type = self.get_value_type(arg)
+                    
+                    self.set_node_values('{0}.{1}'.format(operator_node_name, '{0}[{1}]'.format(attributes[index], array_index)), arg)
+            else:
+                arg = self.generate(arg_ast)
+                arg_type = self.get_value_type(arg)
+                
+                self.set_node_values('{0}.{1}'.format(operator_node_name, attributes[index]), arg)
         
+        index = '[{0}]'.format(ast.index) if ast.index else ''
         attr_type = cmds.attributeQuery('output', type=operator_node_type, attributeType=True)
-        return Attribute(attr_type, '{0}.output'.format(operator_node_name))
+        return Attribute(attr_type, '{0}.output{1}'.format(operator_node_name, index))
     
     def generate_conditional(self, ast):
         """Generate Maya data for conditional abstract"""
@@ -595,7 +632,7 @@ class ExpresionBuilder(object):
         
         operator_node_base_type = FUNCTIONS[ast.value]['name']
         operator_node_name = self._namer.create_name(operator_node_base_type)
-        operator_node_type = '{0}{1}'.format(operator_node_base_type, TYPE_SUFFIX_PER_TYPE[left_type])
+        operator_node_type = operator_node_base_type.format(TYPE_SUFFIX_PER_TYPE[left_type])
         self._nodes.append((operator_node_type, operator_node_name))
 
         operations = ['==', '<', '>', '!=', '<=', '>=']
@@ -606,7 +643,7 @@ class ExpresionBuilder(object):
         
         select_node_base_type = 'math_Select'
         select_node_name = self._namer.create_name(select_node_base_type)
-        select_node_type = '{0}{1}'.format(select_node_base_type, TYPE_SUFFIX_PER_TYPE[left_type])
+        select_node_type = select_node_base_type.format(TYPE_SUFFIX_PER_TYPE[left_type])
         self._nodes.append((select_node_type, select_node_name))
         self.set_node_values('{0}.condition'.format(select_node_name), '{0}.output'.format(operator_node_name))
 
@@ -634,7 +671,7 @@ class ExpresionBuilder(object):
         
         operator_node_base_type = FUNCTIONS[ast.value]['name']
         operator_node_name = self._namer.create_name(operator_node_base_type)
-        operator_node_type = '{0}{1}'.format(operator_node_base_type, TYPE_SUFFIX_PER_TYPE[left_type])
+        operator_node_type = operator_node_base_type.format(TYPE_SUFFIX_PER_TYPE[left_type])
         if left_type != right_type:
             operator_node_type += 'By{0}'.format(TYPE_SUFFIX_PER_TYPE[right_type])
         
