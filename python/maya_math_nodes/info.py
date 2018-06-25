@@ -68,10 +68,58 @@ FUNCTIONS = {
         'types': ['double', 'doubleAngle', 'doubleLinear', 'int'],
         'mixed_types': {}
     },
+    'acos': {
+        'name': 'math_Acos',
+        'attributes': ['input'],
+        'types': ['double'],
+        'mixed_types': {}
+    },
+    'angleBetween': {
+        'name': 'math_AngleVectors',
+        'attributes': ['input1', 'input2'],
+        'types': ['double3'],
+        'mixed_types': {}
+    },
+    'asin': {
+        'name': 'math_Asin',
+        'attributes': ['input'],
+        'types': ['double'],
+        'mixed_types': {}
+    },
+    'atan': {
+        'name': 'math_Atan',
+        'attributes': ['input'],
+        'types': ['double'],
+        'mixed_types': {}
+    },
+    'atan2': {
+        'name': 'math_Atan2',
+        'attributes': ['input1', 'input2'],
+        'types': ['double'],
+        'mixed_types': {}
+    },
+    'axisFromMatrix': {
+        'name': 'math_AxisFromMatrix',
+        'attributes': ['input', 'axis'],
+        'types': ['matrix'],
+        'mixed_types': {}
+    },
+    'ceil': {
+        'name': 'math_Ceil{0}',
+        'attributes': ['input'],
+        'types': ['double', 'doubleAngle'],
+        'mixed_types': {}
+    },
     'clamp': {
         'name': 'math_Clamp{0}',
         'attributes': ['input', 'inputMin', 'inputMax'],
         'types': ['double', 'doubleAngle', 'doubleLinear', 'int'],
+        'mixed_types': {}
+    },
+    'cos': {
+        'name': 'math_CosAngle',
+        'attributes': ['input'],
+        'types': ['doubleAngle'],
         'mixed_types': {}
     },
     'cross': {
@@ -86,10 +134,46 @@ FUNCTIONS = {
         'types': ['double3'],
         'mixed_types': {}
     },
+    'distance': {
+        'name': 'math_Distance{0}',
+        'attributes': ['input1', 'input2'],
+        'types': ['double3', 'matrix'],
+        'mixed_types': {}
+    },
+    'floor': {
+        'name': 'math_Floor{0}',
+        'attributes': ['input'],
+        'types': ['double', 'doubleAngle'],
+        'mixed_types': {}
+    },
+    'inverse': {
+        'name': 'math_Inverse{0}',
+        'attributes': ['input'],
+        'types': ['matrix', 'quaternion', 'rotation'],
+        'mixed_types': {}
+    },
+    'lerp': {
+        'name': 'math_Lerp{0}',
+        'attributes': ['input1', 'input2', 'alpha'],
+        'types': ['double', 'double3', 'doubleAngle', 'matrix'],
+        'mixed_types': {}
+    },
     'length': {
         'name': 'math_VectorLength',
         'attributes': ['input'],
         'types': ['double3'],
+        'mixed_types': {}
+    },
+    'lengthSquared': {
+        'name': 'math_VectorLengthSquared',
+        'attributes': ['input'],
+        'types': ['double3'],
+        'mixed_types': {}
+    },
+    'max': {
+        'name': 'math_Max{0}',
+        'attributes': ['input1', 'input2'],
+        'types': ['double', 'doubleAngle', 'int'],
         'mixed_types': {}
     },
     'maxelement': {
@@ -98,16 +182,88 @@ FUNCTIONS = {
         'types': ['double', 'doubleAngle', 'int'],
         'mixed_types': {}
     },
-    'normalizearray': {
+    'min': {
+        'name': 'math_Min{0}',
+        'attributes': ['input1', 'input2'],
+        'types': ['double', 'doubleAngle', 'int'],
+        'mixed_types': {}
+    },
+    'minelement': {
+        'name': 'math_Min{0}Element',
+        'attributes': ['input'],
+        'types': ['double', 'doubleAngle', 'int'],
+        'mixed_types': {}
+    },
+    'negate': {
+        'name': 'math_Negate{0}',
+        'attributes': ['input'],
+        'types': ['double', 'double3', 'doubleAngle', 'int'],
+        'mixed_types': {}
+    },
+    'normalize': {
+        'name': 'math_NormalizeVector',
+        'attributes': ['input'],
+        'types': ['double3'],
+        'mixed_types': {}
+    },
+    'normalizeArray': {
         'name': 'math_NormalizeArray',
         'attributes': ['input'],
         'types': ['double'],
         'mixed_types': {}
     },
+    'pow': {
+        'name': 'math_Power',
+        'attributes': ['input', 'exponent'],
+        'types': ['double'],
+        'mixed_types': {}
+    },
+    'quat': {
+        'name': 'math_QuaternionFrom{0}',
+        'attributes': ['input', 'rotationOrder'],
+        'types': ['matrix', 'rotation'],
+        'mixed_types': {}
+    },
+    'rot': {
+        'name': 'math_RotationFrom{0}',
+        'attributes': ['input', 'rotationOrder'],
+        'types': ['matrix', 'quaternion'],
+        'mixed_types': {}
+    },
+    'round': {
+        'name': 'math_Round',
+        'attributes': ['input'],
+        'types': ['double', 'doubleAngle'],
+        'mixed_types': {}
+    },
     'select': {
         'name': 'math_Select{0}',
-        'attributes': ['input1', 'input2'],
-        'types': ['double', 'double3', 'doubleAngle', 'doubleLinear', 'int'],
+        'attributes': ['input1', 'input2', 'condition'],
+        'types': ['double', 'double3', 'doubleAngle', 'doubleLinear', 'int', 'matrix', 'quaternion', 'rotation'],
         'mixed_types': {}
     }
+    'sin': {
+        'name': 'math_SinAngle',
+        'attributes': ['input'],
+        'types': ['doubleAngle'],
+        'mixed_types': {}
+    },
+    'tan': {
+        'name': 'math_TanAngle',
+        'attributes': ['input'],
+        'types': ['doubleAngle'],
+        'mixed_types': {}
+    },
+    'slerp': {
+        'name': 'math_SlerpQuaternion',
+        'attributes': ['input1', 'input2', 'alpha', 'interpolationType'],
+        'types': ['quaternion'],
+        'mixed_types': {}
+    },
+    'twist': {
+        'name': 'math_TwistFrom{0}',
+        'attributes': ['input', 'axis', 'rotationOrder'],
+        'types': ['matrix', 'rotation'],
+        'mixed_types': {}
+    },
 }
