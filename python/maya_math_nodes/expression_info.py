@@ -33,11 +33,11 @@ FUNCTIONS = {
     '/': {
         'name': 'math_Divide{0}',
         'attributes': ['input1', 'input2'],
-        'types': ['double', 'doubleAngle', 'doubleLinear', 'int'],
+        'types': ['double', 'doubleAngle', 'doubleLinear'],
         'mixed_types': {'double': ['int'], 'doubleAngle': ['int']}
     },
     '%': {
-        'name': 'math_Modulus',
+        'name': 'math_ModulusInt',
         'attributes': ['input'],
         'types': ['int'],
         'mixed_types': {}
@@ -241,7 +241,7 @@ FUNCTIONS = {
         'attributes': ['input1', 'input2', 'condition'],
         'types': ['double', 'double3', 'doubleAngle', 'doubleLinear', 'int', 'matrix', 'quaternion', 'rotation'],
         'mixed_types': {}
-    }
+    },
     'sin': {
         'name': 'math_SinAngle',
         'attributes': ['input'],
