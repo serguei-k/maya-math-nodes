@@ -117,6 +117,34 @@ class ExpresionBuilder(object):
                 attr_type = 'double'
             return attr_type
     
+    def resolve_operand_types(self, operator, left, right):
+        """Resolve operand types"""
+        node = FUNCTIONS[operator]
+
+        left_type = self.get_value_type(left)
+        right_type = self.get_value_type(right)
+        
+        # cast left operand to double if no type specific node exists
+        if left_type not in node['types']:
+            if isinstance(left, Number) and left_type in NUMERIC_POD_TYPES:
+                left_type = 'double'
+            else:
+                raise RuntimeError('Operands of different types "{0} {1} {2}" are not supported'.format(left_type, operator, right_type))
+
+        if left_type == right_type:
+            return left_type, right_type
+
+        # check if mixed type node exist for this pair
+        if left_type in node['mixed_types'] and right_type in node['mixed_types'][left_type]:
+            return left_type, right_type
+        
+        # otherwise cast right to left
+        right_cast_ok = isinstance(left, Number) and right_type in NUMERIC_POD_TYPES
+        if right_cast_ok:
+            return left_type, left_type
+        else:
+            raise RuntimeError('Operands of different types "{0} {1} {2}" are not supported'.format(left_type, operator, right_type))
+
     def is_type_compatible(self, node, left_type, right_type, cast_ok=False):
         """Check if value types is compatible with a given node
         
@@ -255,17 +283,7 @@ class ExpresionBuilder(object):
         left = self.generate(ast.left)
         right = self.generate(ast.right)
 
-        left_type = self.get_value_type(left)
-        right_type = self.get_value_type(right)
-        
-        if left_type not in FUNCTIONS[ast.value]['types']:
-            if isinstance(left, Number) and left_type in NUMERIC_POD_TYPES:
-                left_type = 'double'
-            else:
-                raise RuntimeError('Operands of different types "{0} {1} {2}" are not support'.format(left_type, ast.value, right_type))
-        
-        if not self.is_type_compatible(FUNCTIONS[ast.value], left_type, right_type, isinstance(right, Number)):
-            raise RuntimeError('Operands of different types "{0} {1} {2}" are not support'.format(left_type, ast.value, right_type))
+        left_type, right_type = self.resolve_operand_types(ast.value, left, right)
         
         operator_node_base_type = FUNCTIONS[ast.value]['name']
         operator_node_name = self._namer.get_name(operator_node_base_type)
@@ -273,6 +291,12 @@ class ExpresionBuilder(object):
         if left_type != right_type:
             operator_node_type += 'By{0}'.format(TYPE_SUFFIX_PER_TYPE[right_type])
         
+        try:
+            cmds.nodeType(operator_node_type, isTypeName=True)
+        except RuntimeError:
+            raise RuntimeError('Binary operation generated unrecognized node type "{0}" for "{1} {2} {3}"'.format(
+                operator_node_type, left_type, ast.value, right_type))
+
         self._nodes.append((operator_node_type, operator_node_name))
 
         self.set_node_values('{0}.input1'.format(operator_node_name), left)
