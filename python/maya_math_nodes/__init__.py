@@ -3,19 +3,25 @@
 import expression_builder
 import expression_parser
 
-def eval_expression(expression, base_node_name, name_generator=expression_builder.NodeNameGenerator):
+NodeNameGenerator = expression_builder.NodeNameGenerator
+
+
+def eval_expression(expression, base_node_name='', name_generator=None):
     """Evaluate Expression
     
     Args:
         expression (str): Math expression to evaluate
-        base_node_name (str): Base name used by the node name generator
-        name_generator (NodeNameGenerator): Optional custom node name generator class
+        base_node_name (str): Base name used to initialize new node name generator
+        name_generator (NodeNameGenerator): Node name generator used by the builder
 
     Returns:
         str: Returns resulting output attribute for generated node graph
     """
+    if not name_generator:
+        name_generator = NodeNameGenerator(base_node_name)
+    
     ast = expression_parser.ExpressionParser(expression).parse()
-    builder = expression_builder.ExpresionBuilder(name_generator(base_node_name))
+    builder = expression_builder.ExpresionBuilder(name_generator)
     output = builder.generate(ast)
     builder.build()
 

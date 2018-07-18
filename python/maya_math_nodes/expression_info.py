@@ -45,8 +45,8 @@ FUNCTIONS = {
     '*': {
         'name': 'math_Multiply{0}',
         'attributes': ['input1', 'input2'],
-        'types': ['double', 'double3', 'doubleAngle', 'doubleLinear', 'int', 'matrix', 'quaternion'],
-        'mixed_types': {'double': ['int'], 'double3': ['matrix'], 'doubleAngle': ['int'], 'doubleLinear': ['int']}
+        'types': ['double', 'double3', 'double4', 'doubleAngle', 'doubleLinear', 'int', 'matrix'],
+        'mixed_types': {'double': ['int'], 'double3': ['int', 'matrix'], 'doubleAngle': ['int'], 'doubleLinear': ['int']}
     },
     '-': {
         'name': 'math_Subtract{0}',

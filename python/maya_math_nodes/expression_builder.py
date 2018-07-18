@@ -125,8 +125,9 @@ class ExpresionBuilder(object):
         right_type = self.get_value_type(right)
         
         # cast left operand to double if no type specific node exists
+        left_cast_ok = isinstance(left, Number) and left_type in NUMERIC_POD_TYPES
         if left_type not in node['types']:
-            if isinstance(left, Number) and left_type in NUMERIC_POD_TYPES:
+            if left_cast_ok:
                 left_type = 'double'
             else:
                 raise RuntimeError('Operands of different types "{0} {1} {2}" are not supported'.format(left_type, operator, right_type))
@@ -138,42 +139,18 @@ class ExpresionBuilder(object):
         if left_type in node['mixed_types'] and right_type in node['mixed_types'][left_type]:
             return left_type, right_type
         
-        # otherwise cast right to left
-        right_cast_ok = isinstance(left, Number) and right_type in NUMERIC_POD_TYPES
-        if right_cast_ok:
+        # otherwise try to cast right to left
+        right_cast_ok = isinstance(right, Number) and right_type in NUMERIC_POD_TYPES
+        if right_cast_ok and left_type in NUMERIC_POD_TYPES:
             return left_type, left_type
+        elif right_cast_ok and left_type in node['mixed_types']:
+            # check if there is a mixed type node we can cast to
+            for pod_type in NUMERIC_POD_TYPES:
+                if pod_type in node['mixed_types'][left_type]:
+                    return left_type, pod_type
         else:
             raise RuntimeError('Operands of different types "{0} {1} {2}" are not supported'.format(left_type, operator, right_type))
 
-    def is_type_compatible(self, node, left_type, right_type, cast_ok=False):
-        """Check if value types is compatible with a given node
-        
-        Args:
-            node (dict): Node info struture to check the type against
-            left_type (str): Left expression operand type
-            right_type (str): Right expression operand type
-            left_cast_ok (bool): Allow implicit casting for numeric POD types
-            right_cast_ok (bool): Allow implicit casting for numeric POD types
-
-        Returns:
-            bool: Returns True if type is compatible, False otherwise
-        """
-        # if not left_cast_ok or left_type not in NUMERIC_POD_TYPES:
-        #     if left_type not in node['types']:
-        #         return False
-
-        if left_type == right_type:
-            return True
-        
-        if cast_ok:
-            if left_type in NUMERIC_POD_TYPES and right_type in NUMERIC_POD_TYPES:
-                return True 
-        
-        if left_type in node['mixed_types'] and right_type in node['mixed_types'][left_type]:
-            return True
-        
-        return False
-    
     def generate_function(self, ast):
         """Generate Maya data for function AST node
         
@@ -290,6 +267,10 @@ class ExpresionBuilder(object):
         operator_node_type = operator_node_base_type.format(TYPE_SUFFIX_PER_TYPE[left_type])
         if left_type != right_type:
             operator_node_type += 'By{0}'.format(TYPE_SUFFIX_PER_TYPE[right_type])
+        
+        # TODO: some workarounds for inconsistencies
+        if operator_node_type == 'math_MultiplyVectorByInt':
+            operator_node_type = 'math_MultiplyVector'
         
         try:
             cmds.nodeType(operator_node_type, isTypeName=True)
