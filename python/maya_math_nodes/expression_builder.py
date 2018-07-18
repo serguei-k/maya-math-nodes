@@ -10,6 +10,11 @@ from expression_parser import *
 Attribute = collections.namedtuple('Attribute', ['type', 'value'])
 
 
+class BuildingError(Exception):
+    """Building exception raised from the builder"""
+    pass
+
+
 class NodeNameGenerator(object):
     """Node Name Generator
     
@@ -130,7 +135,7 @@ class ExpresionBuilder(object):
             if left_cast_ok:
                 left_type = 'double'
             else:
-                raise RuntimeError('Operands of different types "{0} {1} {2}" are not supported'.format(left_type, operator, right_type))
+                raise BuildingError('Operands of different types "{0} {1} {2}" are not supported'.format(left_type, operator, right_type))
 
         if left_type == right_type:
             return left_type, right_type
@@ -149,7 +154,7 @@ class ExpresionBuilder(object):
                 if pod_type in node['mixed_types'][left_type]:
                     return left_type, pod_type
         else:
-            raise RuntimeError('Operands of different types "{0} {1} {2}" are not supported'.format(left_type, operator, right_type))
+            raise BuildingError('Operands of different types "{0} {1} {2}" are not supported'.format(left_type, operator, right_type))
 
     def generate_function(self, ast):
         """Generate Maya data for function AST node
@@ -161,11 +166,11 @@ class ExpresionBuilder(object):
             Attribute: Returns resulting output attribute for node graph generated for the function
         """
         if ast.value not in FUNCTIONS:
-            raise RuntimeError('Function "{0}" does not exist'.format(ast.value))
+            raise BuildingError('Function "{0}" does not exist'.format(ast.value))
         
         attributes = FUNCTIONS[ast.value]['attributes']
         if len(ast.args) != len(attributes):
-            raise RuntimeError('Number of arguments does not match, expected "{0}" got "{1}" instead'.format(len(attributes), len(ast.args)))
+            raise BuildingError('Number of arguments does not match, expected "{0}" got "{1}" instead'.format(len(attributes), len(ast.args)))
         
         # use first function argument to deduce node type
         # make sure to check if the first argument value is an array
@@ -221,13 +226,13 @@ class ExpresionBuilder(object):
         right_type = self.get_value_type(right)
         
         if left_type not in FUNCTIONS[ast.value]['types']:
-            raise RuntimeError('Operator "{0}" does not support left operand of type {1}'.format(ast.value, left_type))
+            raise BuildingError('Operator "{0}" does not support left operand of type {1}'.format(ast.value, left_type))
         
         if left_type not in FUNCTIONS['select']['types']:
-            raise RuntimeError('No selector found for values of type {0}'.format(left_type))
+            raise BuildingError('No selector found for values of type {0}'.format(left_type))
         
         if left_type != right_type:
-            raise RuntimeError('Cannot compare values of different type "{0}" and {1}'.format(left_type, right_type))
+            raise BuildingError('Cannot compare values of different type "{0}" and {1}'.format(left_type, right_type))
         
         operator_node_base_type = FUNCTIONS[ast.value]['name']
         operator_node_name = self._namer.get_name(operator_node_base_type)
@@ -275,7 +280,7 @@ class ExpresionBuilder(object):
         try:
             cmds.nodeType(operator_node_type, isTypeName=True)
         except RuntimeError:
-            raise RuntimeError('Binary operation generated unrecognized node type "{0}" for "{1} {2} {3}"'.format(
+            raise BuildingError('Binary operation generated unrecognized node type "{0}" for "{1} {2} {3}"'.format(
                 operator_node_type, left_type, ast.value, right_type))
 
         self._nodes.append((operator_node_type, operator_node_name))

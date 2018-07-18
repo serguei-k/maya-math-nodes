@@ -4,6 +4,8 @@ import unittest
 import maya.cmds as cmds
 
 import maya_math_nodes
+from maya_math_nodes.expression_lexer import ParsingError
+from maya_math_nodes.expression_builder import BuildingError
 
 plugin_name = 'mayaMathNodes'
 

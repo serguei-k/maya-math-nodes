@@ -21,6 +21,11 @@ CommaToken = 8
 Token = collections.namedtuple('Token', ['type', 'value'])
 
 
+class ParsingError(Exception):
+    """Parsing exception raised from lexer or parser"""
+    pass
+
+
 class ExpressionStream(object):
     """Expression Stream"""
     def __init__(self, input_str):
@@ -45,12 +50,26 @@ class ExpressionStream(object):
         return self._pos == len(self._data)
     
     def error(self, message):
-        raise RuntimeError('{0} at {1}'.format(message, self._pos))
+        raise ParsingError('{0} at {1}'.format(message, self._pos))
 
 
 class ExpressionLexer(object):
     """Expression Lexer"""
     def __init__(self, input_stream):
+        """Initialize the lexer
+        
+        Args:
+           input_stream (str): Input expression stream to parse
+        """
+        if input_stream.count('(') != input_stream.count(')'):
+            raise ParsingError('Found odd number of parentheses in the expression!')
+        
+        if input_stream.count('{') != input_stream.count('}'):
+            raise ParsingError('Found odd number of curly braces in the expression!')
+        
+        if input_stream.count('[') != input_stream.count(']'):
+            raise ParsingError('Found odd number of square brakets in the expression!')
+        
         self._data = ExpressionStream(input_stream)
         self._current = None
         self._next = None
