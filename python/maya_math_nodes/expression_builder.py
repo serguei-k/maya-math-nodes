@@ -245,7 +245,7 @@ class ExpresionBuilder(object):
         self.set_node_values('{0}.input1'.format(operator_node_name), left)
         self.set_node_values('{0}.input2'.format(operator_node_name), right)
         
-        select_node_base_type = 'math_Select'
+        select_node_base_type = FUNCTIONS['select']['name']
         select_node_name = self._namer.get_name(select_node_base_type)
         select_node_type = select_node_base_type.format(TYPE_SUFFIX_PER_TYPE[left_type])
         self._nodes.append((select_node_type, select_node_name))

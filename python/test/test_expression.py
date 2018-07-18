@@ -70,3 +70,7 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('(2.0 + 2.0) * (2.0 / (2.0 - 1.0))', 8.0)
         self.eval_expression('(2.0 + 2.0) * (2.0 / 2.0 - 1.0))', 0.0, exception=ParsingError)
         self.eval_expression('(2.0 + 2.0) * (2.0 / (2.0 - 1.0)', 0.0, exception=ParsingError)
+
+    def test_conditional(self):
+        self.eval_expression('dummy.tx < 1.0 ? 2.0 + 2.0 : 2.0 - 2.0', 4.0, 'math_Select')
+        self.eval_expression('dummy.tx > 1.0 ? 2.0 + 2.0 : 2.0 - 2.0', 0.0, 'math_Select')
