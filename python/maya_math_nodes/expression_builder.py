@@ -218,22 +218,12 @@ class ExpresionBuilder(object):
         Returns:
             Attribute: Returns resulting output attribute for node graph generated for this condition
         """
-        # recursively generate the left and right conditional expresion operands
+        # recursively generate the left and right conditional expression operands
         left = self.generate(ast.left)
         right = self.generate(ast.right)
+        
+        left_type, right_type = self.resolve_operand_types(ast.value, left, right)
 
-        left_type = self.get_value_type(left)
-        right_type = self.get_value_type(right)
-        
-        if left_type not in FUNCTIONS[ast.value]['types']:
-            raise BuildingError('Operator "{0}" does not support left operand of type {1}'.format(ast.value, left_type))
-        
-        if left_type not in FUNCTIONS['select']['types']:
-            raise BuildingError('No selector found for values of type {0}'.format(left_type))
-        
-        if left_type != right_type:
-            raise BuildingError('Cannot compare values of different type "{0}" and {1}'.format(left_type, right_type))
-        
         operator_node_base_type = FUNCTIONS[ast.value]['name']
         operator_node_name = self._namer.get_name(operator_node_base_type)
         operator_node_type = operator_node_base_type.format(TYPE_SUFFIX_PER_TYPE[left_type])
@@ -245,17 +235,19 @@ class ExpresionBuilder(object):
         self.set_node_values('{0}.input1'.format(operator_node_name), left)
         self.set_node_values('{0}.input2'.format(operator_node_name), right)
         
+        # recursively geneate true and false outputs
+        true = self.generate(ast.true)
+        false = self.generate(ast.false)
+
+        true_type, false_type = self.resolve_operand_types('select', true, false)
+
         select_node_base_type = FUNCTIONS['select']['name']
         select_node_name = self._namer.get_name(select_node_base_type)
-        select_node_type = select_node_base_type.format(TYPE_SUFFIX_PER_TYPE[left_type])
+        select_node_type = select_node_base_type.format(TYPE_SUFFIX_PER_TYPE[true_type])
         self._nodes.append((select_node_type, select_node_name))
         self.set_node_values('{0}.condition'.format(select_node_name), '{0}.output'.format(operator_node_name))
-
-        true = self.generate(ast.true)
-        self.set_node_values('{0}.input1'.format(select_node_name), true)
-
-        false = self.generate(ast.false)
-        self.set_node_values('{0}.input2'.format(select_node_name), false)
+        self.set_node_values('{0}.input1'.format(select_node_name), false)
+        self.set_node_values('{0}.input2'.format(select_node_name), true)
 
         return Attribute(left_type, '{0}.output'.format(select_node_name))
 
