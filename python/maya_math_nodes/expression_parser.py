@@ -177,6 +177,7 @@ class ExpressionParser(object):
             # special case for negative values
             self._data.next()  # consume negate
             
+            # TODO: complete for other types
             if self.token.type == NumberToken:
                 number = self.parse_number()
                 number.negate()

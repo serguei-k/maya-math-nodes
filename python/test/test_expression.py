@@ -14,13 +14,17 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('dummy.rx + 2', 4.0, 'math_AddAngle')
         self.eval_expression('2 + dummy.rx', 0.0, exception=BuildingError)
         
-        # subtrackt
+        # subtract
         self.eval_expression('4 - 2', 2, 'math_SubtractInt')
         self.eval_expression('4 - 2.0', 2, 'math_SubtractInt')
         self.eval_expression('4.0 - 2', 2.0, 'math_Subtract')
         self.eval_expression('4.0 - 2.0', 2.0, 'math_Subtract')
         self.eval_expression('dummy.rx - 2', 0.0, 'math_SubtractAngle')
         self.eval_expression('2 - dummy.tx', 0.0, exception=BuildingError)
+        
+        # negate
+        self.eval_expression('-2.0 + -2.0', -4.0, 'math_Add')
+        self.eval_expression('-2 + -2', -4, 'math_AddInt')
         
         # divide
         self.eval_expression('2 / 2', 1.0, 'math_DivideByInt')
@@ -114,4 +118,10 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('minelement([2 - 0, 2 + 2, abs(-1)])', 1, 'math_MinIntElement')
         self.eval_expression('minelement([dummy.rx, 0.0, dummy.rz])', 0.0, 'math_MinAngleElement')
         self.eval_expression('minelement([0, 1, dummy.tx])', 0, exception=BuildingError)
-
+        
+        # complex types
+        self.eval_expression('twist(dummy.matrix, 0, 0)', 1.965, 'math_TwistFromMatrix', places=3)
+        #self.eval_expression('twist(dummy.rotate, 0, 0)', 1.965, 'math_TwistFromRotation', places=3)
+    
+    #def text_complex(self):
+        #self.eval_expression('')

@@ -112,7 +112,7 @@ class ExpresionBuilder(object):
         """Condition Maya type to one supported by the builder"""
         if maya_type == 'doubleLinear':
             maya_type = 'double'
-        elif maya_type == 'long' or maya_type == 'short':
+        elif maya_type == 'long' or maya_type == 'short' or maya_type == 'enum':
             maya_type = 'int'
         
         return maya_type
