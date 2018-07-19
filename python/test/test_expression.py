@@ -5,6 +5,7 @@ from expression_test_case import ExpressionTestCase, ParsingError, BuildingError
 
 class TestExpression(ExpressionTestCase):
     def test_operators(self):
+        # add
         self.eval_expression('2 + 2', 4, 'math_AddInt')
         self.eval_expression('2 + 2.0', 4, 'math_AddInt')
         self.eval_expression('2.0 + 2', 4.0, 'math_Add')
@@ -13,6 +14,7 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('dummy.rx + 2', 4.0, 'math_AddAngle')
         self.eval_expression('2 + dummy.rx', 0.0, exception=BuildingError)
         
+        # subtrackt
         self.eval_expression('4 - 2', 2, 'math_SubtractInt')
         self.eval_expression('4 - 2.0', 2, 'math_SubtractInt')
         self.eval_expression('4.0 - 2', 2.0, 'math_Subtract')
@@ -20,6 +22,7 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('dummy.rx - 2', 0.0, 'math_SubtractAngle')
         self.eval_expression('2 - dummy.tx', 0.0, exception=BuildingError)
         
+        # divide
         self.eval_expression('2 / 2', 1.0, 'math_DivideByInt')
         self.eval_expression('2.0 / 2', 1.0, 'math_DivideByInt')
         self.eval_expression('2 / 2.0', 1.0, 'math_Divide')
@@ -28,6 +31,7 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('dummy.rx / 2', 1.0, 'math_DivideAngleByInt')
         self.eval_expression('dummy.rx / dummy.tx', 0.0, exception=BuildingError)
         
+        # modulo
         self.eval_expression('2 % 2', 0, 'math_ModulusInt')
         self.eval_expression('2.0 % 2', 0, 'math_ModulusInt')
         self.eval_expression('2 % 2.0', 0, 'math_ModulusInt')
@@ -35,6 +39,7 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('dummy.tx % 2', 0, exception=BuildingError)
         self.eval_expression('2 % dummy.tx', 0, exception=BuildingError)
         
+        # multiply
         self.eval_expression('2 * 2', 4, 'math_MultiplyInt')
         self.eval_expression('2 * 2.0', 4, 'math_MultiplyInt')
         self.eval_expression('2.0 * 2', 4.0, 'math_MultiplyByInt')
@@ -46,6 +51,7 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('2.0 * dummy.rx', 0.0, exception=BuildingError)
         self.eval_expression('dummy.rx * dummy.tx', 0.0, exception=BuildingError)
         
+        # multiply complex types
         self.eval_expression('{1, 0, 0} * 2', [2.0, 0.0, 0.0], 'math_MultiplyVector')
         self.eval_expression('{1, 0, 0} * 2.0', [2.0, 0.0, 0.0], 'math_MultiplyVector')
         self.eval_expression('{1, 0, 0} * dummy.tx', [0.0, 0.0, 0.0], exception=BuildingError)
@@ -72,6 +78,7 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('(2.0 + 2.0) * (2.0 / (2.0 - 1.0)', 0.0, exception=ParsingError)
 
     def test_conditional(self):
+        # compare
         self.eval_expression('2 == 2 ? 1 : 0', 1)
         self.eval_expression('2.0 == 2.0 ? 1 : 0', 1)
         self.eval_expression('2.0 == 2 ? 1 : 0', 1)
@@ -79,8 +86,32 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('dummy.tx == dummy.ty ? 1 : 0', 1)
         self.eval_expression('dummy.rx == dummy.ty ? 1 : 0', 1, exception=BuildingError)
         
+        # selector
         self.eval_expression('dummy.tx > 1.0 ? 2.0 + 2.0 : 2.0 - 2.0', 4.0, 'math_Select')
         self.eval_expression('dummy.tx < 1.0 ? 2.0 + 2.0 : 2', 2.0, 'math_Select')
         self.eval_expression('dummy.tx > 1.0 ? 2 + 2 : 2 - 2', 4, 'math_SelectInt')
         self.eval_expression('dummy.tx > 1.0 ? 2 + 2 : 2.0', 4, 'math_SelectInt')
         self.eval_expression('dummy.tx > 1.0 ? 2.0 + 2.0 : 2 - 2', 0.0, exception=BuildingError)
+        
+        self.eval_expression('(2.0 + 2.0 == 4.0 ? 1 : 0) + 1', 2, 'math_AddInt')
+    
+    def test_functions(self):
+        # single argument
+        self.eval_expression('abs(-1.0)', 1.0, 'math_Absolute')
+        self.eval_expression('abs(-1)', 1, 'math_AbsoluteInt')
+        self.eval_expression('abs(dummy.rx)', 2.0, 'math_AbsoluteAngle')
+        self.eval_expression('abs(-1.0) * 2.0', 2.0, 'math_Multiply')
+        self.eval_expression('abs(1.0 - 2.0)', 1.0, 'math_Absolute')
+        
+        # multi argument
+        self.eval_expression('clamp(1.2, 0.0, 1.0)', 1.0, 'math_Clamp')
+        self.eval_expression('clamp(1, 0, 1)', 1, 'math_ClampInt')
+        self.eval_expression('clamp(1, min(0, 1), 1)', 1, 'math_ClampInt')
+        
+        # array argument
+        self.eval_expression('minelement([1.0, 2.0, 3.0])', 1.0, 'math_MinElement')
+        self.eval_expression('minelement([1, 2, 3])', 1, 'math_MinIntElement')
+        self.eval_expression('minelement([2 - 0, 2 + 2, abs(-1)])', 1, 'math_MinIntElement')
+        self.eval_expression('minelement([dummy.rx, 0.0, dummy.rz])', 0.0, 'math_MinAngleElement')
+        self.eval_expression('minelement([0, 1, dummy.tx])', 0, exception=BuildingError)
+

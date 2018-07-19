@@ -30,10 +30,14 @@ class NodeNameGenerator(object):
             base_name (str): Base name used by the generator
         """
         self._base_name = base_name
-
         self._counter_per_type = dict()
+        
         for node_type in [value['name'] for value in FUNCTIONS.values()]:
-            self._counter_per_type[node_type] = 0
+            if node_type.endswith('}'):
+                node_type = node_type[:-3]
+            suffix = node_type.split('_')[1][:3].upper()
+            
+            self._counter_per_type['{0}_{0}'.format(self._base_name, suffix)] = 0
     
     def get_name(self, node_type):
         """Get unique node name for a given type
@@ -44,9 +48,13 @@ class NodeNameGenerator(object):
         Returns:
             str: Returns new unique name
         """
-        index = self._counter_per_type[node_type]
-        self._counter_per_type[node_type] = index + 1
+        if node_type.endswith('}'):
+            node_type = node_type[:-3]
         suffix = node_type.split('_')[1][:3].upper()
+        
+        counter_key = '{0}_{0}'.format(self._base_name, suffix)
+        index = self._counter_per_type[counter_key]
+        self._counter_per_type[counter_key] = index + 1
         
         return '{0}{1}_{2}'.format(self._base_name, index, suffix)
 
@@ -100,6 +108,15 @@ class ExpresionBuilder(object):
         elif isinstance(value, basestring):
             self._connections.append((value, attr))
 
+    def condition_type(self, maya_type):
+        """Condition Maya type to one supported by the builder"""
+        if maya_type == 'doubleLinear':
+            maya_type = 'double'
+        elif maya_type == 'long' or maya_type == 'short':
+            maya_type = 'int'
+        
+        return maya_type
+
     def get_value_type(self, value):
         """Get value type
         
@@ -113,13 +130,11 @@ class ExpresionBuilder(object):
             return value.type
         elif isinstance(value, String):
             attr_type = cmds.getAttr(value.value, type=True)
-            if attr_type == 'doubleLinear':
-                attr_type = 'double'
+            attr_type = self.condition_type(attr_type)
             return attr_type
         elif isinstance(value, basestring):
             attr_type = cmds.getAttr(value, type=True)
-            if attr_type == 'doubleLinear':
-                attr_type = 'double'
+            attr_type = self.condition_type(attr_type)
             return attr_type
     
     def resolve_operand_types(self, operator, left, right):
@@ -155,7 +170,20 @@ class ExpresionBuilder(object):
                     return left_type, pod_type
         else:
             raise BuildingError('Operands of different types "{0} {1} {2}" are not supported'.format(left_type, operator, right_type))
-
+    
+    def validate_function_argument_type(self, attr_name, node_type, arg_type, cast_ok):
+        """Check if argument type is compatible with attribute type"""
+        attr_type = cmds.attributeQuery(attr_name, type=node_type, attributeType=True)
+        attr_type = self.condition_type(attr_type)
+        
+        if attr_type == arg_type:
+            return True
+        
+        if attr_type in NUMERIC_POD_TYPES and (cast_ok and arg_type in NUMERIC_POD_TYPES):
+            return True
+        
+        raise BuildingError('Invalid argument of type "{0}" used for node attribute "{1}.{2}"'.format(arg_type, node_type, attr_name))
+    
     def generate_function(self, ast):
         """Generate Maya data for function AST node
         
@@ -172,22 +200,8 @@ class ExpresionBuilder(object):
         if len(ast.args) != len(attributes):
             raise BuildingError('Number of arguments does not match, expected "{0}" got "{1}" instead'.format(len(attributes), len(ast.args)))
         
-        # use first function argument to deduce node type
-        # make sure to check if the first argument value is an array
-        if isinstance(ast.args[0], list):
-            primary_value_type = self.get_value_type(ast.args[0][0])
-        else:
-            primary_value_type = self.get_value_type(ast.args[0])
-        
         operator_node_base_type = FUNCTIONS[ast.value]['name']
         operator_node_name = self._namer.get_name(operator_node_base_type)
-        
-        # if there are type specific node variants we need to account for that in the node type name
-        if len(FUNCTIONS[ast.value]['types']) == 1:
-            operator_node_type = operator_node_base_type
-        else:
-            operator_node_type = operator_node_base_type.format(TYPE_SUFFIX_PER_TYPE[primary_value_type])
-        self._nodes.append((operator_node_type, operator_node_name))
         
         for index, arg_ast in enumerate(ast.args):
             # handle array values
@@ -197,16 +211,37 @@ class ExpresionBuilder(object):
                     arg = self.generate(array_arg_ast)
                     arg_type = self.get_value_type(arg)
                     
+                    # we use first function argument to deduce node type
+                    if index == 0 and array_index == 0:
+                        # if there are type specific node variants we need to account for that in the node type name
+                        if len(FUNCTIONS[ast.value]['types']) == 1:
+                            operator_node_type = operator_node_base_type
+                        else:
+                            operator_node_type = operator_node_base_type.format(TYPE_SUFFIX_PER_TYPE[arg_type])
+                        self._nodes.append((operator_node_type, operator_node_name))
+                    
+                    self.validate_function_argument_type(attributes[index], operator_node_type, arg_type, isinstance(arg, Number))
                     self.set_node_values('{0}.{1}'.format(operator_node_name, '{0}[{1}]'.format(attributes[index], array_index)), arg)
             else:
                 # recursively generate function argument value
                 arg = self.generate(arg_ast)
                 arg_type = self.get_value_type(arg)
                 
+                # we use first function argument to deduce node type
+                if index == 0:
+                    # if there are type specific node variants we need to account for that in the node type name
+                    if len(FUNCTIONS[ast.value]['types']) == 1:
+                        operator_node_type = operator_node_base_type
+                    else:
+                        operator_node_type = operator_node_base_type.format(TYPE_SUFFIX_PER_TYPE[arg_type])
+                    self._nodes.append((operator_node_type, operator_node_name))
+                
+                self.validate_function_argument_type(attributes[index], operator_node_type, arg_type, isinstance(arg, Number))
                 self.set_node_values('{0}.{1}'.format(operator_node_name, attributes[index]), arg)
         
         index = '[{0}]'.format(ast.index) if ast.index else ''
         attr_type = cmds.attributeQuery('output', type=operator_node_type, attributeType=True)
+        attr_type = self.condition_type(attr_type)
         return Attribute(attr_type, '{0}.output{1}'.format(operator_node_name, index))
     
     def generate_conditional(self, ast):
@@ -249,7 +284,7 @@ class ExpresionBuilder(object):
         self.set_node_values('{0}.input1'.format(select_node_name), false)
         self.set_node_values('{0}.input2'.format(select_node_name), true)
 
-        return Attribute(left_type, '{0}.output'.format(select_node_name))
+        return Attribute(true_type, '{0}.output'.format(select_node_name))
 
     def generate_binary(self, ast):
         """Generate Maya data for binary operation AST node"""
