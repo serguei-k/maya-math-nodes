@@ -37,7 +37,7 @@ class NodeNameGenerator(object):
                 node_type = node_type[:-3]
             suffix = node_type.split('_')[1][:3].upper()
             
-            self._counter_per_type['{0}_{0}'.format(self._base_name, suffix)] = 0
+            self._counter_per_type['{0}_{1}'.format(self._base_name, suffix)] = 0
     
     def get_name(self, node_type):
         """Get unique node name for a given type
@@ -52,7 +52,7 @@ class NodeNameGenerator(object):
             node_type = node_type[:-3]
         suffix = node_type.split('_')[1][:3].upper()
         
-        counter_key = '{0}_{0}'.format(self._base_name, suffix)
+        counter_key = '{0}_{1}'.format(self._base_name, suffix)
         index = self._counter_per_type[counter_key]
         self._counter_per_type[counter_key] = index + 1
         
@@ -171,6 +171,13 @@ class ExpresionBuilder(object):
         else:
             raise BuildingError('Operands of different types "{0} {1} {2}" are not supported'.format(left_type, operator, right_type))
     
+    def validate_node_type(self, node_type, message):
+        """Validate generated node type against Maya nodes"""
+        try:
+            cmds.nodeType(node_type, isTypeName=True)
+        except RuntimeError:
+            raise BuildingError('Generated unrecognized node type "{0}" for {1}'.format(node_type, message))
+    
     def validate_function_argument_type(self, attr_name, node_type, arg_type, cast_ok):
         """Check if argument type is compatible with attribute type"""
         attr_type = cmds.attributeQuery(attr_name, type=node_type, attributeType=True)
@@ -218,6 +225,7 @@ class ExpresionBuilder(object):
                             operator_node_type = operator_node_base_type
                         else:
                             operator_node_type = operator_node_base_type.format(TYPE_SUFFIX_PER_TYPE[arg_type])
+                        self.validate_node_type(operator_node_type, 'function "{0}"'.format(ast.value))
                         self._nodes.append((operator_node_type, operator_node_name))
                     
                     self.validate_function_argument_type(attributes[index], operator_node_type, arg_type, isinstance(arg, Number))
@@ -234,6 +242,7 @@ class ExpresionBuilder(object):
                         operator_node_type = operator_node_base_type
                     else:
                         operator_node_type = operator_node_base_type.format(TYPE_SUFFIX_PER_TYPE[arg_type])
+                    self.validate_node_type(operator_node_type, 'function "{0}"'.format(ast.value))
                     self._nodes.append((operator_node_type, operator_node_name))
                 
                 self.validate_function_argument_type(attributes[index], operator_node_type, arg_type, isinstance(arg, Number))
@@ -262,8 +271,9 @@ class ExpresionBuilder(object):
         operator_node_base_type = FUNCTIONS[ast.value]['name']
         operator_node_name = self._namer.get_name(operator_node_base_type)
         operator_node_type = operator_node_base_type.format(TYPE_SUFFIX_PER_TYPE[left_type])
+        self.validate_node_type(operator_node_type, '"{0} {1} {2}"'.format(left_type, ast.value, right_type))
         self._nodes.append((operator_node_type, operator_node_name))
-
+        
         operations = ['==', '<', '>', '!=', '<=', '>=']
         self._values.append(('{0}.operation'.format(operator_node_name), operations.index(ast.value)))
         
@@ -279,6 +289,7 @@ class ExpresionBuilder(object):
         select_node_base_type = FUNCTIONS['select']['name']
         select_node_name = self._namer.get_name(select_node_base_type)
         select_node_type = select_node_base_type.format(TYPE_SUFFIX_PER_TYPE[true_type])
+        self.validate_node_type(select_node_type, '"{0} {1} {2}"'.format(true_type, ast.value, false_type))
         self._nodes.append((select_node_type, select_node_name))
         self.set_node_values('{0}.condition'.format(select_node_name), '{0}.output'.format(operator_node_name))
         self.set_node_values('{0}.input1'.format(select_node_name), false)
@@ -304,12 +315,7 @@ class ExpresionBuilder(object):
         if operator_node_type == 'math_MultiplyVectorByInt':
             operator_node_type = 'math_MultiplyVector'
         
-        try:
-            cmds.nodeType(operator_node_type, isTypeName=True)
-        except RuntimeError:
-            raise BuildingError('Binary operation generated unrecognized node type "{0}" for "{1} {2} {3}"'.format(
-                operator_node_type, left_type, ast.value, right_type))
-
+        self.validate_node_type(operator_node_type, '"{0} {1} {2}"'.format(left_type, ast.value, right_type))
         self._nodes.append((operator_node_type, operator_node_name))
 
         self.set_node_values('{0}.input1'.format(operator_node_name), left)

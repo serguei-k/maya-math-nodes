@@ -98,7 +98,7 @@ FUNCTIONS = {
         'types': ['double'],
         'mixed_types': {}
     },
-    'axisFromMatrix': {
+    'axis': {
         'name': 'math_AxisFromMatrix',
         'attributes': ['input', 'axis'],
         'types': ['matrix'],
