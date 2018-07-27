@@ -128,14 +128,23 @@ class ExpresionBuilder(object):
         """
         if isinstance(value, Number) or isinstance(value, Attribute):
             return value.type
-        elif isinstance(value, String):
-            attr_type = cmds.getAttr(value.value, type=True)
-            attr_type = self.condition_type(attr_type)
-            return attr_type
+        
+        if isinstance(value, String):
+            attr_name = value.value
         elif isinstance(value, basestring):
-            attr_type = cmds.getAttr(value, type=True)
-            attr_type = self.condition_type(attr_type)
-            return attr_type
+            attr_name = value
+        
+        attr_type = cmds.getAttr(attr_name, type=True)
+        attr_type = self.condition_type(attr_type)
+        
+        # check if attribute is rotation
+        if attr_type == 'double3':
+            children = cmds.listAttr(attr_name, multi=True)
+            child_name = attr_name.split('.')[0] + '.' + children[1]
+            if cmds.getAttr(child_name, type=True) == 'doubleAngle':
+                attr_type = 'double3Angle'
+        
+        return attr_type
     
     def resolve_operand_types(self, operator, left, right):
         """Resolve operand types"""
@@ -180,6 +189,9 @@ class ExpresionBuilder(object):
     
     def validate_function_argument_type(self, attr_name, node_type, arg_type, cast_ok):
         """Check if argument type is compatible with attribute type"""
+        if arg_type.endswith('3Angle'):
+            arg_type = arg_type[:-5]
+        
         attr_type = cmds.attributeQuery(attr_name, type=node_type, attributeType=True)
         attr_type = self.condition_type(attr_type)
         
@@ -237,6 +249,9 @@ class ExpresionBuilder(object):
                 
                 # we use first function argument to deduce node type
                 if index == 0:
+                    if arg_type not in FUNCTIONS[ast.value]['types']:
+                        raise BuildingError("Function '{0}' does not support type '{1}'".format(ast.value, arg_type))
+                    
                     # if there are type specific node variants we need to account for that in the node type name
                     if len(FUNCTIONS[ast.value]['types']) == 1:
                         operator_node_type = operator_node_base_type

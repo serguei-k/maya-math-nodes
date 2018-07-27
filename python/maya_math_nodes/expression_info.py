@@ -6,6 +6,7 @@ NUMERIC_POD_TYPES = ['double', 'int', 'doubleAngle', 'doubleLinear']
 TYPE_SUFFIX_PER_TYPE = {
     'double': '',
     'double3': 'Vector',
+    'double3Angle': 'Rotation',
     'double4': 'Quaternion',
     'doubleAngle': 'Angle',
     'doubleLinear': '',
@@ -149,7 +150,7 @@ FUNCTIONS = {
     'inverse': {
         'name': 'math_Inverse{0}',
         'attributes': ['input'],
-        'types': ['matrix', 'quaternion', 'rotation'],
+        'types': ['matrix', 'quaternion', 'double3Angle'],
         'mixed_types': {}
     },
     'lerp': {
@@ -221,7 +222,7 @@ FUNCTIONS = {
     'quat': {
         'name': 'math_QuaternionFrom{0}',
         'attributes': ['input', 'rotationOrder'],
-        'types': ['matrix', 'rotation'],
+        'types': ['matrix', 'double3Angle'],
         'mixed_types': {}
     },
     'rot': {
@@ -239,7 +240,7 @@ FUNCTIONS = {
     'select': {
         'name': 'math_Select{0}',
         'attributes': ['input1', 'input2', 'condition'],
-        'types': ['double', 'double3', 'doubleAngle', 'doubleLinear', 'int', 'matrix', 'quaternion', 'rotation'],
+        'types': ['double', 'double3', 'double3Angle', 'double4', 'doubleAngle', 'doubleLinear', 'int', 'matrix'],
         'mixed_types': {}
     },
     'sin': {
@@ -263,7 +264,7 @@ FUNCTIONS = {
     'twist': {
         'name': 'math_TwistFrom{0}',
         'attributes': ['input', 'axis', 'rotationOrder'],
-        'types': ['matrix', 'rotation'],
+        'types': ['matrix', 'double3Angle'],
         'mixed_types': {}
     },
 }

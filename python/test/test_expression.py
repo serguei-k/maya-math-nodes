@@ -121,7 +121,8 @@ class TestExpression(ExpressionTestCase):
         
         # complex types
         self.eval_expression('twist(dummy.matrix, 0, 0)', 1.965, 'math_TwistFromMatrix', places=3)
-        self.eval_expression('twist(dummy.rotate, 0, 0)', 1.965, 'math_TwistFromRotation', places=3)  # # needs fixing
+        self.eval_expression('twist(dummy.rotate, 0, 0)', 1.965, 'math_TwistFromRotation', places=3)
+        self.eval_expression('rot(dummy.matrix, 0)', [2.0, 2.0, 2.0], 'math_RotationFromMatrix', places=3)
     
     #def text_complex(self):
         #self.eval_expression('')
