@@ -2,9 +2,6 @@
 # Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 
 if(APPLE)
-    # Set default plugin install directory
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ~/Library/Preferences/Autodesk/maya/${MAYA_VERSION}/plug-ins)
-    
     set(MAYA_PLUGIN_EXT .bundle)
     set(MAYA_COMPILE_DEFINITIONS "OSMac_;MAC_PLUGIN")
     
@@ -17,9 +14,6 @@ if(APPLE)
     find_path(MAYA_INCLUDE_DIR maya/MFn.h PATHS ${MAYA_LOCATION_FULL} PATH_SUFFIXES include)
     find_path(MAYA_LIBRARY_DIR libOpenMaya.dylib PATHS ${MAYA_LOCATION_FULL} PATH_SUFFIXES Maya.app/Contents/MacOS)
 elseif(WIN32)
-    # Set default plugin install directory
-    #set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ~/Library/Preferences/Autodesk/maya/${MAYA_VERSION}/plug-ins)
-    
     set(MAYA_PLUGIN_EXT .mll)
     set(MAYA_COMPILE_DEFINITIONS "NT_PLUGIN")
     
