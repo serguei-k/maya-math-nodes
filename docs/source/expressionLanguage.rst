@@ -34,7 +34,7 @@ The language supports a limited set of arithmetic operators: :code:`+, -, *, /, 
 Conditionals
 ------------
 
-The language supports the following conditional operators: :code:`==, !=, >, <, >=, <=`
+The language supports the following relational operators: :code:`==, !=, >, <, >=, <=`
 
 These should be used in combination with ternary conditional expression: :code:`a == b ? true : false`
 
@@ -56,6 +56,23 @@ Output array arguments can also be index using the :code:`[]` operator.
 
 .. note::
    Default and keyword arguments are currently not supported!
+
+Evaluation Order
+----------------
+
+Expressions are evaluated left to right with the following operator precedence, listed from lowest to highest:
+
++----------------------+-------------------------------------+
+| Operator             | Description                         |
++----------------------+-------------------------------------+
+| +, -                 | Addition and subtraction            |
++----------------------+-------------------------------------+
+| \*, /, %             | Multiplication, division, remainder |
++----------------------+-------------------------------------+
+| <, <=, >, >=, !=, == | Comparisons                         |
++----------------------+-------------------------------------+
+| func()               | Function call                       |
++----------------------+-------------------------------------+
 
 Type Resolution
 ---------------
