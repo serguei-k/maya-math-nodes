@@ -75,8 +75,8 @@ FUNCTIONS = {
         'types': ['double'],
         'mixed_types': {}
     },
-    'angleBetween': {
-        'name': 'math_AngleVectors',
+    'anglebetween': {
+        'name': 'math_AngleBetweenVectors',
         'attributes': ['input1', 'input2'],
         'types': ['double3'],
         'mixed_types': {}
@@ -165,7 +165,7 @@ FUNCTIONS = {
         'types': ['double3'],
         'mixed_types': {}
     },
-    'lengthSquared': {
+    'lengthsquared': {
         'name': 'math_VectorLengthSquared',
         'attributes': ['input'],
         'types': ['double3'],
@@ -207,7 +207,7 @@ FUNCTIONS = {
         'types': ['double3'],
         'mixed_types': {}
     },
-    'normalizeArray': {
+    'normalizearray': {
         'name': 'math_NormalizeArray',
         'attributes': ['input'],
         'types': ['double'],

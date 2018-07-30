@@ -13,54 +13,57 @@ The nodes are designed with the following principles in mind:
 - nodes are strongly typed
 
 .. note::
-   In order to achieve consistency and streamlineed workflow, there are a few nodes that duplicate existing Maya functionalility.
+   In order to achieve consistency and streamlined workflow, there are a few nodes that duplicate existing Maya functionality.
 
-The node lbrary tries to adhere to the following set of rules when it comes to choosing the node and attribute names:
+The node library tries to adhere to the following set of rules when it comes to choosing the node and attribute names:
 
-- node names are prefixed with `math_`
-- nodes are named with affirmative action verbs, ex: `Add`, `Multiply`
-- the `get` action verb is implied, ex: `GetDotProduct` is `DotProduct`
-- nodes are assumed to operate on doubles by default, ex: `Add`, `Multiply`
-- mixed type operations are reflected in the name, ex: `AddVector`, `MultiplyVectorByMatrix`
-- conversion nodes have following format `OutputFromSource`, ex: `RotationFromMatrix`
-- attributes are generally named `input` and `output`
-- if multiple inputs are required they are enumerated, ex: `input1`, `input2`
-- for clarity other attribute names are allowed, ex: `translation`, `alpha`, `axis`, `min`
+- node names are prefixed with :code:`math_`
+- nodes are named with affirmative action verbs, ex: :code:`Add`, :code:`Multiply`
+- the `get` action verb is implied, ex: :code:`GetDotProduct` is :code:`DotProduct`
+- nodes are assumed to operate on doubles by default, ex: :code:`Add`, :code:`Multiply`
+- mixed type operations are reflected in the name, ex: :code:`AddVector`, :code:`MultiplyVectorByMatrix`
+- conversion nodes have following format `OutputFromSource`, ex: :code:`RotationFromMatrix`
+- attributes are generally named :code:`input` and :code:`output`
+- if multiple inputs are required they are enumerated, ex: :code:`input1`, :code:`input2`
+- for clarity other attribute names are allowed, ex: :code:`translation`, :code:`alpha`, :code:`axis`, :code:`min`
 
 
 Details
 *******
 
-Absolute [Angle, Int]
----------------------
+| **Format**:
+| Node Type Name [Type Variants,] | Expression Function Name
+
+Absolute [angle, int] | abs
+---------------------------
 Compute absolute value
 
-Acos
-----
+Acos | acos
+-----------
 Compute arccosine
 
-Add [Angle, Int, Vector]
-------------------------
+Add [angle, int, vector] | add
+------------------------------
 Compute sum of two values
 
-AngleBetweenVectors
--------------------
+AngleBetweenVectors | anglebetween
+----------------------------------
 Compute angle between two vectors
 
-Asin
-----
+Asin | asin
+-----------
 Compute arcsine
 
-Atan
-----
+Atan | atan
+-----------
 Compute arctangent
 
-Atan2
------
+Atan2 | atan2
+-------------
 Compute arctangent of `x / y`
 
-AxisFromMatrix
---------------
+AxisFromMatrix | axis
+---------------------
 Get basis vector from matrix for a given axis
 
 .. warning::
