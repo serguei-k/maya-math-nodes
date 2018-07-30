@@ -73,6 +73,8 @@ Expressions are evaluated left to right with the following operator precedence, 
 +----------------------+-------------------------------------+
 | func()               | Function call                       |
 +----------------------+-------------------------------------+
+| (...)                | Grouping                            |
++----------------------+-------------------------------------+
 
 Type Resolution
 ---------------
