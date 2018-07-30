@@ -10,7 +10,7 @@ Even simple math expressions often require relatively large node networks, which
 While this process can be scripted, the code is likewise tedious to write and makes it difficult to see the logic at a glance.
 
 To help alleviate these issues, Maya Math Nodes plugin provide a simple expression language that can be used to describe
-a complex mathematical operation which can then be interpreted to and generate the math node network for you.
+a complex mathematical operation which can then be interpreted to generate the math node network for you.
 
 Data Types
 ----------
@@ -21,7 +21,7 @@ numeric
    float and int types are supported, ex: :code:`-1, 0, 1.0`
 
 string
-   string literals are used to reference Maya attributes, ex: :code:`node.attribte[0]`
+   string literals are used to reference Maya attributes, ex: :code:`node.attribute[0]`
 
 complex
    complex types are used to define a vector, matrix, rotation, and quaternion data, ex: :code:`{0, 1, 0}`
@@ -29,8 +29,14 @@ complex
 Operators
 ---------
 
-| The language supports a limited set of arithmetic operators: :code:`+, -, *, /, %,`
-| In addition the following conditional operators are supported: :code:`==, !=, >, <, >=, <=`
+The language supports a limited set of arithmetic operators: :code:`+, -, *, /, %,`
+
+Conditionals
+------------
+
+The language supports the following conditional operators: :code:`==, !=, >, <, >=, <=`
+
+These should be used in combination with ternary conditional expression: :code:`a == b ? true : false`
 
 Functions
 ---------
@@ -41,8 +47,8 @@ These functions map directly to the node operators available in the plugin.
 For example :code:`Absolute` node is made available through the :code:`abs()` function call.
 Please see the :ref:`Node Reference <nodeReference>` for the mapping between node type and function name.
 
-The function arguments correspond with node attributes. For example the :code:`Clamp` node two input arguments
-therefore the :code:`clamp(arg1, arg2)` function will take two arguments.
+The function arguments correspond with node attributes. For example the :code:`Clamp` node has two input
+attributes, therefore the :code:`clamp(arg1, arg2)` function will take two arguments.
 
 Likewise, array arguments are also supported with the following syntax: :code:`minelement([1, 2, 3])`.
 
