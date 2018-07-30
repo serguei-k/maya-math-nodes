@@ -20,7 +20,7 @@ class NodeNameGenerator(object):
     
     This class is used to procedurally generate unique names for nodes created by the expression builder.
     
-    You can replace its use by any class that satisfies the get_name(node_type) interface to accomodate your
+    You can replace its use by any class that satisfies the get_name(node_type) interface to accommodate your
     pipeline naming requirements.
     """
     def __init__(self, base_name):
