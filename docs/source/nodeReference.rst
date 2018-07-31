@@ -28,172 +28,280 @@ The node library tries to adhere to the following set of rules when it comes to 
 - for clarity other attribute names are allowed, ex: :code:`translation`, :code:`alpha`, :code:`axis`, :code:`min`
 
 
-Details
-*******
+Node List
+*********
 
-| **Format**:
-| Node Type Name [Type Variants,] | Expression Function Name
+Absolute
+--------
+:description: Computes absolute value
+:type variants: AbsoluteAngle, AbsoluteInt
+:expression: abs(x)
 
-Absolute [Angle, Int] | abs
----------------------------
-Compute absolute value
+Acos
+----
+:description: Computes arccosine
+:expression: acos(x)
 
-Acos | acos
------------
-Compute arccosine
+Add
+---
+:description: Computes sum of two values
+:type variants: AddAngle, AddInt, AddVector
+:expression: x + y
 
-Add [Angle, Int, Vector] | add
-------------------------------
-Compute sum of two values
+AndBool
+-------
+:description: Gets logical *and* of two values
+:type variants: AndInt
 
-AngleBetweenVectors | anglebetween
-----------------------------------
-Compute angle between two vectors
-
-Asin | asin
------------
-Compute arcsine
-
-Atan | atan
------------
-Compute arctangent
-
-Atan2 | atan2
--------------
-Compute arctangent of `x / y`
-
-AxisFromMatrix | axis
----------------------
-Get basis vector from matrix for a given axis
-
-Ceil [Angle] | ceil
+AngleBetweenVectors
 -------------------
-Compute the smallest integer value greater than or equal to input
+:description: Computes angle between two vectors
+:expression: anglebetween(x, y)
 
-Clamp [Angle, Int] | clamp
---------------------------
-Compute the value within the given min and max range
+Asin
+----
+:description: Computes arcsine
+:expression: asin(x)
 
-Compare [Angle] | compare
--------------------------
-Compute how the two values compare to each other
+Atan
+----
+:description: Computes arctangent
+:expression: atan(x)
 
-CosAngle | cos
+Atan2
+-----
+:description: Computes arctangent of `x / y`
+:expression: atan(x, y)
+
+Average
+-------
+:description: Computes average value
+:type variants: AverageAngle, AverageInt, AverageMatrix, AverageQuaternion, AverageRotation, AverageVector
+
+AxisFromMatrix
 --------------
-Compute the cosine of angle
+:description: Gets basis vector from matrix for a given axis
+:expression: axis(x, axis)
 
-CrossProduct | cross
---------------------
-Compute the cross product of two vectors
+Ceil
+----
+:description: Computes the smallest integer value greater than or equal to input
+:type variants: CeilAngle
+:expression: ceil(x)
 
-Divide [Angle, AngleByInt, ByInt] | /
--------------------------------------
-Compute the quotient of two values
+Clamp
+-----
+:description: Computes the value within the given min and max range
+:type variants: ClampAngle, ClampInt
+:expression: clamp(x, min, max)
 
-DotProduct | dot
-----------------
-Compute the dot product of two vectors
+Compare
+-------
+:description: Compute how the two values compare to each other
+:type variants: CompareAngle
+:expression: compare(x, y)
 
-DistancePoints [Transforms] | distance
---------------------------------------
-Compute the distance between two points or matrices
+CosAngle
+--------
+:description: Computes the cosine of angle
+:expression: cos(x)
 
-Floor [Angle] | floor
----------------------
-Compute the largest integer value less than or equal to input
+CrossProduct
+------------
+:description: Computes the cross product of two vectors
+:expression: cross(x, y)
 
-InverseMatrix [Quaternion, Rotation] | inverse
-----------------------------------------------
-Compute the inverse of value
+Divide
+------
+:description: Computes the quotient of two values
+:type variants: DivideAngle, DivideAngleByInt, DivideByInt
+:expression: x / y
 
-Lerp [Angle, Matrix, Vector] | lerp
------------------------------------
-Compute leanear interpolation between two values
+DotProduct
+----------
+:description: Computes the dot product of two vectors
+:expression: dot(x, y)
+
+DistancePoints
+--------------
+:description: Computes the distance between two points or matrices
+:type variants: DistanceTransforms
+:expression: distance(x, y)
+
+Floor
+-----
+:description: Computes the largest integer value less than or equal to input
+:expression: floor(x)
+
+InverseMatrix
+-------------
+:description: Computes the inverse of value
+:type variants: InverseQuaternion, InverseRotation
+:expression: inverse(x)
+
+Lerp
+----
+:description: Computes linear interpolation between two values
+:type variants: LerpAngle, LerpMatrix, LerpVector
+:expression: lerp(x, y, alpha)
 
 MatrixFromTRS
 -------------
-Compute a matrix from translation, rotation and scale
+:description: Computes a matrix from translation, rotation and scale
 
-Max [Angle, Int] | max
-----------------------
-Get the smallest of the two values
+Max
+---
+:description: Gets the smallest of the two values
+:type variants: MaxAngle, MaxInt
+:expression: max(x, y)
 
-Min [Angle, Int] | min
-----------------------
-Get the largest of the two values
+MaxElement
+----------
+:description: Gets the largest value in array
+:type variants: MaxAngleElement, MaxIntElement
+:expression: maxelement(x, y)
 
-ModulusInt | %
---------------
-Compute the remainder of the two values
+Min
+---
+:description: Gets the largest of the two values
+:type variants: MaxAngle, MaxInt
+:expression: min(x, y)
 
-Multiply [Angle, AngleByInt, ByInt, Int, Matrix, Quaternion, Rotation, Vector, VectorByMatrix] | *
---------------------------------------------------------------------------------------------------
-Compute the product of two values
+MinElement
+----------
+:description: Gets the smallest value in array
+:type variants: MinAngleElement, MinIntElement
+:expression: minelement(x, y)
 
-Negate [Angle, Int, Vector] | negate
-------------------------------------
-Compute the negation of value
+ModulusInt
+----------
+:description: Computes the remainder of the two values
+:expression: x % y
 
-NormalizeVector | normalize
----------------------------
-Compute normalized vector
+Multiply
+--------
+:description: Computes the product of two values
+:type variants: MultiplyAngle, MultiplyAngleByInt, MultiplyByInt, MultiplyInt, MultiplyMatrix,
+   MultiplyQuaternion, MultiplyRotation, MultiplyVector, MultiplyVectorByMatrix
+:expression: x * y
 
-Power | power
--------------
-Compute the exponent
+Negate
+------
+:description: Computes the negation of value
+:type variants: NegateAngle, NegateInt, NegateVector
+:expression: negate(x)
 
-QuaternionFromMatrix [FromRotation] | quat
-------------------------------------------
-Get quatenrion from matrix or rotation
+NormalizeVector
+---------------
+:description: Computes normalized vector
+:expression: normalize(x)
 
-Round [Angle] | round
+NormalizeArray
+---------------
+:description: Normalize array of values
+:expression: normalizearray(x)
+
+NormalizeWeightsArray
 ---------------------
-Compute rounded value
+:description: Normalize array of weight values
 
-RotationFromMatrix [FromQuaternion] | rot
------------------------------------------
-Get rotation from matrix or quaternion
+OrBool
+-------
+:description: Gets logical *or* of two values
+:type variants: OrInt
+
+Power
+-----
+:description: Computes the value raised to power of the exponent
+:expression: power(x, exp)
+
+QuaternionFromMatrix
+--------------------
+:description: Gets quaternion from matrix or rotation
+:type variants: QuaternionFromRotation
+:expression: quat(x, rot_order)
+
+Round
+-----
+:description: Computes rounded value
+:type variants: RoundAngle
+:expression: round(x)
+
+RotationFromMatrix
+------------------
+:description: Gets rotation from matrix or quaternion
+:type variants: RotationFromQuaternion
+:expression: rot(x, rot_order)
 
 ScaleFromMatrix
 ---------------
-Get scale from matrix
+:description: Gets scale from matrix
 
-Select [Angle, Int, Matrix, Quaternion, Rotaiton, Vector] | select
-------------------------------------------------------------------
-Toggle selection
+Select
+------
+:description: Toggles output
+:type variants: SelectAngle, SelectInt, SelectMatrix, SelectQuaternion, SelectRotation,
+   SelectVector
+:expression: select(x, y, state)
 
-SinAngle | sin
---------------
-Compute sin of angle
+SelectArray
+-----------
+:description: Toggles array output
+:type variants: SelectAngleArray, SelectIntArray, SelectMatrixArray, SelectVectorArray
 
-SlerpQuaternion | slerp
------------------------
-Comptue slerp interpolation between two quaternions
+SinAngle
+--------
+:description: Computes sin of angle
+:expression: sin(x)
 
-Subtract [Angle, Int, Vector] | -
----------------------------------
-Compute the difference between two values
+SlerpQuaternion
+---------------
+:description: Comptues slerp interpolation between two quaternions
+:expression: slerp(x, y)
 
-TanAngle | tan
---------------
-Compute tangent of angle
+Subtract
+--------
+:description: Computes the difference between two values
+:type variants: SubtractAngle, SubtractInt, SubtractVector
+:expression: x - y
+
+Sum
+---
+:description: Computes the the sum of values
+:type variants: SumAngle, SumInt, SumVector
+
+TanAngle
+--------
+:description: Computes tangent of angle
+:expression: tan(x)
 
 TranslationFromMatrix
 ---------------------
-Get translation from matrix
+:description: Get translation from matrix
 
-TwistFromMatrix [FromRotaiton] | twist
---------------------------------------
-Compute twist around axis from matrix or rotation
+TwistFromMatrix
+---------------
+:description: Computes twist around axis from matrix or rotation
+:type variants: TwistFromRotaiton
+:expression: twist(x, axis, rot_order)
 
-VectorLength | length
----------------------
-Compute length of vector
+VectorLength
+------------
+:description: Computes length of vector
+:expression: length(x)
 
-VectorLengthSquared | lengthsquared
------------------------------------
-Compute squared length of vector
+VectorLengthSquared
+-------------------
+:description: Computes squared length of vector
+:expression: lengthsquared(x)
 
-.. warning::
-   This documentation is not completed, for the full list of nodes please see
-   `Plugin.cpp <https://github.com/serguei-k/maya-math-nodes/blob/master/src/Plugin.cpp>`_
+WeightedAverage
+---------------
+:description: Computes the weighted average value
+:type variants: WeightedAverageAngle, WeightedAverageInt, WeightedAverageMatrix, WeightedAverageQuaternion,
+   WeightedAverageRotation, WeightedAverageVector
+
+XorBool
+-------
+:description: Gets logical *xor* of two values
+:type variants: XorInt
