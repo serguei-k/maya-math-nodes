@@ -44,10 +44,9 @@ To install the library on OSX or Linux run the following command:
 make install
 ```
 
-By default the resulting module gets installed under the current build directory.
+By default the resulting module gets installed under *dist* folder in the current source directory.
 
-To make the module available in Maya, add the install location to *MAYA_MODULE_PATH* environment variable or create
-a symlink to the *MayaMathNodes.mod* under an an existing module path.
+To make the module available in Maya, add the install location to *MAYA_MODULE_PATH* environment variable or copy the module to a directory already in the module path.
 
 The install location can also be changed as follows:
 
