@@ -18,8 +18,7 @@ The purpose of these nodes is to streamline the creation of complex and highly p
 
 To see the list of nodes made available by the plugin, please refer to the :ref:`Node Reference <nodeReference>` section.
 
-Additionaly, this plugin provides a simple expression language that can be used to describe complex mathematical operation which can
-then be used to and generate a math node network, see :ref:`Expression Language <expressionLanguage>` section for details.
+Additionaly, this plugin provides a simple expression language that can be used to describe a series of mathematical operations inline, which can then be interpreted to generate a math node network for you, see :ref:`Expression Language <expressionLanguage>` section for details.
 
 .. note::
    At this time there are no distributable binaries available for download.
