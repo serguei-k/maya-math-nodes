@@ -151,7 +151,7 @@ MatrixFromTRS
 
 Max
 ---
-:description: Gets the smallest of the two values
+:description: Gets the largest of the two values
 :type variants: MaxAngle, MaxInt
 :expression: max(x, y)
 
@@ -163,7 +163,7 @@ MaxElement
 
 Min
 ---
-:description: Gets the largest of the two values
+:description: Gets the smallest of the two values
 :type variants: MaxAngle, MaxInt
 :expression: min(x, y)
 
