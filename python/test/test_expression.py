@@ -78,8 +78,6 @@ class TestExpression(ExpressionTestCase):
     def test_precedence(self):
         self.eval_expression('2.0 + 2.0 * 2.0 / 2.0 - 1.0', 3.0)
         self.eval_expression('(2.0 + 2.0) * (2.0 / (2.0 - 1.0))', 8.0)
-        self.eval_expression('(2.0 + 2.0) * (2.0 / 2.0 - 1.0))', 0.0, exception=ParsingError)
-        self.eval_expression('(2.0 + 2.0) * (2.0 / (2.0 - 1.0)', 0.0, exception=ParsingError)
 
     def test_conditional(self):
         # compare
@@ -126,4 +124,37 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('rot(dummy.matrix, 0)', [2.0, 2.0, 2.0], 'math_RotationFromMatrix', places=3)
 
         self.eval_expression('distance({0, 0, 0}, {1, 0, 0})', 1.0, 'math_DistancePoints')
-        self.eval_expression('distance(dummy.matrix, dummy.matrix)', 0.0, 'math_DistanceTransforms')
+        self.eval_expression('distance(dummy.worldMatrix[0], dummy.matrix)', 0.0, 'math_DistanceTransforms')
+
+    def test_errors(self):
+        # invalid expression
+        self.eval_expression('1', 1, exception=BuildingError)
+        self.eval_expression('1 +', 1, exception=ParsingError)
+        self.eval_expression('+ 1', 1, exception=ParsingError)
+        self.eval_expression('+', 1, exception=ParsingError)
+        self.eval_expression('abs', 1, exception=BuildingError)
+        self.eval_expression('dummy.tx', 1, exception=BuildingError)
+
+        # invalid path
+        self.eval_expression('not_dymmy.tx + 2', 1, exception=BuildingError)
+        self.eval_expression('dymmy.wx + 2', 1, exception=BuildingError)
+        self.eval_expression('dymmy + 2', 1, exception=BuildingError)
+
+        # uneven parentheses
+        self.eval_expression('(2.0 + 2.0) * (2.0 / 2.0 - 1.0))', 0.0, exception=ParsingError)
+        self.eval_expression('(2.0 + 2.0) * (2.0 / (2.0 - 1.0)', 0.0, exception=ParsingError)
+
+        # invalid indexing
+        self.eval_expression('{0, 1, 0} * dymmy.worldMatrix[]', 0.0, exception=ParsingError)
+        self.eval_expression('{0, 1, 0} * dymmy.worldMatrix[none]', 0.0, exception=ParsingError)
+        self.eval_expression('{0, 1, 0} * dymmy.worldMatrix[2 + 2]', 0.0, exception=ParsingError)
+
+        # invalid complex number
+        self.eval_expression('{0, 1, 0 * 2', [0.0, 2.0, 0.0], exception=ParsingError)
+        self.eval_expression('{{0, 1, 0} * 2', [0.0, 2.0, 0.0], exception=ParsingError)
+        self.eval_expression('{0, 0, 0, 0, 0} * 2', [0.0, 2.0, 0.0], exception=ParsingError)
+
+        # invalid function arguments
+        self.eval_expression('abs()', 1, exception=ParsingError)
+        self.eval_expression('min(1,)', 1, exception=ParsingError)
+        self.eval_expression('min(1)', 1, exception=BuildingError)

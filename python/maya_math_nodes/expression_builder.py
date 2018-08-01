@@ -75,6 +75,7 @@ class ExpresionBuilder(object):
         self._connections = []
         self._values = []
         self._namer = name_generator
+        self._first = True
     
     def generate(self, ast):
         """Generate Maya data from AST
@@ -86,13 +87,19 @@ class ExpresionBuilder(object):
             Attribute: Returns resulting output attribute for node graph that would be generated from AST
         """
         if isinstance(ast, Binary):
+            self._first = False
             return self.generate_binary(ast)
         elif isinstance(ast, Conditional):
+            self._first = False
             return self.generate_conditional(ast)
         elif isinstance(ast, Function):
+            self._first = False
             return self.generate_function(ast)
-        else:
-            return ast
+        elif self._first:
+            raise BuildingError("Expected expression, got '{0}' instead".format(ast.value))
+        
+        self._first = False
+        return ast
     
     def set_node_values(self, attr, value):
         """Set node values
@@ -134,8 +141,11 @@ class ExpresionBuilder(object):
         elif isinstance(value, basestring):
             attr_name = value
         
-        attr_type = cmds.getAttr(attr_name, type=True)
-        attr_type = self.condition_type(attr_type)
+        try:
+            attr_type = cmds.getAttr(attr_name, type=True)
+            attr_type = self.condition_type(attr_type)
+        except ValueError:
+            raise BuildingError("Invalid Maya attribute specified '{0}'".format(attr_name))
         
         # check if attribute is rotation
         if attr_type == 'double3':

@@ -246,9 +246,10 @@ class ExpressionParser(object):
                 arg_is_list = True
                 self._data.next()  # consume open bracket
             
-            arg = self.parse_expression()
-            if not arg:
-                self._data.error('Expected a valid argument, got "None" instead')
+            try:
+                arg = self.parse_expression()
+            except ParsingError:
+                self._data.error("Expected a valid argument, got '{0}' instead".format(self.token.value))
             
             if arg_is_list:
                 args_nested.append(arg)
