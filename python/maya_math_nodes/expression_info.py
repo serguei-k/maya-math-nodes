@@ -117,6 +117,7 @@ FUNCTIONS = {
         'types': ['double', 'doubleAngle', 'doubleLinear', 'int'],
         'mixed_types': {}
     },
+    'compare': CompareOp,
     'cos': {
         'name': 'math_CosAngle',
         'attributes': ['input'],

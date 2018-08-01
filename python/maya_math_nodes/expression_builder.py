@@ -112,7 +112,7 @@ class ExpresionBuilder(object):
         """Condition Maya type to one supported by the builder"""
         if maya_type == 'doubleLinear':
             maya_type = 'double'
-        elif maya_type == 'long' or maya_type == 'short' or maya_type == 'enum':
+        elif maya_type == 'long' or maya_type == 'short' or maya_type == 'enum' or maya_type == 'bool':
             maya_type = 'int'
         
         return maya_type
@@ -182,10 +182,20 @@ class ExpresionBuilder(object):
     
     def validate_node_type(self, node_type, message):
         """Validate generated node type against Maya nodes"""
+        # TODO: some workarounds for inconsistenly named nodes
+        if node_type == 'math_MultiplyVectorByInt':
+            node_type = 'math_MultiplyVector'
+        elif node_type == 'math_DistanceVector':
+            node_type = 'math_DistancePoints'
+        elif node_type == 'math_DistanceMatrix':
+            node_type = 'math_DistanceTransforms'
+        
         try:
             cmds.nodeType(node_type, isTypeName=True)
         except RuntimeError:
             raise BuildingError('Generated unrecognized node type "{0}" for {1}'.format(node_type, message))
+        
+        return node_type
     
     def validate_function_argument_type(self, attr_name, node_type, arg_type, cast_ok):
         """Check if argument type is compatible with attribute type"""
@@ -237,7 +247,7 @@ class ExpresionBuilder(object):
                             operator_node_type = operator_node_base_type
                         else:
                             operator_node_type = operator_node_base_type.format(TYPE_SUFFIX_PER_TYPE[arg_type])
-                        self.validate_node_type(operator_node_type, 'function "{0}"'.format(ast.value))
+                        operator_node_type = self.validate_node_type(operator_node_type, 'function "{0}"'.format(ast.value))
                         self._nodes.append((operator_node_type, operator_node_name))
                     
                     self.validate_function_argument_type(attributes[index], operator_node_type, arg_type, isinstance(arg, Number))
@@ -257,7 +267,7 @@ class ExpresionBuilder(object):
                         operator_node_type = operator_node_base_type
                     else:
                         operator_node_type = operator_node_base_type.format(TYPE_SUFFIX_PER_TYPE[arg_type])
-                    self.validate_node_type(operator_node_type, 'function "{0}"'.format(ast.value))
+                    operator_node_type = self.validate_node_type(operator_node_type, 'function "{0}"'.format(ast.value))
                     self._nodes.append((operator_node_type, operator_node_name))
                 
                 self.validate_function_argument_type(attributes[index], operator_node_type, arg_type, isinstance(arg, Number))
@@ -286,7 +296,7 @@ class ExpresionBuilder(object):
         operator_node_base_type = FUNCTIONS[ast.value]['name']
         operator_node_name = self._namer.get_name(operator_node_base_type)
         operator_node_type = operator_node_base_type.format(TYPE_SUFFIX_PER_TYPE[left_type])
-        self.validate_node_type(operator_node_type, '"{0} {1} {2}"'.format(left_type, ast.value, right_type))
+        operator_node_type = self.validate_node_type(operator_node_type, '"{0} {1} {2}"'.format(left_type, ast.value, right_type))
         self._nodes.append((operator_node_type, operator_node_name))
         
         operations = ['==', '<', '>', '!=', '<=', '>=']
@@ -304,7 +314,7 @@ class ExpresionBuilder(object):
         select_node_base_type = FUNCTIONS['select']['name']
         select_node_name = self._namer.get_name(select_node_base_type)
         select_node_type = select_node_base_type.format(TYPE_SUFFIX_PER_TYPE[true_type])
-        self.validate_node_type(select_node_type, '"{0} {1} {2}"'.format(true_type, ast.value, false_type))
+        operator_node_type = self.validate_node_type(select_node_type, '"{0} {1} {2}"'.format(true_type, ast.value, false_type))
         self._nodes.append((select_node_type, select_node_name))
         self.set_node_values('{0}.condition'.format(select_node_name), '{0}.output'.format(operator_node_name))
         self.set_node_values('{0}.input1'.format(select_node_name), false)
@@ -326,11 +336,7 @@ class ExpresionBuilder(object):
         if left_type != right_type:
             operator_node_type += 'By{0}'.format(TYPE_SUFFIX_PER_TYPE[right_type])
         
-        # TODO: some workarounds for inconsistencies
-        if operator_node_type == 'math_MultiplyVectorByInt':
-            operator_node_type = 'math_MultiplyVector'
-        
-        self.validate_node_type(operator_node_type, '"{0} {1} {2}"'.format(left_type, ast.value, right_type))
+        operator_node_type = self.validate_node_type(operator_node_type, '"{0} {1} {2}"'.format(left_type, ast.value, right_type))
         self._nodes.append((operator_node_type, operator_node_name))
 
         self.set_node_values('{0}.input1'.format(operator_node_name), left)

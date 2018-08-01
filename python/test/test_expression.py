@@ -89,14 +89,15 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('2 == 2.0 ? 1 : 0', 1)
         self.eval_expression('dummy.tx == dummy.ty ? 1 : 0', 1)
         self.eval_expression('dummy.rx == dummy.ty ? 1 : 0', 1, exception=BuildingError)
-        
+        self.eval_expression('compare(dummy.rx, 2.0)', True, 'math_CompareAngle')
+
         # selector
         self.eval_expression('dummy.tx > 1.0 ? 2.0 + 2.0 : 2.0 - 2.0', 4.0, 'math_Select')
         self.eval_expression('dummy.tx < 1.0 ? 2.0 + 2.0 : 2', 2.0, 'math_Select')
         self.eval_expression('dummy.tx > 1.0 ? 2 + 2 : 2 - 2', 4, 'math_SelectInt')
         self.eval_expression('dummy.tx > 1.0 ? 2 + 2 : 2.0', 4, 'math_SelectInt')
         self.eval_expression('dummy.tx > 1.0 ? 2.0 + 2.0 : 2 - 2', 0.0, exception=BuildingError)
-        
+        self.eval_expression('select(0, 1, 1)', 1, 'math_SelectInt')
         self.eval_expression('(2.0 + 2.0 == 4.0 ? 1 : 0) + 1', 2, 'math_AddInt')
     
     def test_functions(self):
@@ -123,6 +124,6 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('twist(dummy.matrix, 0, 0)', 1.965, 'math_TwistFromMatrix', places=3)
         self.eval_expression('twist(dummy.rotate, 0, 0)', 1.965, 'math_TwistFromRotation', places=3)
         self.eval_expression('rot(dummy.matrix, 0)', [2.0, 2.0, 2.0], 'math_RotationFromMatrix', places=3)
-    
-    #def text_complex(self):
-        #self.eval_expression('')
+
+        self.eval_expression('distance({0, 0, 0}, {1, 0, 0})', 1.0, 'math_DistancePoints')
+        self.eval_expression('distance(dummy.matrix, dummy.matrix)', 0.0, 'math_DistanceTransforms')
