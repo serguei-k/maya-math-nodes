@@ -9,8 +9,7 @@ Overview
 Even simple math expressions often require relatively large node networks, which are tedious to create by hand.
 While this process can be scripted, the code is likewise tedious to write and makes it difficult to see the logic at a glance.
 
-To help alleviate these issues, Maya Math Nodes plugin provide a simple expression language that can be used to describe
-a complex mathematical operation which can then be interpreted to generate the math node network for you.
+To help alleviate these issues, Maya Math Nodes plugin provide a simple expression language that can be used to describe a series of mathematical operations inline, which can then be interpreted to generate a math node network for you.
 
 Data Types
 ----------
