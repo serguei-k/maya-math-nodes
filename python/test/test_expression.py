@@ -145,6 +145,7 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('(2.0 + 2.0) * (2.0 / (2.0 - 1.0)', 0.0, exception=ParsingError)
 
         # invalid indexing
+        self.eval_expression('{0, 1, 0} * dymmy.worldMatrix[', 0.0, exception=ParsingError)
         self.eval_expression('{0, 1, 0} * dymmy.worldMatrix[]', 0.0, exception=ParsingError)
         self.eval_expression('{0, 1, 0} * dymmy.worldMatrix[none]', 0.0, exception=ParsingError)
         self.eval_expression('{0, 1, 0} * dymmy.worldMatrix[2 + 2]', 0.0, exception=ParsingError)

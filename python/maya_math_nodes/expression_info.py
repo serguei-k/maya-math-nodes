@@ -15,6 +15,8 @@ TYPE_SUFFIX_PER_TYPE = {
 }
 
 OPERATORS = ['+', '/', '%', '*', '-']
+CONDITION = ['<', '>', '=', '!']
+TERNARY = ['?', ':']
 
 CompareOp = {
     'name': 'math_Compare{0}',
