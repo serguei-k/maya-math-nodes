@@ -1,0 +1,8 @@
++ MAYAVERSION:2017 MayaMathNodes ${PROJECT_VERSION} ${INSTALL_DIR}
+plug-ins: plug-ins/2017
+
++ MAYAVERSION:2018 MayaMathNodes ${PROJECT_VERSION} ${INSTALL_DIR}
+plug-ins: plug-ins/2018
+
++ MAYAVERSION:2019 MayaMathNodes ${PROJECT_VERSION} ${INSTALL_DIR}
+plug-ins: plug-ins/2019
