@@ -18,6 +18,12 @@ OPERATORS = ['+', '/', '%', '*', '-']
 CONDITION = ['<', '>', '=', '!']
 TERNARY = ['?', ':']
 
+PRECEDENCE = {
+    '<': 10, '>': 10, '<=': 10, '>=': 10, '==': 10, '!=': 10,
+    '+': 20, '-': 20,
+    '*': 30, '/': 30, '%': 30,
+}
+
 CompareOp = {
     'name': 'math_Compare{0}',
     'attributes': ['input1', 'input2'],

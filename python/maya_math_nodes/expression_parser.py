@@ -2,16 +2,15 @@
 # Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 from expression_lexer import *
 
-PRECEDENCE = {
-    '<': 10, '>': 10, '<=': 10, '>=': 10, '==': 10, '!=': 10,
-    '+': 20, '-': 20,
-    '*': 30, '/': 30, '%': 30,
-}
-
 
 class Number(object):
-    """"""
+    """Number AST Node"""
     def __init__(self, value):
+        """Initialize AST node
+
+        Args:
+            value (int | float | list[float]): Value held by this AST node
+        """
         self.value = value
 
         if isinstance(value, list):
@@ -25,63 +24,98 @@ class Number(object):
         else:
             self.type = 'double' if '.' in value else 'int'
             self.value = float(value) if self.type == 'double' else int(value)
-    
+
     def negate(self):
+        """Negate current value"""
         self.value = self.value * -1
-    
+
     def __repr__(self):
         return '(Number: {0}({1}))'.format(self.type, self.value)
 
 
 class String(object):
+    """String AST Node"""
     def __init__(self, value, index=None):
+        """Initialize AST node
+
+        Args:
+            value (str): Value held by this AST node
+            index (int): Index for array attribute access
+        """
         self._value = value
         self.index = index
-    
+
     @property
     def value(self):
         return '{0}{1}'.format(self._value, '[{0}]'.format(self.index) if self.index else '')
-    
+
     def __repr__(self):
         return '(String: {0})'.format(self.value)
 
 
 class Binary(object):
+    """Binary AST Node"""
     def __init__(self, value, left, right):
+        """Initialize AST node
+
+        Args:
+            value (str): Binary operator value
+            left (int | float | list[float] | str): Left operand value
+            right (int | float | list[float] | str): Right operand value
+        """
         self.value = value
         self.left = left
         self.right = right
-    
+
     def __repr__(self):
         return '(Binary: {0} {1} {2})'.format(self.left, self.value, self.right)
 
 
 class Conditional(object):
+    """Conditional AST Node"""
     def __init__(self, value, left, right, true, false):
+        """Initialize AST node
+
+        Args:
+            value (str): Conditional operator value
+            left (int | float | list[float] | str): Left operand value
+            right (int | float | list[float] | str): Right operand value
+            true (int | float | list[float] | str): Value if true
+            false (int | float | list[float] | str): Value if false
+        """
         self.value = value
         self.left = left
         self.right = right
         self.true = true
         self.false = false
-    
+
     def __repr__(self):
         return '(Conditional: {0} {1} {2} ? {3} : {4})'.format(self.left, self.value, self.right, self.true, self.false)
 
 
 class Function(object):
+    """Function AST Node"""
     def __init__(self, value, args, index=None):
+        """Initialize AST node
+
+        Args:
+            value (str): Function name
+            args (list): Function argument values
+            index (int): Index for array output attribute access
+        """
         self.value = value
         self.args = args
         self.index = index
-    
+
     def __repr__(self):
         return '(Function: {0}({1}){2})'.format(self.value, self.args, '[{0}]'.format(self.index) if self.index else '')
 
 
 class ExpressionParser(object):
+    """Expression Parser"""
     def __init__(self, expression):
         """Initialize expression parser
-        
+
         Args:
             expression (str): Raw math expression to parse
         """
@@ -90,7 +124,7 @@ class ExpressionParser(object):
     @property
     def token(self):
         """Get current lexer token
-        
+
         Returns:
             Token: Current token
         """
@@ -98,35 +132,35 @@ class ExpressionParser(object):
 
     def parse(self):
         """Parse the entire expression
-        
+
         This is the main executor for the parser.
 
         Returns:
-            Object: Returns the containing AST node
+            Number | String | Binary | Conditional | Function: Returns the containing AST node
         """
         self._data.next()
         return self.parse_expression()
 
     def get_precedence(self):
         """Get operator precedence from current token
-        
+
         Returns:
             int: Returns operator prcedence value
         """
         if not self.token or self.token.type is not OperatorToken:
             return -1
-        
+
         return PRECEDENCE[self.token.value]
 
     def parse_number(self):
         """"Parse current token as number
-        
+
         Returns:
             Number: Returns Number AST node
         """
         num = Number(self.token.value)
         self._data.next()  # consumes number
-        
+
         return num
 
     def parse_string(self):
@@ -145,7 +179,7 @@ class ExpressionParser(object):
                 self._data.error('Expected a numeric index, got "{0}" instead'.format(self.token))
             string.index = self.token.value
             self._data.next() # consume index number
-            
+
             if not self.token or self.token.value != ']':
                 self._data.error('Expected a closing bracket, got "{0}"" instead'.format(self.token))
             self._data.next() # consume close bracket
@@ -154,13 +188,13 @@ class ExpressionParser(object):
 
     def parse_element(self):
         """Parse token element
-        
+
         Returns:
-            Object: Returns appropriate AST node
+            Number | String | Binary | Conditional | Function: Returns appropriate AST node
         """
         if not self.token:
             self._data.error('Expected a valid token, got "None" instead')
-        
+
         if self.token.type == NumberToken:
             return self.parse_number()
         elif self.token.type == StringToken:
@@ -176,7 +210,7 @@ class ExpressionParser(object):
         elif self.token.type == OperatorToken and self.token.value == '-':
             # special case for negative values
             self._data.next()  # consume negate
-            
+
             # TODO: complete for other types
             if self.token.type == NumberToken:
                 number = self.parse_number()
@@ -186,18 +220,18 @@ class ExpressionParser(object):
                 self._data.error('Expected a number after negate, got "{0}" instead'.format(self.token.value))
         else:
             self._data.error('Could not handle token "{0}"'.format(self.token))
-    
+
     def parse_expression(self):
         """Parse expression recursively
-        
+
         Returns:
-            Object: Returns the containing left most AST node
+            Number | String | Binary | Conditional | Function: Returns the containing left most AST node
         """
         left = self.parse_element()
-        
+
         if self.token and self.token.type == OperatorToken:
             left = self.parse_binary_right(0, left)
-        
+
         if self.token and self.token.type == ConditionToken:
             left = self.parse_conditional(left)
 
@@ -205,12 +239,12 @@ class ExpressionParser(object):
         #     self.error('Expected end of expression or another operator, got '{0}' instead'.format(self.token))
 
         return left
-    
+
     def parse_parentheses(self):
         """Parse parentheses
-        
+
         Returns:
-            Object: Returns appropriate AST node
+            Number | String | Binary | Conditional | Function: Returns appropriate AST node
         """
         self._data.next()  # consume open paren
         result = self.parse_expression()
@@ -220,22 +254,22 @@ class ExpressionParser(object):
 
         if not self.token or self.token.value != ')':
             self._data.error('Expected closing parenthesis, got "{0}" instead'.format(self.token))
-        
+
         self._data.next()  # consume closing paren
         return result
-    
+
     def parse_function(self):
         """Parse function expression
-        
+
         Returns:
             Function: Returns Function AST node
         """
         function = self.token.value
         self._data.next()  # consume function
-        
+
         if not self.token or self.token.value != '(':
             self._data.error('Expected function call parentheses, got "{0}" instead'.format(self.token))
-        
+
         args = []
         args_nested = []
         arg_is_list = False
@@ -245,20 +279,20 @@ class ExpressionParser(object):
             if self.token and self.token.value == '[':
                 arg_is_list = True
                 self._data.next()  # consume open bracket
-            
+
             try:
                 arg = self.parse_expression()
             except ParsingError:
                 self._data.error("Expected a valid argument, got '{0}' instead".format(self.token.value))
-            
+
             if arg_is_list:
                 args_nested.append(arg)
             else:
                 args.append(arg)
-            
+
             if self.token and self.token.value == ']':
                 self._data.next()  # consume close bracket
-                
+
                 if self.token and self.token.value in [',', ')']:
                     prev_token = self.token
                     self._data.next()  # consume comma or close paren
@@ -267,7 +301,7 @@ class ExpressionParser(object):
                     if prev_token.value == ')':
                         break
                 else:
-                    self._data.error('Expected comma or closing parenthesis, got "{0}" instead'.format(next)) 
+                    self._data.error('Expected comma or closing parenthesis, got "{0}" instead'.format(next))
             elif self.token and self.token.value == ')':
                 self._data.next()  # consume close paren
                 break
@@ -275,7 +309,7 @@ class ExpressionParser(object):
                 self._data.next()  # consume comma
             else:
                 self._data.error('Expected closing parenthesis, got "{0}" instead'.format(self.token))
-        
+
         # if the next token is a square bracket then we assuming indexing
         index = None
         if self.token and self.token.value == '[':
@@ -293,7 +327,7 @@ class ExpressionParser(object):
 
     def parse_binary_right(self, prec, left):
         """Parse binary expression with precendence recursively
-        
+
         Returns:
             Binary: Returns Binary AST node
         """
@@ -301,14 +335,14 @@ class ExpressionParser(object):
             left_prec = self.get_precedence()
             if left_prec < prec:
                 return left
-            
+
             op_value = self.token.value
             self._data.next()  # consume op
 
             right = self.parse_element()
             if left_prec < self.get_precedence():
                 right = self.parse_binary_right(left_prec + 1, right)
-            
+
             left = Binary(op_value, left, right)
 
     def parse_conditional(self, left):
@@ -323,12 +357,12 @@ class ExpressionParser(object):
         right = self.parse_expression()
         if not self.token.type == TernaryToken:
             self._data.error('Expected ternary operator, got "{0}" instead'.format(self.token.value))
-        
+
         self._data.next()  # consume op
         true = self.parse_expression()
         false = None
         if self.token.type == TernaryToken:
             self._data.next()  # consume op
             false = self.parse_expression()
-        
+
         return Conditional(op_value, left, right, true, false)

@@ -8,7 +8,7 @@ NodeNameGenerator = expression_builder.NodeNameGenerator
 
 def eval_expression(expression, base_node_name='', name_generator=None):
     """Evaluate Expression
-    
+
     Args:
         expression (str): Math expression to evaluate
         base_node_name (str): Base name used to initialize new node name generator
@@ -19,7 +19,7 @@ def eval_expression(expression, base_node_name='', name_generator=None):
     """
     if not name_generator:
         name_generator = NodeNameGenerator(base_node_name)
-    
+
     ast = expression_parser.ExpressionParser(expression).parse()
     builder = expression_builder.ExpresionBuilder(name_generator)
     output = builder.generate(ast)
