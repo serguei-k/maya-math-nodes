@@ -74,6 +74,8 @@ endif()
 
 configure_file(MayaMathNodes.mod.in MayaMathNodes.mod)
 
-install(TARGETS mayaMathNodes LIBRARY DESTINATION ${INSTALL_DIR}/plug-ins/${MAYA_VERSION})
+install(TARGETS mayaMathNodes
+    LIBRARY DESTINATION ${INSTALL_DIR}/plug-ins/${MAYA_VERSION}
+    RUNTIME DESTINATION ${INSTALL_DIR}/plug-ins/${MAYA_VERSION})
 install(DIRECTORY python/maya_math_nodes DESTINATION ${INSTALL_DIR}/scripts)
 install(FILES ${CMAKE_BINARY_DIR}/MayaMathNodes.mod DESTINATION ${INSTALL_DIR})
