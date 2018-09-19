@@ -58,7 +58,7 @@ class TestExpression(ExpressionTestCase):
         # multiply complex types
         self.eval_expression('{1, 0, 0} * 2', [2.0, 0.0, 0.0], 'math_MultiplyVector')
         self.eval_expression('{1, 0, 0} * 2.0', [2.0, 0.0, 0.0], 'math_MultiplyVector')
-        self.eval_expression('{1, 0, 0} * dummy.tx', [0.0, 0.0, 0.0], exception=BuildingError)
+        self.eval_expression('{1, 0, 0} * dummy.tx', [2.0, 0.0, 0.0], 'math_MultiplyVector')
         self.eval_expression('{1, 0, 0} * {1, 0, 0}', [0.0, 0.0, 0.0], exception=RuntimeError)  # needs fixing
         self.eval_expression('2 * {1, 0, 0}', [0.0, 0.0, 0.0], exception=BuildingError)
         self.eval_expression('1, 0, 0} * 2', 0.0, exception=ParsingError)

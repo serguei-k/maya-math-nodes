@@ -214,7 +214,7 @@ class ExpresionBuilder(object):
             str: Return conditioned node type
         """
         # TODO: some workarounds for inconsistenly named nodes
-        if node_type == 'math_MultiplyVectorByInt':
+        if node_type == 'math_MultiplyVectorBy':
             node_type = 'math_MultiplyVector'
         elif node_type == 'math_DistanceVector':
             node_type = 'math_DistancePoints'
