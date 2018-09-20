@@ -128,6 +128,8 @@ class ExpresionBuilder(object):
             maya_type = 'double'
         elif maya_type == 'long' or maya_type == 'short' or maya_type == 'enum' or maya_type == 'bool':
             maya_type = 'int'
+        elif maya_type == 'TdataCompound':
+            maya_type = 'compound'
 
         return maya_type
 
@@ -160,6 +162,11 @@ class ExpresionBuilder(object):
             child_name = attr_name.split('.')[0] + '.' + children[1]
             if cmds.getAttr(child_name, type=True) == 'doubleAngle':
                 attr_type = 'double3Angle'
+        elif attr_type == 'compound':
+            children = cmds.listAttr(attr_name, multi=True)
+            child_name = attr_name.split('.')[0] + '.' + children[1]
+            if len(children) == 5 and cmds.getAttr(child_name, type=True) == 'double':
+                attr_type = 'double4'
 
         return attr_type
 
@@ -242,6 +249,11 @@ class ExpresionBuilder(object):
 
         attr_type = cmds.attributeQuery(attr_name, type=node_type, attributeType=True)
         attr_type = self.condition_type(attr_type)
+        
+        
+        if attr_type == 'compound':
+            if cmds.attributeQuery(attr_name, type=node_type, numberOfChildren=True)[0] == 4:
+                attr_type = 'double4'
 
         if attr_type == arg_type:
             return True

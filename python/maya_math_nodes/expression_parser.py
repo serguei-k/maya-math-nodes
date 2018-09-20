@@ -5,7 +5,7 @@ from expression_lexer import *
 
 class Number(object):
     """Number AST Node"""
-    def __init__(self, value):
+    def __init__(self, value, is_angle=False):
         """Initialize AST node
 
         Args:
@@ -15,7 +15,10 @@ class Number(object):
 
         if isinstance(value, list):
             if len(value) == 3:
-                self.type = 'double3'
+                if is_angle:
+                    self.type = 'double3Angle'
+                else:
+                    self.type = 'double3'
             elif len(value) == 4:
                 self.type = 'double4'
             else:
@@ -309,6 +312,11 @@ class ExpressionParser(object):
                 self._data.next()  # consume comma
             else:
                 self._data.error('Expected closing parenthesis, got "{0}" instead'.format(self.token))
+
+        # special case for functions that cast to complex numerics
+        if function in ['vec', 'mat', 'quat', 'rot']:
+            if len(args) in [3, 4, 16] and all([x.type in ['float', 'int'] for x in args]):
+                return Number([x.value for x in args], function == 'rot')
 
         # if the next token is a square bracket then we assuming indexing
         index = None
