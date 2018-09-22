@@ -135,7 +135,18 @@ class ExpresionBuilder(object):
         return maya_type
 
     def get_attribute_type(self, attr_name, node_type):
-        """"""
+        """Get attribute type
+
+        Args:
+            attr_name (str): Attribute name to query the type for
+            node_type (str): Node type the attribute belongs to
+
+        Returns:
+            str: Returns attribute type
+        """
+        if '[' in attr_name:
+            attr_name = attr_name.split('[')[0]
+
         try:
             attr_type = cmds.attributeQuery(attr_name, type=node_type, attributeType=True)
             attr_type = self.condition_type(attr_type)
@@ -178,6 +189,8 @@ class ExpresionBuilder(object):
         try:
             node_name, attr_name = attr_name.split('.')
             node_type = cmds.nodeType(node_name)
+        except ValueError:
+            raise BuildingError("Invalid Maya attribute specified '{0}'".format(attr_name))
         except RuntimeError:
             raise BuildingError("Invalid Maya node specified '{0}'".format(node_name))
 
