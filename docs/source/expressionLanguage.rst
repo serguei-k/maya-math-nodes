@@ -9,21 +9,28 @@ Overview
 Even simple math expressions often require relatively large node networks, which are tedious to create by hand.
 While this process can be scripted, the code is likewise tedious to write and makes it difficult to see the logic at a glance.
 
-To help alleviate these issues, Maya Math Nodes plugin provide a simple expression language that can be used to describe a series of mathematical operations inline, which can then be interpreted to generate a math node network for you.
+To help alleviate these issues, Maya Math Nodes plugin provide a simple expression language that can be used to describe a series of mathematical operations inline,
+which can then be interpreted to generate a math node network for you. For example:
+
+.. code:: python
+
+  # project vector to plane
+  eval_expression('node.t - (vec(0, 1, 0) * dot(node.t, vec(0, 1, 0)))', 'projectToPlane')
 
 Data Types
 ----------
 
-The language supports several data types:
+The language supports the following data types:
 
 numeric
    float and int types are supported, ex: :code:`-1, 0, 1.0`
 
 string
-   string literals are used to reference Maya attributes, ex: :code:`node.attribute[0]`
+   string literals are used to reference Maya attributes, ex: :code:`node.attribute[0]`,
+   note that there are no quatation marks around the string literals!
 
 complex
-   complex types are used to define a vector, matrix, rotation, and quaternion data, ex: :code:`{0, 1, 0}`
+   complex types such ab vector, matrix, rotation, and quaternion are specified by using cast functions, ex: :code:`vec(0, 1, 0)`
 
 Operators
 ---------
@@ -35,7 +42,7 @@ Conditionals
 
 The language supports the following relational operators: :code:`==, !=, >, <, >=, <=`
 
-These should be used in combination with ternary conditional expression: :code:`a == b ? true : false`
+These are used in combination with ternary conditional expression: :code:`a == b ? true : false`
 
 Functions
 ---------
@@ -52,6 +59,25 @@ attributes, therefore the :code:`clamp(arg1, arg2)` function will take two argum
 Likewise, array arguments are also supported with the following syntax: :code:`minelement([1, 2, 3])`.
 
 Output array arguments can also be index using the :code:`[]` operator.
+
+Cast Functions
+++++++++++++++
+
+Several functions that output complex data types can take constant values as input.
+
+mat
+  :code:`mat(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)` can be used to specify constat matrix value
+
+rot
+  :code:`rot(0, 1, 0)` can be used to specify constant rotation value, :code:`rot()` also maps to several
+  math nodes and can take other arguments, ex: :code:`rot(node.matrix, 0)`
+
+quat
+  :code:`quat(0, 0, 0, 1)` can be used to specify constant quaternion value, :code:`quat()` also maps to
+  several math nodes and can take other arguments, ex: :code:`quat(node.rotation, 0)`
+
+vec
+  :code:`vec(1, 0, 0)` can be used to specify a constant vector value
 
 .. warning::
    | Currently, some nodes do not have expression bindings!
@@ -121,4 +147,4 @@ Examples
   eval_expression('ctrl.roll > ctrl.break ? ctrl.roll - ctrl.break : 0', 'toeroll')
 
   # compute some pole vector with offset
-  eval_expression('cross(axis(ctrl.matrix, 0), {0.0, 1.0, 0.0}) * 2', 'pole')
+  eval_expression('cross(axis(ctrl.matrix, 0), vec(0, 1, 0)) * 2', 'pole')
