@@ -25,7 +25,7 @@ class ParsingError(Exception):
 class ExpressionStream(object):
     """Expression Stream"""
     def __init__(self, input_str):
-        """Initialize expresion stream
+        """Initialize expression stream
 
         Args:
             input_str (str): Raw input string
@@ -312,7 +312,7 @@ class ExpressionLexer(object):
         return Token(StringToken, self.read_while(functools.partial(self.is_string, strict=False)))
 
     def is_open_curly(self, char):
-        """Check for open curly brance character
+        """Check for open curly brace character
 
         Args:
             char (str): Single character to check
@@ -323,13 +323,13 @@ class ExpressionLexer(object):
         return char == '{'
 
     def is_not_close_curly(self, char):
-        """Check for close curly brance character
+        """Check for close curly brace character
 
         Args:
             char (str): Single character to check
 
         Returns:
-            bool: Returns True if char is not a closng curly brace
+            bool: Returns True if char is not a closing curly brace
         """
         return char != '}'
 
@@ -343,7 +343,7 @@ class ExpressionLexer(object):
         value = self.read_while(self.is_not_close_curly)
 
         if self._data.peek() != '}':
-            self.error('Expected closing curly brance, got "{0}" instead'.format(self._data.peek()))
+            self.error('Expected closing curly brace, got "{0}" instead'.format(self._data.peek()))
 
         value = value.replace(' ', '').split(',')
         if len(value) not in [3, 4, 16]:

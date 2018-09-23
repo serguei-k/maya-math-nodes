@@ -250,7 +250,7 @@ class ExpresionBuilder(object):
         Returns:
             str: Return conditioned node type
         """
-        # TODO: some workarounds for inconsistenly named nodes
+        # TODO: some workarounds for inconsistently named nodes
         if node_type == 'math_MultiplyVectorBy':
             node_type = 'math_MultiplyVector'
         elif node_type == 'math_DistanceVector':
@@ -290,7 +290,7 @@ class ExpresionBuilder(object):
         """Generate Maya data for function AST node
 
         Args:
-            ast (Function): AST funciton node to process
+            ast (Function): AST function node to process
 
         Returns:
             Attribute: Returns resulting output attribute for node graph generated for the function
@@ -379,7 +379,7 @@ class ExpresionBuilder(object):
         self.set_node_values('{0}.input1'.format(operator_node_name), left)
         self.set_node_values('{0}.input2'.format(operator_node_name), right)
 
-        # recursively geneate true and false outputs
+        # recursively generate true and false outputs
         true = self.generate(ast.true)
         false = self.generate(ast.false)
 
@@ -389,7 +389,7 @@ class ExpresionBuilder(object):
         select_node_name = self._namer.get_name(select_node_base_type)
         select_node_type = select_node_base_type.format(TYPE_SUFFIX_PER_TYPE[true_type])
         operator_node_type = self.validate_node_type(select_node_type, '"{0} {1} {2}"'.format(true_type, ast.value, false_type))
-        self._nodes.append((select_node_type, select_node_name))
+        self._nodes.append((operator_node_type, select_node_name))
         self.set_node_values('{0}.condition'.format(select_node_name), '{0}.output'.format(operator_node_name))
         self.set_node_values('{0}.input1'.format(select_node_name), false)
         self.set_node_values('{0}.input2'.format(select_node_name), true)

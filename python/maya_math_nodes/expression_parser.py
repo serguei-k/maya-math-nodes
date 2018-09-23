@@ -10,6 +10,7 @@ class Number(object):
 
         Args:
             value (int | float | list[float]): Value held by this AST node
+            is_angle (bool): Treat value as angle type
         """
         self.value = value
 
@@ -265,7 +266,7 @@ class ExpressionParser(object):
         """Parse function expression
 
         Returns:
-            Function: Returns Function AST node
+            Function | Number: Returns Function AST node or Number AST node for cast functions
         """
         function = self.token.value
         self._data.next()  # consume function
@@ -334,7 +335,7 @@ class ExpressionParser(object):
         return Function(function, args, index)
 
     def parse_binary_right(self, prec, left):
-        """Parse binary expression with precendence recursively
+        """Parse binary expression with precedence recursively
 
         Returns:
             Binary: Returns Binary AST node
