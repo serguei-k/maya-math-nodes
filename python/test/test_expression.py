@@ -136,19 +136,19 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('dummy.tx', 1, exception=BuildingError)
 
         # invalid path
-        self.eval_expression('not_dymmy.tx + 2', 1, exception=BuildingError)
-        self.eval_expression('dymmy.wx + 2', 1, exception=BuildingError)
-        self.eval_expression('dymmy + 2', 1, exception=BuildingError)
+        self.eval_expression('not_dummy.tx + 2', 1, exception=BuildingError)
+        self.eval_expression('dummy.wx + 2', 1, exception=BuildingError)
+        self.eval_expression('dummy + 2', 1, exception=BuildingError)
 
         # uneven parentheses
         self.eval_expression('(2.0 + 2.0) * (2.0 / 2.0 - 1.0))', 0.0, exception=ParsingError)
         self.eval_expression('(2.0 + 2.0) * (2.0 / (2.0 - 1.0)', 0.0, exception=ParsingError)
 
         # invalid indexing
-        self.eval_expression('{0, 1, 0} * dymmy.worldMatrix[', 0.0, exception=ParsingError)
-        self.eval_expression('{0, 1, 0} * dymmy.worldMatrix[]', 0.0, exception=ParsingError)
-        self.eval_expression('{0, 1, 0} * dymmy.worldMatrix[none]', 0.0, exception=ParsingError)
-        self.eval_expression('{0, 1, 0} * dymmy.worldMatrix[2 + 2]', 0.0, exception=ParsingError)
+        self.eval_expression('{0, 1, 0} * dummy.worldMatrix[', 0.0, exception=ParsingError)
+        self.eval_expression('{0, 1, 0} * dummy.worldMatrix[]', 0.0, exception=ParsingError)
+        self.eval_expression('{0, 1, 0} * dummy.worldMatrix[none]', 0.0, exception=ParsingError)
+        self.eval_expression('{0, 1, 0} * dummy.worldMatrix[2 + 2]', 0.0, exception=ParsingError)
 
         # invalid complex number
         self.eval_expression('{0, 1, 0 * 2', [0.0, 2.0, 0.0], exception=ParsingError)

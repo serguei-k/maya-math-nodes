@@ -60,7 +60,7 @@ class NodeNameGenerator(object):
         return '{0}{1}_{2}'.format(self._base_name, index, suffix)
 
 
-class ExpresionBuilder(object):
+class ExpressionBuilder(object):
     """Expression Builder
 
     This class takes in the expression AST and generates the required Maya commands to
@@ -116,7 +116,8 @@ class ExpresionBuilder(object):
         elif isinstance(value, basestring):
             self._connections.append((value, attr))
 
-    def condition_type(self, maya_type):
+    @staticmethod
+    def condition_type(maya_type):
         """Condition Maya attribute type to one supported by the builder
 
         Args:
@@ -134,7 +135,8 @@ class ExpresionBuilder(object):
 
         return maya_type
 
-    def get_attribute_type(self, attr_name, node_type):
+    @staticmethod
+    def get_attribute_type(attr_name, node_type):
         """Get attribute type
 
         Args:
@@ -149,7 +151,7 @@ class ExpresionBuilder(object):
 
         try:
             attr_type = cmds.attributeQuery(attr_name, type=node_type, attributeType=True)
-            attr_type = self.condition_type(attr_type)
+            attr_type = ExpressionBuilder.condition_type(attr_type)
         except RuntimeError:
             raise BuildingError("Invalid Maya attribute specified '{0}'".format(attr_name))
 
@@ -169,7 +171,8 @@ class ExpresionBuilder(object):
 
         return attr_type
     
-    def get_value_type(self, value):
+    @staticmethod
+    def get_value_type(value):
         """Get value type
 
         Args:
@@ -194,10 +197,11 @@ class ExpresionBuilder(object):
         except RuntimeError:
             raise BuildingError("Invalid Maya node specified '{0}'".format(node_name))
 
-        attr_type = self.get_attribute_type(attr_name, node_type)
+        attr_type = ExpressionBuilder.get_attribute_type(attr_name, node_type)
         return attr_type
 
-    def resolve_operand_types(self, operator, left, right):
+    @staticmethod
+    def resolve_operand_types(operator, left, right):
         """Resolve operand types
 
         Args:
@@ -210,8 +214,8 @@ class ExpresionBuilder(object):
         """
         node = FUNCTIONS[operator]
 
-        left_type = self.get_value_type(left)
-        right_type = self.get_value_type(right)
+        left_type = ExpressionBuilder.get_value_type(left)
+        right_type = ExpressionBuilder.get_value_type(right)
 
         # cast left operand to double if no type specific node exists
         left_cast_ok = isinstance(left, Number) and left_type in NUMERIC_POD_TYPES
@@ -240,7 +244,8 @@ class ExpresionBuilder(object):
         else:
             raise BuildingError('Operands of different types "{0} {1} {2}" are not supported'.format(left_type, operator, right_type))
 
-    def validate_node_type(self, node_type, message):
+    @staticmethod
+    def validate_node_type(node_type, message):
         """Validate generated node type against Maya nodes
 
         Args:
@@ -265,7 +270,8 @@ class ExpresionBuilder(object):
 
         return node_type
 
-    def validate_function_argument_type(self, attr_name, node_type, arg_type, cast_ok):
+    @staticmethod
+    def validate_function_argument_type(attr_name, node_type, arg_type, cast_ok):
         """Check if argument type is compatible with attribute type
 
         Args:
@@ -277,7 +283,7 @@ class ExpresionBuilder(object):
         Returns:
             bool: Returns True if function argument type is compatible with attribute type
         """
-        attr_type = self.get_attribute_type(attr_name, node_type)
+        attr_type = ExpressionBuilder.get_attribute_type(attr_name, node_type)
         if attr_type == arg_type:
             return True
 

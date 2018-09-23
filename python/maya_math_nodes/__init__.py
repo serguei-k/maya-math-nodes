@@ -21,7 +21,7 @@ def eval_expression(expression, base_node_name='', name_generator=None):
         name_generator = NodeNameGenerator(base_node_name)
 
     ast = expression_parser.ExpressionParser(expression).parse()
-    builder = expression_builder.ExpresionBuilder(name_generator)
+    builder = expression_builder.ExpressionBuilder(name_generator)
     output = builder.generate(ast)
     builder.build()
 
