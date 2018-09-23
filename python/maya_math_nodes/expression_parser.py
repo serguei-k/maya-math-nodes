@@ -316,7 +316,7 @@ class ExpressionParser(object):
 
         # special case for functions that cast to complex numerics
         if function in ['vec', 'mat', 'quat', 'rot']:
-            if len(args) in [3, 4, 16] and all([x.type in ['float', 'int'] for x in args]):
+            if len(args) in [3, 4, 16] and all([x.type in ['double', 'int'] for x in args]):
                 return Number([x.value for x in args], function == 'rot')
 
         # if the next token is a square bracket then we assuming indexing

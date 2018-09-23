@@ -67,8 +67,7 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('{0.7071, 0.0, 0.0, 0.7071} * {0.7071, 0.0, 0.0, 0.7071}',
                              [1.0, 0.0, 0.0, 0.0], 'math_MultiplyQuaternion')
         self.eval_expression('{0.7071, 0.0, 0.0, 0.7071} * 2',
-                             [1.0, 0.0, 0.0, 0.0],
-                             exception=BuildingError)
+                             [1.0, 0.0, 0.0, 0.0], exception=BuildingError)
 
         matrix1 = '{0.0, 0.0, -1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0}'
         matrix2 = '{0.0, 0.0, -1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0}'
@@ -117,6 +116,17 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('minelement([2 - 0, 2 + 2, abs(-1)])', 1, 'math_MinIntElement')
         self.eval_expression('minelement([dummy.rx, 0.0, dummy.rz])', 0.0, 'math_MinAngleElement')
         self.eval_expression('minelement([0, 1, dummy.tx])', 0, exception=BuildingError)
+
+        # test cast functions
+        self.eval_expression('vec(1, 0, 0) * 2', [2.0, 0.0, 0.0], 'math_MultiplyVector')
+        self.eval_expression('inverse(rot(2, 2, 2))', [-2.0, -2.0, -2.0], 'math_InverseRotation')
+        self.eval_expression('inverse(rot(dummy.matrix, 0))', [-2.0, -2.0, -2.0], 'math_InverseRotation')
+        self.eval_expression('inverse(quat(0.017, 0.018, 0.017, 1.0))', [-0.017, -0.018, -0.017, 1.0],
+                             'math_InverseQuaternion', places=2)
+        self.eval_expression('inverse(quat(dummy.r, 0))', [-0.017, -0.018, -0.017, 1.0],
+                             'math_InverseQuaternion', places=3)
+        self.eval_expression('inverse(mat(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 2, 2, 1))',
+                             [1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 1., 0., -2., -2., -2., 1.], 'math_InverseMatrix')
 
         # complex types
         self.eval_expression('twist(dummy.matrix, 0, 0)', 1.965, 'math_TwistFromMatrix', places=3)
