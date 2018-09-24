@@ -159,7 +159,7 @@ FUNCTIONS = {
     'inverse': {
         'name': 'math_Inverse{0}',
         'attributes': ['input'],
-        'types': ['matrix', 'quaternion', 'double3Angle'],
+        'types': ['matrix', 'double4', 'double3Angle'],
         'mixed_types': {}
     },
     'lerp': {
@@ -237,7 +237,7 @@ FUNCTIONS = {
     'rot': {
         'name': 'math_RotationFrom{0}',
         'attributes': ['input', 'rotationOrder'],
-        'types': ['matrix', 'quaternion'],
+        'types': ['matrix', 'double4'],
         'mixed_types': {}
     },
     'round': {
@@ -267,7 +267,7 @@ FUNCTIONS = {
     'slerp': {
         'name': 'math_SlerpQuaternion',
         'attributes': ['input1', 'input2', 'alpha', 'interpolationType'],
-        'types': ['quaternion'],
+        'types': ['double4'],
         'mixed_types': {}
     },
     'twist': {

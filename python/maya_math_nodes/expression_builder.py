@@ -2,6 +2,7 @@
 # Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 import collections
 
+import maya.api.OpenMaya as om
 import maya.cmds as cmds
 
 from expression_info import *
@@ -59,7 +60,7 @@ class NodeNameGenerator(object):
         return '{0}{1}_{2}'.format(self._base_name, index, suffix)
 
 
-class ExpresionBuilder(object):
+class ExpressionBuilder(object):
     """Expression Builder
 
     This class takes in the expression AST and generates the required Maya commands to
@@ -115,7 +116,8 @@ class ExpresionBuilder(object):
         elif isinstance(value, basestring):
             self._connections.append((value, attr))
 
-    def condition_type(self, maya_type):
+    @staticmethod
+    def condition_type(maya_type):
         """Condition Maya attribute type to one supported by the builder
 
         Args:
@@ -128,10 +130,49 @@ class ExpresionBuilder(object):
             maya_type = 'double'
         elif maya_type == 'long' or maya_type == 'short' or maya_type == 'enum' or maya_type == 'bool':
             maya_type = 'int'
+        elif maya_type == 'TdataCompound':
+            maya_type = 'compound'
 
         return maya_type
 
-    def get_value_type(self, value):
+    @staticmethod
+    def get_attribute_type(attr_name, node_type):
+        """Get attribute type
+
+        Args:
+            attr_name (str): Attribute name to query the type for
+            node_type (str): Node type the attribute belongs to
+
+        Returns:
+            str: Returns attribute type
+        """
+        if '[' in attr_name:
+            attr_name = attr_name.split('[')[0]
+
+        try:
+            attr_type = cmds.attributeQuery(attr_name, type=node_type, attributeType=True)
+            attr_type = ExpressionBuilder.condition_type(attr_type)
+        except RuntimeError:
+            raise BuildingError("Invalid Maya attribute specified '{0}'".format(attr_name))
+
+        if attr_type == 'double3':
+            children = cmds.attributeQuery(attr_name, type=node_type, listChildren=True)
+            if cmds.attributeQuery(children[0], type=node_type, attributeType=True) == 'doubleAngle':
+                attr_type = 'double3Angle'
+        elif attr_type == 'compound':
+            children = cmds.attributeQuery(attr_name, type=node_type, listChildren=True)
+            if len(children) == 4 and cmds.attributeQuery(children[0], type=node_type, attributeType=True) == 'double':
+                attr_type = 'double4'
+        elif attr_type == 'typed':
+            node_class = om.MNodeClass(node_type)
+            attr_obj = node_class.attribute(attr_name)
+            if om.MFnTypedAttribute(attr_obj).attrType() == om.MFnData.kMatrix:
+                attr_type = 'matrix'
+
+        return attr_type
+    
+    @staticmethod
+    def get_value_type(value):
         """Get value type
 
         Args:
@@ -149,32 +190,32 @@ class ExpresionBuilder(object):
             attr_name = value
 
         try:
-            attr_type = cmds.getAttr(attr_name, type=True)
-            attr_type = self.condition_type(attr_type)
+            node_name, attr_name = attr_name.split('.')
+            node_type = cmds.nodeType(node_name)
         except ValueError:
             raise BuildingError("Invalid Maya attribute specified '{0}'".format(attr_name))
+        except RuntimeError:
+            raise BuildingError("Invalid Maya node specified '{0}'".format(node_name))
 
-        # check if attribute is rotation
-        if attr_type == 'double3':
-            children = cmds.listAttr(attr_name, multi=True)
-            child_name = attr_name.split('.')[0] + '.' + children[1]
-            if cmds.getAttr(child_name, type=True) == 'doubleAngle':
-                attr_type = 'double3Angle'
-
+        attr_type = ExpressionBuilder.get_attribute_type(attr_name, node_type)
         return attr_type
 
-    def resolve_operand_types(self, operator, left, right):
+    @staticmethod
+    def resolve_operand_types(operator, left, right):
         """Resolve operand types
 
         Args:
             operator (str): Operation type
             left (Attribute | Number | String | str): Left operand
             right (Attribute | Number | String | str): Right operand
+
+        Returns:
+            tuple[str, str]: Returns left and right operand types
         """
         node = FUNCTIONS[operator]
 
-        left_type = self.get_value_type(left)
-        right_type = self.get_value_type(right)
+        left_type = ExpressionBuilder.get_value_type(left)
+        right_type = ExpressionBuilder.get_value_type(right)
 
         # cast left operand to double if no type specific node exists
         left_cast_ok = isinstance(left, Number) and left_type in NUMERIC_POD_TYPES
@@ -203,7 +244,8 @@ class ExpresionBuilder(object):
         else:
             raise BuildingError('Operands of different types "{0} {1} {2}" are not supported'.format(left_type, operator, right_type))
 
-    def validate_node_type(self, node_type, message):
+    @staticmethod
+    def validate_node_type(node_type, message):
         """Validate generated node type against Maya nodes
 
         Args:
@@ -213,7 +255,7 @@ class ExpresionBuilder(object):
         Returns:
             str: Return conditioned node type
         """
-        # TODO: some workarounds for inconsistenly named nodes
+        # TODO: some workarounds for inconsistently named nodes
         if node_type == 'math_MultiplyVectorBy':
             node_type = 'math_MultiplyVector'
         elif node_type == 'math_DistanceVector':
@@ -228,7 +270,8 @@ class ExpresionBuilder(object):
 
         return node_type
 
-    def validate_function_argument_type(self, attr_name, node_type, arg_type, cast_ok):
+    @staticmethod
+    def validate_function_argument_type(attr_name, node_type, arg_type, cast_ok):
         """Check if argument type is compatible with attribute type
 
         Args:
@@ -236,13 +279,11 @@ class ExpresionBuilder(object):
             node_type (str): Maya node type
             arg_type (str): Proposed expression argument type
             cast_ok (bool): Ok to cast literal numeric values
+
+        Returns:
+            bool: Returns True if function argument type is compatible with attribute type
         """
-        if arg_type.endswith('3Angle'):
-            arg_type = arg_type[:-5]
-
-        attr_type = cmds.attributeQuery(attr_name, type=node_type, attributeType=True)
-        attr_type = self.condition_type(attr_type)
-
+        attr_type = ExpressionBuilder.get_attribute_type(attr_name, node_type)
         if attr_type == arg_type:
             return True
 
@@ -255,7 +296,7 @@ class ExpresionBuilder(object):
         """Generate Maya data for function AST node
 
         Args:
-            ast (Function): AST funciton node to process
+            ast (Function): AST function node to process
 
         Returns:
             Attribute: Returns resulting output attribute for node graph generated for the function
@@ -277,6 +318,7 @@ class ExpresionBuilder(object):
                     # recursively generate function argument value
                     arg = self.generate(array_arg_ast)
                     arg_type = self.get_value_type(arg)
+                    arg_type = self.condition_type(arg_type)
 
                     # we use first function argument to deduce node type
                     if index == 0 and array_index == 0:
@@ -294,6 +336,7 @@ class ExpresionBuilder(object):
                 # recursively generate function argument value
                 arg = self.generate(arg_ast)
                 arg_type = self.get_value_type(arg)
+                arg_type = self.condition_type(arg_type)
 
                 # we use first function argument to deduce node type
                 if index == 0:
@@ -312,8 +355,7 @@ class ExpresionBuilder(object):
                 self.set_node_values('{0}.{1}'.format(operator_node_name, attributes[index]), arg)
 
         index = '[{0}]'.format(ast.index) if ast.index else ''
-        attr_type = cmds.attributeQuery('output', type=operator_node_type, attributeType=True)
-        attr_type = self.condition_type(attr_type)
+        attr_type = self.get_attribute_type('output', operator_node_type)
         return Attribute(attr_type, '{0}.output{1}'.format(operator_node_name, index))
 
     def generate_conditional(self, ast):
@@ -343,7 +385,7 @@ class ExpresionBuilder(object):
         self.set_node_values('{0}.input1'.format(operator_node_name), left)
         self.set_node_values('{0}.input2'.format(operator_node_name), right)
 
-        # recursively geneate true and false outputs
+        # recursively generate true and false outputs
         true = self.generate(ast.true)
         false = self.generate(ast.false)
 
@@ -353,7 +395,7 @@ class ExpresionBuilder(object):
         select_node_name = self._namer.get_name(select_node_base_type)
         select_node_type = select_node_base_type.format(TYPE_SUFFIX_PER_TYPE[true_type])
         operator_node_type = self.validate_node_type(select_node_type, '"{0} {1} {2}"'.format(true_type, ast.value, false_type))
-        self._nodes.append((select_node_type, select_node_name))
+        self._nodes.append((operator_node_type, select_node_name))
         self.set_node_values('{0}.condition'.format(select_node_name), '{0}.output'.format(operator_node_name))
         self.set_node_values('{0}.input1'.format(select_node_name), false)
         self.set_node_values('{0}.input2'.format(select_node_name), true)

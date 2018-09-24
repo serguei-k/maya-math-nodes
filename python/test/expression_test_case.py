@@ -54,8 +54,7 @@ class ExpressionTestCase(unittest.TestCase):
                 maya_math_nodes.eval_expression(expression, name_generator=self.name_generator)
             return
         
-        exp_output = maya_math_nodes.eval_expression(expression,
-                                                     name_generator=self.name_generator)
+        exp_output = maya_math_nodes.eval_expression(expression, name_generator=self.name_generator)
         
         if isinstance(output, bool):
             result = cmds.getAttr(exp_output)

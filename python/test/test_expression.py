@@ -67,8 +67,7 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('{0.7071, 0.0, 0.0, 0.7071} * {0.7071, 0.0, 0.0, 0.7071}',
                              [1.0, 0.0, 0.0, 0.0], 'math_MultiplyQuaternion')
         self.eval_expression('{0.7071, 0.0, 0.0, 0.7071} * 2',
-                             [1.0, 0.0, 0.0, 0.0],
-                             exception=BuildingError)
+                             [1.0, 0.0, 0.0, 0.0], exception=BuildingError)
 
         matrix1 = '{0.0, 0.0, -1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0}'
         matrix2 = '{0.0, 0.0, -1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0}'
@@ -118,6 +117,17 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('minelement([dummy.rx, 0.0, dummy.rz])', 0.0, 'math_MinAngleElement')
         self.eval_expression('minelement([0, 1, dummy.tx])', 0, exception=BuildingError)
 
+        # test cast functions
+        self.eval_expression('vec(1, 0, 0) * 2', [2.0, 0.0, 0.0], 'math_MultiplyVector')
+        self.eval_expression('inverse(rot(2, 2, 2))', [-2.0, -2.0, -2.0], 'math_InverseRotation')
+        self.eval_expression('inverse(rot(dummy.matrix, 0))', [-2.0, -2.0, -2.0], 'math_InverseRotation')
+        self.eval_expression('inverse(quat(0.017, 0.018, 0.017, 1.0))', [-0.017, -0.018, -0.017, 1.0],
+                             'math_InverseQuaternion', places=2)
+        self.eval_expression('inverse(quat(dummy.r, 0))', [-0.017, -0.018, -0.017, 1.0],
+                             'math_InverseQuaternion', places=3)
+        self.eval_expression('inverse(mat(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 2, 2, 1))',
+                             [1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 1., 0., -2., -2., -2., 1.], 'math_InverseMatrix')
+
         # complex types
         self.eval_expression('twist(dummy.matrix, 0, 0)', 1.965, 'math_TwistFromMatrix', places=3)
         self.eval_expression('twist(dummy.rotate, 0, 0)', 1.965, 'math_TwistFromRotation', places=3)
@@ -136,19 +146,19 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('dummy.tx', 1, exception=BuildingError)
 
         # invalid path
-        self.eval_expression('not_dymmy.tx + 2', 1, exception=BuildingError)
-        self.eval_expression('dymmy.wx + 2', 1, exception=BuildingError)
-        self.eval_expression('dymmy + 2', 1, exception=BuildingError)
+        self.eval_expression('not_dummy.tx + 2', 1, exception=BuildingError)
+        self.eval_expression('dummy.wx + 2', 1, exception=BuildingError)
+        self.eval_expression('dummy + 2', 1, exception=BuildingError)
 
         # uneven parentheses
         self.eval_expression('(2.0 + 2.0) * (2.0 / 2.0 - 1.0))', 0.0, exception=ParsingError)
         self.eval_expression('(2.0 + 2.0) * (2.0 / (2.0 - 1.0)', 0.0, exception=ParsingError)
 
         # invalid indexing
-        self.eval_expression('{0, 1, 0} * dymmy.worldMatrix[', 0.0, exception=ParsingError)
-        self.eval_expression('{0, 1, 0} * dymmy.worldMatrix[]', 0.0, exception=ParsingError)
-        self.eval_expression('{0, 1, 0} * dymmy.worldMatrix[none]', 0.0, exception=ParsingError)
-        self.eval_expression('{0, 1, 0} * dymmy.worldMatrix[2 + 2]', 0.0, exception=ParsingError)
+        self.eval_expression('{0, 1, 0} * dummy.worldMatrix[', 0.0, exception=ParsingError)
+        self.eval_expression('{0, 1, 0} * dummy.worldMatrix[]', 0.0, exception=ParsingError)
+        self.eval_expression('{0, 1, 0} * dummy.worldMatrix[none]', 0.0, exception=ParsingError)
+        self.eval_expression('{0, 1, 0} * dummy.worldMatrix[2 + 2]', 0.0, exception=ParsingError)
 
         # invalid complex number
         self.eval_expression('{0, 1, 0 * 2', [0.0, 2.0, 0.0], exception=ParsingError)

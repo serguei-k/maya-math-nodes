@@ -25,7 +25,7 @@ class ParsingError(Exception):
 class ExpressionStream(object):
     """Expression Stream"""
     def __init__(self, input_str):
-        """Initialize expresion stream
+        """Initialize expression stream
 
         Args:
             input_str (str): Raw input string
@@ -121,7 +121,7 @@ class ExpressionLexer(object):
         Returns:
             bool: Returns True if end of stream has been reached
         """
-        return self.peek() == None
+        return self.peek() is None
 
     def error(self, message):
         """Raise parsing error
@@ -165,7 +165,7 @@ class ExpressionLexer(object):
         """Read from stream while condition of the predicate is met
 
         Args:
-            predicate (str): Predicate that will exit current read
+            predicate (function): Predicate that will exit current read
 
         Returns:
             str: Return resulting read string
@@ -176,7 +176,8 @@ class ExpressionLexer(object):
 
         return str
 
-    def is_whitespace(self, char):
+    @staticmethod
+    def is_whitespace(char):
         """Check for whitespace character
 
         Args:
@@ -187,7 +188,8 @@ class ExpressionLexer(object):
         """
         return char == ' '
 
-    def is_digit(self, char, dot_ok=False):
+    @staticmethod
+    def is_digit(char, dot_ok=False):
         """Check for digit character
 
         Args:
@@ -212,7 +214,8 @@ class ExpressionLexer(object):
         """
         return Token(NumberToken, negate + self.read_while(functools.partial(self.is_digit, dot_ok=True)))
 
-    def is_operator(self, char):
+    @staticmethod
+    def is_operator(char):
         """Check for operator character
 
         Args:
@@ -231,7 +234,8 @@ class ExpressionLexer(object):
         """
         return Token(OperatorToken, self.read_while(self.is_operator))
 
-    def is_conditional(self, char):
+    @staticmethod
+    def is_conditional(char):
         """Check for conditional character
 
         Args:
@@ -250,7 +254,8 @@ class ExpressionLexer(object):
         """
         return Token(ConditionToken, self.read_while(self.is_conditional))
 
-    def is_ternary(self, char):
+    @staticmethod
+    def is_ternary(char):
         """Check for ternary character
 
         Args:
@@ -269,7 +274,8 @@ class ExpressionLexer(object):
         """
         return Token(TernaryToken, self.read_while(self.is_ternary))
 
-    def is_bracket(self, char):
+    @staticmethod
+    def is_bracket(char):
         """Check for bracket character
 
         Args:
@@ -288,7 +294,8 @@ class ExpressionLexer(object):
         """
         return Token(BracketToken, self._data.next())
 
-    def is_string(self, char, strict=True):
+    @staticmethod
+    def is_string(char, strict=True):
         """Check for string character
 
         Args:
@@ -311,8 +318,9 @@ class ExpressionLexer(object):
         """
         return Token(StringToken, self.read_while(functools.partial(self.is_string, strict=False)))
 
-    def is_open_curly(self, char):
-        """Check for open curly brance character
+    @staticmethod
+    def is_open_curly(char):
+        """Check for open curly brace character
 
         Args:
             char (str): Single character to check
@@ -322,14 +330,15 @@ class ExpressionLexer(object):
         """
         return char == '{'
 
-    def is_not_close_curly(self, char):
-        """Check for close curly brance character
+    @staticmethod
+    def is_not_close_curly(char):
+        """Check for close curly brace character
 
         Args:
             char (str): Single character to check
 
         Returns:
-            bool: Returns True if char is not a closng curly brace
+            bool: Returns True if char is not a closing curly brace
         """
         return char != '}'
 
@@ -343,7 +352,7 @@ class ExpressionLexer(object):
         value = self.read_while(self.is_not_close_curly)
 
         if self._data.peek() != '}':
-            self.error('Expected closing curly brance, got "{0}" instead'.format(self._data.peek()))
+            self.error('Expected closing curly brace, got "{0}" instead'.format(self._data.peek()))
 
         value = value.replace(' ', '').split(',')
         if len(value) not in [3, 4, 16]:

@@ -5,17 +5,21 @@ from expression_lexer import *
 
 class Number(object):
     """Number AST Node"""
-    def __init__(self, value):
+    def __init__(self, value, is_angle=False):
         """Initialize AST node
 
         Args:
             value (int | float | list[float]): Value held by this AST node
+            is_angle (bool): Treat value as angle type
         """
         self.value = value
 
         if isinstance(value, list):
             if len(value) == 3:
-                self.type = 'double3'
+                if is_angle:
+                    self.type = 'double3Angle'
+                else:
+                    self.type = 'double3'
             elif len(value) == 4:
                 self.type = 'double4'
             else:
@@ -262,7 +266,7 @@ class ExpressionParser(object):
         """Parse function expression
 
         Returns:
-            Function: Returns Function AST node
+            Function | Number: Returns Function AST node or Number AST node for cast functions
         """
         function = self.token.value
         self._data.next()  # consume function
@@ -310,6 +314,11 @@ class ExpressionParser(object):
             else:
                 self._data.error('Expected closing parenthesis, got "{0}" instead'.format(self.token))
 
+        # special case for functions that cast to complex numerics
+        if function in ['vec', 'mat', 'quat', 'rot']:
+            if len(args) in [3, 4, 16] and all([x.type in ['double', 'int'] for x in args]):
+                return Number([x.value for x in args], function == 'rot')
+
         # if the next token is a square bracket then we assuming indexing
         index = None
         if self.token and self.token.value == '[':
@@ -326,7 +335,7 @@ class ExpressionParser(object):
         return Function(function, args, index)
 
     def parse_binary_right(self, prec, left):
-        """Parse binary expression with precendence recursively
+        """Parse binary expression with precedence recursively
 
         Returns:
             Binary: Returns Binary AST node
