@@ -30,7 +30,7 @@ string
    note that there are no quatation marks around the string literals!
 
 complex
-   complex types such ab vector, matrix, rotation, and quaternion are specified by using cast functions, ex: :code:`vec(0, 1, 0)`
+   complex types such as vector, matrix, rotation, and quaternion are specified by using cast functions, ex: :code:`vec(0, 1, 0)`
 
 Operators
 ---------
