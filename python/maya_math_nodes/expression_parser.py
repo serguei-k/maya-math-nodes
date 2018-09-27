@@ -157,7 +157,7 @@ class ExpressionParser(object):
         return PRECEDENCE[self.token.value]
 
     def parse_number(self):
-        """"Parse current token as number
+        """Parse current token as number
 
         Returns:
             Number: Returns Number AST node
