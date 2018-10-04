@@ -24,7 +24,7 @@
 MStatus
 initializePlugin(MObject pluginObj)
 {
-    MFnPlugin pluginFn(pluginObj, "Serguei Kalentchouk, et al.", "1.2.0", "Any");
+    MFnPlugin pluginFn(pluginObj, "Serguei Kalentchouk, et al.", PROJECT_VERSION, "Any");
     
     int typeId = 0x0012c340;
     

@@ -15,3 +15,7 @@ build/
 
 # Python
 *.pyc
+
+# Other
+.vscode/
+dist/
