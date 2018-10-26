@@ -37,6 +37,7 @@ add_library(mayaMathNodes SHARED
     src/Array.h
     src/Condition.h
     src/Clamp.h
+    src/Debug.h
     src/Distance.h
     src/Divide.h
     src/Convert.h

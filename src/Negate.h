@@ -13,6 +13,14 @@ struct negate_fob
     typedef TType result_type;
 };
 
+struct negate_bool_fob
+{
+    bool operator() (bool arg) const { return !arg; }
+    
+    typedef bool argument_type;
+    typedef bool result_type;
+};
+
 
 template<typename TClass, const char* TTypeName, typename TOperator>
 class NegateNode : public BaseNode<TClass, TTypeName>
@@ -44,6 +52,16 @@ public:
         
         return MS::kUnknownParameter;
     }
+    
+    MPlug passThroughToOne(const MPlug& plug) const override
+    {
+        if (plug == inputAttr_)
+        {
+            return MPlug(this->thisMObject(), outputAttr_);
+        }
+        
+        return MPlug();
+    }
 
 private:
     static Attribute inputAttr_;
@@ -64,3 +82,4 @@ NEGATE_NODE(Negate, negate_fob<double>);
 NEGATE_NODE(NegateInt, negate_fob<int>);
 NEGATE_NODE(NegateAngle, negate_fob<MAngle>);
 NEGATE_NODE(NegateVector, negate_fob<MVector>);
+NEGATE_NODE(NotBool, negate_bool_fob);

@@ -15,3 +15,6 @@ class TestNegate(NodeTestCase):
     
     def test_negate_vector(self):
         self.create_node('NegateVector', {'input': [1.0, -1.0, 0.0]}, [-1.0, 1.0, 0.0])
+    
+    def test_not_bool(self):
+        self.create_node('NotBool', {'input': True}, False)

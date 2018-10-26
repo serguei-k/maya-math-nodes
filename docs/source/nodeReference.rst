@@ -111,6 +111,11 @@ CrossProduct
 :description: Computes the cross product of two vectors
 :expression: cross(x, y)
 
+DebugLog
+--------
+:description: Pass-through node that will log the value to Maya Script Editor
+:type variants: DebugLogAngle, DebugLogInt, DebugLogMatrix, DebugLogQuaternion, DebugLogVector
+
 Divide
 ------
 :description: Computes the quotient of two values
@@ -204,6 +209,10 @@ NormalizeArray
 NormalizeWeightsArray
 ---------------------
 :description: Normalize array of weight values
+
+NotBool
+-------
+:description: Logical *not*
 
 OrBool
 -------
