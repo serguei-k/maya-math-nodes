@@ -154,6 +154,10 @@ MatrixFromTRS
 -------------
 :description: Computes a matrix from translation, rotation and scale
 
+MatrixFromDirection
+-------------------
+:description: Computes a rotation matrix from direction and up vectors
+
 Max
 ---
 :description: Gets the largest of the two values

@@ -170,6 +170,7 @@ initializePlugin(MObject pluginObj)
     DebugLogRotation::registerNode(pluginFn, typeId++);
     DebugLogQuaternion::registerNode(pluginFn, typeId++);
     DebugLogMatrix::registerNode(pluginFn, typeId++);
+    MatrixFromDirection::registerNode(pluginFn, typeId++);
     NotBool::registerNode(pluginFn, typeId++);
     
     return MS::kSuccess;
@@ -316,6 +317,7 @@ uninitializePlugin(MObject pluginObj)
     DebugLogRotation::deregisterNode(pluginFn);
     DebugLogQuaternion::deregisterNode(pluginFn);
     DebugLogMatrix::deregisterNode(pluginFn);
+    MatrixFromDirection::deregisterNode(pluginFn);
     NotBool::deregisterNode(pluginFn);
     
     return MS::kSuccess;

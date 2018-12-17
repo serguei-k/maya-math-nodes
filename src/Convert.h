@@ -2,6 +2,7 @@
 // Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 #pragma once
 
+#include <maya/MGlobal.h>
 #include <maya/MFnEnumAttribute.h>
 #include <maya/MTransformationMatrix.h>
 
@@ -335,3 +336,100 @@ Attribute GetAxisNode<TClass, TTypeName>::outputAttr_;
     class NodeName : public GetAxisNode<NodeName, name##NodeName> {};
 
 GET_AXIS_NODE(AxisFromMatrix);
+
+
+TEMPLATE_PARAMETER_LINKAGE char MatrixFromDirectionNodeName[] = "MatrixFromDirection";
+class MatrixFromDirection : public BaseNode<MatrixFromDirection, MatrixFromDirectionNodeName>
+{
+public:
+    static MStatus initialize()
+    {
+        createAttribute(directionAttr_, "direction", DefaultValue<MVector>());
+        createAttribute(upAttr_, "up", DefaultValue<MVector>(0.0, 1.0, 0.0));
+        createAttribute(outputAttr_, "output", DefaultValue<MMatrix>(), false);
+        
+        MFnEnumAttribute attrFn;
+        alignmentAttr_ = attrFn.create("alignment", "alignment");
+        attrFn.addField("xy", 0);
+        attrFn.addField("xz", 1);
+        attrFn.addField("yx", 2);
+        attrFn.addField("yz", 3);
+        attrFn.addField("zx", 4);
+        attrFn.addField("zy", 5);
+        
+        MPxNode::addAttribute(directionAttr_);
+        MPxNode::addAttribute(upAttr_);
+        MPxNode::addAttribute(alignmentAttr_);
+        MPxNode::addAttribute(outputAttr_);
+        
+        MPxNode::attributeAffects(directionAttr_, outputAttr_);
+        MPxNode::attributeAffects(upAttr_, outputAttr_);
+        
+        return MS::kSuccess;
+    }
+    
+    MStatus compute(const MPlug& plug, MDataBlock& dataBlock) override
+    {
+        if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
+        {
+            const auto directionValue = getAttribute<MVector>(dataBlock, directionAttr_).normal();
+            auto upValue = getAttribute<MVector>(dataBlock, upAttr_).normal();
+            
+            if (directionValue.isParallel(upValue))
+            {
+                setAttribute(dataBlock, outputAttr_, MMatrix::identity);
+                MGlobal::displayWarning("Direction and up vectors cannot be parallel!");
+                
+                return MS::kSuccess;
+            }
+            
+            MDataHandle alignmentHandle = dataBlock.inputValue(alignmentAttr_);
+            const auto alignmentValue = alignmentHandle.asShort();
+            
+            const auto cross = directionValue ^ upValue;
+            upValue = cross ^ directionValue;
+            
+            double xformData[4][4] = {{1.0, 0.0, 0.0, 0.0},
+                                      {0.0, 1.0, 0.0, 0.0},
+                                      {0.0, 0.0, 1.0, 0.0},
+                                      {0.0, 0.0, 0.0, 1.0}};
+            
+            if (alignmentValue == 0 || alignmentValue == 1)
+            {
+                directionValue.get(xformData[0]);
+                upValue.get(xformData[alignmentValue == 0 ? 1 : 2]);
+                cross.get(xformData[alignmentValue == 0 ? 2 : 1]);
+            }
+            else if (alignmentValue == 2 || alignmentValue == 3)
+            {
+                directionValue.get(xformData[1]);
+                upValue.get(xformData[alignmentValue == 2 ? 0 : 2]);
+                cross.get(xformData[alignmentValue == 2 ? 2 : 0]);
+            }
+            else
+            {
+                directionValue.get(xformData[2]);
+                upValue.get(xformData[alignmentValue == 4 ? 0 : 1]);
+                cross.get(xformData[alignmentValue == 4 ? 1 : 0]);
+            }
+            
+            const MMatrix xform(xformData);
+            setAttribute(dataBlock, outputAttr_, xform);
+            
+            return MS::kSuccess;
+        }
+        
+        return MS::kUnknownParameter;
+    }
+
+private:
+    static Attribute directionAttr_;
+    static Attribute upAttr_;
+    static Attribute alignmentAttr_;
+    static Attribute outputAttr_;
+};
+
+Attribute MatrixFromDirection::directionAttr_;
+Attribute MatrixFromDirection::upAttr_;
+Attribute MatrixFromDirection::alignmentAttr_;
+Attribute MatrixFromDirection::outputAttr_;

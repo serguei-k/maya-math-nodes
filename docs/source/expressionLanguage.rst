@@ -66,7 +66,7 @@ Cast Functions
 Several functions that output complex data types can take constant values as input.
 
 mat
-  :code:`mat(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)` can be used to specify constat matrix value
+  :code:`mat(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)` can be used to specify constant matrix value
 
 rot
   :code:`rot(0, 1, 0)` can be used to specify constant rotation value, :code:`rot()` also maps to several
