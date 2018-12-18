@@ -344,7 +344,7 @@ class MatrixFromDirection : public BaseNode<MatrixFromDirection, MatrixFromDirec
 public:
     static MStatus initialize()
     {
-        createAttribute(directionAttr_, "direction", DefaultValue<MVector>());
+        createAttribute(directionAttr_, "direction", DefaultValue<MVector>(1.0, 0.0, 0.0));
         createAttribute(upAttr_, "up", DefaultValue<MVector>(0.0, 1.0, 0.0));
         createAttribute(outputAttr_, "output", DefaultValue<MMatrix>(), false);
         
@@ -364,6 +364,7 @@ public:
         
         MPxNode::attributeAffects(directionAttr_, outputAttr_);
         MPxNode::attributeAffects(upAttr_, outputAttr_);
+        MPxNode::attributeAffects(alignmentAttr_, outputAttr_);
         
         return MS::kSuccess;
     }
@@ -394,26 +395,35 @@ public:
                                       {0.0, 0.0, 1.0, 0.0},
                                       {0.0, 0.0, 0.0, 1.0}};
             
+            unsigned crossAxis = 0;
             if (alignmentValue == 0 || alignmentValue == 1)
             {
                 directionValue.get(xformData[0]);
                 upValue.get(xformData[alignmentValue == 0 ? 1 : 2]);
                 cross.get(xformData[alignmentValue == 0 ? 2 : 1]);
+                crossAxis = alignmentValue == 0 ? 2 : 1;
             }
             else if (alignmentValue == 2 || alignmentValue == 3)
             {
                 directionValue.get(xformData[1]);
                 upValue.get(xformData[alignmentValue == 2 ? 0 : 2]);
                 cross.get(xformData[alignmentValue == 2 ? 2 : 0]);
+                crossAxis = alignmentValue == 2 ? 2 : 0;
             }
             else
             {
                 directionValue.get(xformData[2]);
                 upValue.get(xformData[alignmentValue == 4 ? 0 : 1]);
                 cross.get(xformData[alignmentValue == 4 ? 1 : 0]);
+                crossAxis = alignmentValue == 4 ? 1 : 0;
             }
             
-            const MMatrix xform(xformData);
+            MMatrix xform(xformData);
+            if (xform.det3x3() < 0)
+            {
+                (-cross).get(xform[crossAxis]);
+            }
+            
             setAttribute(dataBlock, outputAttr_, xform);
             
             return MS::kSuccess;
