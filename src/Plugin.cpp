@@ -172,6 +172,9 @@ initializePlugin(MObject pluginObj)
     DebugLogMatrix::registerNode(pluginFn, typeId++);
     MatrixFromDirection::registerNode(pluginFn, typeId++);
     NotBool::registerNode(pluginFn, typeId++);
+    Remap::registerNode(pluginFn, typeId++);
+    RemapAngle::registerNode(pluginFn, typeId++);
+    RemapInt::registerNode(pluginFn, typeId++);
     
     return MS::kSuccess;
 }
@@ -319,6 +322,9 @@ uninitializePlugin(MObject pluginObj)
     DebugLogMatrix::deregisterNode(pluginFn);
     MatrixFromDirection::deregisterNode(pluginFn);
     NotBool::deregisterNode(pluginFn);
+    Remap::deregisterNode(pluginFn);
+    RemapAngle::deregisterNode(pluginFn);
+    RemapInt::deregisterNode(pluginFn);
     
     return MS::kSuccess;
 }

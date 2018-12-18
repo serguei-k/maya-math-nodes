@@ -3,6 +3,7 @@
 #pragma once
 
 #include <cmath>
+#include <limits>
 #include <string>
 #include <type_traits>
 #include <vector>
@@ -84,6 +85,28 @@ inline MEulerRotation DefaultValue(double x, double y, double z)
 {
     return MEulerRotation(x, y, z);
 }
+
+
+// Math helper functions
+template <typename TType>
+inline bool almostEquals(TType a, TType b)
+{
+    return std::abs(a - b) <= std::numeric_limits<TType>::epsilon() * std::max(TType(1.0), std::abs(a + b));
+}
+
+template <>
+inline bool almostEquals(int a, int b)
+{
+    return a == b;
+}
+
+template <>
+inline bool almostEquals(MAngle a, MAngle b)
+{
+    return std::abs(a.asRadians() - b.asRadians()) <= std::numeric_limits<double>::epsilon() *
+           std::max(1.0, std::abs(a.asRadians() + b.asRadians()));
+}
+
 
 // Overloads for createAttribute
 inline void createAttribute(Attribute& attr, const char* name, double value, bool isInput = true, bool isArray = false)
@@ -670,7 +693,7 @@ inline void setAttribute(MDataBlock& dataBlock, const Attribute& attribute, cons
 }
 
 
-// MAngle operator overloads
+// Maya types operator overloads
 MAngle operator+(const MAngle& a, const MAngle& b)
 {
     return MAngle(a.asRadians() + b.asRadians());
@@ -679,6 +702,11 @@ MAngle operator+(const MAngle& a, const MAngle& b)
 MAngle operator-(const MAngle& a, const MAngle& b)
 {
     return MAngle(a.asRadians() - b.asRadians());
+}
+
+MAngle operator*(const MAngle& a, const MAngle& b)
+{
+    return MAngle(a.asRadians() * b.asRadians());
 }
 
 MAngle operator*(const MAngle& a, double b)
@@ -699,6 +727,11 @@ MAngle operator/(const MAngle& a, double b)
 MAngle operator/(const MAngle& a, int b)
 {
     return MAngle(a.asRadians() / b);
+}
+
+MAngle operator/(const MAngle& a, const MAngle& b)
+{
+    return MAngle(a.asRadians() / b.asRadians());
 }
 
 MAngle operator-(const MAngle& a)

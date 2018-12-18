@@ -8,11 +8,6 @@
 
 #include "Utils.h"
 
-inline bool equals(double a, double b)
-{
-    return std::abs(a - b) <= std::numeric_limits<double>::epsilon() * std::max(1.0, std::abs(a + b));
-}
-
 template<typename TAttrType, typename TClass, const char* TTypeName>
 class ConditionNode : public BaseNode<TClass, TTypeName>
 {
@@ -60,7 +55,7 @@ public:
                 default:
                 case 0:
                 {
-                    status = equals(input1Value, input2Value);
+                    status = almostEquals(input1Value, input2Value);
                 }
                 break;
                 case 1:
@@ -75,17 +70,17 @@ public:
                 break;
                 case 3:
                 {
-                    status = !equals(input1Value, input2Value);
+                    status = !almostEquals(input1Value, input2Value);
                 }
                 break;
                 case 4:
                 {
-                    status = input1Value < input2Value || equals(input1Value, input2Value);
+                    status = input1Value < input2Value || almostEquals(input1Value, input2Value);
                 }
                 break;
                 case 5:
                 {
-                    status = input1Value > input2Value || equals(input1Value, input2Value);
+                    status = input1Value > input2Value || almostEquals(input1Value, input2Value);
                 }
             }
 
