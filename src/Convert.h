@@ -35,16 +35,23 @@ inline MEulerRotation getRotation(const MQuaternion& source, MEulerRotation::Rot
 }
 
 template <>
-inline MEulerRotation getRotation(const MEulerRotation& source, MEulerRotation::RotationOrder rotationOrder)
-{
-    return MEulerRotation(source.x, source.y, source.z, rotationOrder);
-}
-
-template <>
 inline MQuaternion getRotation(const MEulerRotation& source, MEulerRotation::RotationOrder rotationOrder)
 {
     return MEulerRotation(source.x, source.y, source.z, rotationOrder).asQuaternion();
 }
+
+template <>
+inline MMatrix getRotation(const MEulerRotation& source, MEulerRotation::RotationOrder rotationOrder)
+{
+    return MEulerRotation(source.x, source.y, source.z, rotationOrder).asMatrix();
+}
+
+template <>
+inline MMatrix getRotation(const MQuaternion& source, MEulerRotation::RotationOrder)
+{
+    return source.asMatrix();
+}
+
 
 template<typename TInAttrType, typename TOutAttrType, typename TClass, const char* TTypeName>
 class GetRotationNode : public BaseNode<TClass, TTypeName>
@@ -55,14 +62,7 @@ public:
         createAttribute(inputAttr_, "input", DefaultValue<TInAttrType>());
         createAttribute(outputAttr_, "output", DefaultValue<TOutAttrType>(), false);
         
-        MFnEnumAttribute attrFn;
-        rotationOrderAttr_ = attrFn.create("rotationOrder", "rotationOrder");
-        attrFn.addField("xyz", 0);
-        attrFn.addField("yzx", 1);
-        attrFn.addField("zxy", 2);
-        attrFn.addField("xzy", 3);
-        attrFn.addField("yxz", 4);
-        attrFn.addField("zyx", 5);
+        createRotationOrderAttribute(rotationOrderAttr_);
         
         MPxNode::addAttribute(inputAttr_);
         MPxNode::addAttribute(rotationOrderAttr_);
@@ -115,6 +115,9 @@ GET_ROTATION_NODE(MMatrix, MEulerRotation, RotationFromMatrix);
 GET_ROTATION_NODE(MQuaternion, MEulerRotation, RotationFromQuaternion);
 GET_ROTATION_NODE(MMatrix, MQuaternion, QuaternionFromMatrix);
 GET_ROTATION_NODE(MEulerRotation, MQuaternion, QuaternionFromRotation);
+GET_ROTATION_NODE(MMatrix, MEulerRotation, MatrixFromRotation);
+GET_ROTATION_NODE(MMatrix, MQuaternion, MatrixFromQuaternion);
+
 
 inline MVector getTranslationFromMatrix(const MMatrix& matrix)
 {
@@ -192,14 +195,7 @@ public:
         createAttribute(scaleAttr_, "scale", DefaultValue<MVector>(1.0, 1.0, 1.0));
         createAttribute(outputAttr_, "output", DefaultValue<MMatrix>(), false);
         
-        MFnEnumAttribute attrFn;
-        rotationOrderAttr_ = attrFn.create("rotationOrder", "rotationOrder", 1);
-        attrFn.addField("xyz", 1);
-        attrFn.addField("yzx", 2);
-        attrFn.addField("zxy", 3);
-        attrFn.addField("xzy", 4);
-        attrFn.addField("yxz", 5);
-        attrFn.addField("zyx", 6);
+        createRotationOrderAttribute(rotationOrderAttr_);
         
         MPxNode::addAttribute(translationAttr_);
         MPxNode::addAttribute(rotationAttr_);

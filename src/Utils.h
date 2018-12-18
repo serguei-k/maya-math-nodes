@@ -13,6 +13,7 @@
 #include <maya/MMatrix.h>
 #include <maya/MFnCompoundAttribute.h>
 #include <maya/MFnDependencyNode.h>
+#include <maya/MFnEnumAttribute.h>
 #include <maya/MFnMatrixAttribute.h>
 #include <maya/MFnNumericAttribute.h>
 #include <maya/MFnUnitAttribute.h>
@@ -259,6 +260,23 @@ inline void createCompoundAttribute(Attribute& attr, const std::vector<Attribute
     cAttrFn.setWritable(isInput);
     cAttrFn.setArray(isArray);
     cAttrFn.setUsesArrayDataBuilder(isArray);
+}
+
+void createRotationOrderAttribute(Attribute& attr)
+{
+    MFnEnumAttribute eAttrFn;
+    attr.attr = eAttrFn.create("rotationOrder", "rotationOrder");
+    
+    eAttrFn.addField("xyz", 0);
+    eAttrFn.addField("yzx", 1);
+    eAttrFn.addField("zxy", 2);
+    eAttrFn.addField("xzy", 3);
+    eAttrFn.addField("yxz", 4);
+    eAttrFn.addField("zyx", 5);
+    
+    eAttrFn.setStorable(true);
+    eAttrFn.setWritable(true);
+    eAttrFn.setChannelBox(true);
 }
 
 // Explicit specializations for getAttribute
