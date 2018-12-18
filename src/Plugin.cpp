@@ -171,6 +171,8 @@ initializePlugin(MObject pluginObj)
     DebugLogQuaternion::registerNode(pluginFn, typeId++);
     DebugLogMatrix::registerNode(pluginFn, typeId++);
     MatrixFromDirection::registerNode(pluginFn, typeId++);
+    MatrixFromQuaternion::registerNode(pluginFn, typeId++);
+    MatrixFromRotation::registerNode(pluginFn, typeId++);
     NotBool::registerNode(pluginFn, typeId++);
     Remap::registerNode(pluginFn, typeId++);
     RemapAngle::registerNode(pluginFn, typeId++);
@@ -321,6 +323,8 @@ uninitializePlugin(MObject pluginObj)
     DebugLogQuaternion::deregisterNode(pluginFn);
     DebugLogMatrix::deregisterNode(pluginFn);
     MatrixFromDirection::deregisterNode(pluginFn);
+    MatrixFromQuaternion::deregisterNode(pluginFn);
+    MatrixFromRotation::deregisterNode(pluginFn);
     NotBool::deregisterNode(pluginFn);
     Remap::deregisterNode(pluginFn);
     RemapAngle::deregisterNode(pluginFn);

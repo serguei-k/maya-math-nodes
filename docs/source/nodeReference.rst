@@ -150,13 +150,21 @@ Lerp
 :type variants: LerpAngle, LerpMatrix, LerpVector
 :expression: lerp(x, y, alpha)
 
-MatrixFromTRS
--------------
-:description: Computes a matrix from translation, rotation and scale
-
 MatrixFromDirection
 -------------------
 :description: Computes a rotation matrix from direction and up vectors
+
+MatrixFromQuaternion
+--------------------
+:description: Computes a rotation matrix from quaternion
+
+MatrixFromRotation
+------------------
+:description: Computes a rotation matrix from euler rotation
+
+MatrixFromTRS
+-------------
+:description: Computes a matrix from translation, rotation and scale
 
 Max
 ---
