@@ -43,8 +43,8 @@ public:
     {
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
-            const auto input1Value = getAttribute<TAttrType, double>(dataBlock, input1Attr_);
-            const auto input2Value = getAttribute<TAttrType, double>(dataBlock, input2Attr_);
+            const auto input1Value = getAttribute<TAttrType>(dataBlock, input1Attr_);
+            const auto input2Value = getAttribute<TAttrType>(dataBlock, input2Attr_);
 
             MDataHandle operationHandle = dataBlock.inputValue(operationAttr_);
             const auto operation = operationHandle.asShort();
@@ -117,6 +117,7 @@ Attribute ConditionNode<TAttrType, TClass, TTypeName>::outputAttr_;
 
 CONDITION_NODE(double, Compare);
 CONDITION_NODE(MAngle, CompareAngle);
+CONDITION_NODE(int, CompareInt);
 
 
 template<typename TAttrType, typename TClass, const char* TTypeName>

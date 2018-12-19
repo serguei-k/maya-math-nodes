@@ -27,7 +27,7 @@ PRECEDENCE = {
 CompareOp = {
     'name': 'math_Compare{0}',
     'attributes': ['input1', 'input2'],
-    'types': ['double', 'doubleAngle'],
+    'types': ['double', 'doubleAngle', 'int'],
     'mixed_types': {}
 }
 
@@ -138,6 +138,12 @@ FUNCTIONS = {
         'types': ['double3'],
         'mixed_types': {}
     },
+    'direction': {
+        'name': 'math_MatrixFromDirection',
+        'attributes': ['direction', 'up', 'alignment'],
+        'types': ['double3'],
+        'mixed_types': {}
+    },
     'dot': {
         'name': 'math_DotProduct',
         'attributes': ['input1', 'input2'],
@@ -178,6 +184,12 @@ FUNCTIONS = {
         'name': 'math_VectorLengthSquared',
         'attributes': ['input'],
         'types': ['double3'],
+        'mixed_types': {}
+    },
+    'mat': {
+        'name': 'math_MatrixFrom{0}',
+        'attributes': ['input', 'rotationOrder'],
+        'types': ['double3Angle', 'double4'],
         'mixed_types': {}
     },
     'max': {
@@ -234,6 +246,12 @@ FUNCTIONS = {
         'types': ['matrix', 'double3Angle'],
         'mixed_types': {}
     },
+    'remap': {
+        'name': 'math_Remap{0}',
+        'attributes': ['input', 'low1', 'high1', 'low2', 'high2'],
+        'types': ['double', 'doubleAngle', 'int'],
+        'mixed_types': {}
+    },
     'rot': {
         'name': 'math_RotationFrom{0}',
         'attributes': ['input', 'rotationOrder'],
@@ -258,10 +276,22 @@ FUNCTIONS = {
         'types': ['doubleAngle'],
         'mixed_types': {}
     },
+    'smoothstep': {
+        'name': 'math_Smoothstep',
+        'attributes': ['input'],
+        'types': ['double'],
+        'mixed_types': {}
+    },
     'tan': {
         'name': 'math_TanAngle',
         'attributes': ['input'],
         'types': ['doubleAngle'],
+        'mixed_types': {}
+    },
+    'trs': {
+        'name': 'math_MatrixFromTRS',
+        'attributes': ['translation', 'rotation', 'scale', 'rotationOrder'],
+        'types': ['double3'],
         'mixed_types': {}
     },
     'slerp': {

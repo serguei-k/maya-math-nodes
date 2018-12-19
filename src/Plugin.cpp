@@ -170,6 +170,7 @@ initializePlugin(MObject pluginObj)
     DebugLogRotation::registerNode(pluginFn, typeId++);
     DebugLogQuaternion::registerNode(pluginFn, typeId++);
     DebugLogMatrix::registerNode(pluginFn, typeId++);
+    CompareInt::registerNode(pluginFn, typeId++);
     MatrixFromDirection::registerNode(pluginFn, typeId++);
     MatrixFromQuaternion::registerNode(pluginFn, typeId++);
     MatrixFromRotation::registerNode(pluginFn, typeId++);
@@ -177,6 +178,7 @@ initializePlugin(MObject pluginObj)
     Remap::registerNode(pluginFn, typeId++);
     RemapAngle::registerNode(pluginFn, typeId++);
     RemapInt::registerNode(pluginFn, typeId++);
+    Smoothstep::registerNode(pluginFn, typeId++);
     
     return MS::kSuccess;
 }
@@ -322,6 +324,7 @@ uninitializePlugin(MObject pluginObj)
     DebugLogRotation::deregisterNode(pluginFn);
     DebugLogQuaternion::deregisterNode(pluginFn);
     DebugLogMatrix::deregisterNode(pluginFn);
+    CompareInt::deregisterNode(pluginFn);
     MatrixFromDirection::deregisterNode(pluginFn);
     MatrixFromQuaternion::deregisterNode(pluginFn);
     MatrixFromRotation::deregisterNode(pluginFn);
@@ -329,6 +332,7 @@ uninitializePlugin(MObject pluginObj)
     Remap::deregisterNode(pluginFn);
     RemapAngle::deregisterNode(pluginFn);
     RemapInt::deregisterNode(pluginFn);
+    Smoothstep::deregisterNode(pluginFn);
     
     return MS::kSuccess;
 }

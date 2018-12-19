@@ -305,8 +305,11 @@ class ExpressionBuilder(object):
             raise BuildingError('Function "{0}" does not exist'.format(ast.value))
 
         attributes = FUNCTIONS[ast.value]['attributes']
-        if len(ast.args) != len(attributes):
-            raise BuildingError('Number of arguments does not match, expected "{0}" got "{1}" instead'.format(len(attributes), len(ast.args)))
+        if len(ast.args) < 1:
+            raise BuildingError('Function "{}" require at least one argument.'.format(ast.value))
+        elif len(ast.args) > len(attributes):
+            raise BuildingError('Too many arguments specified for function "{}", expected "{}" got "{}" instead'.format(
+                                ast.value, len(attributes), len(ast.args)))
 
         operator_node_base_type = FUNCTIONS[ast.value]['name']
         operator_node_name = self._namer.get_name(operator_node_base_type)
@@ -341,7 +344,12 @@ class ExpressionBuilder(object):
                 # we use first function argument to deduce node type
                 if index == 0:
                     if arg_type not in FUNCTIONS[ast.value]['types']:
-                        raise BuildingError("Function '{0}' does not support type '{1}'".format(ast.value, arg_type))
+                        # check if it is possible to cast a pod argument to a supported pod type
+                        pod_types = [typ for typ in FUNCTIONS[ast.value]['types'] if typ in NUMERIC_POD_TYPES]
+                        if pod_types and isinstance(arg, Number) and arg_type in NUMERIC_POD_TYPES:
+                            arg_type = pod_types[0]
+                        else:
+                            raise BuildingError("Function '{0}' does not support type '{1}'".format(ast.value, arg_type))
 
                     # if there are type specific node variants we need to account for that in the node type name
                     if len(FUNCTIONS[ast.value]['types']) == 1:

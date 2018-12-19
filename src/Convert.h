@@ -115,8 +115,8 @@ GET_ROTATION_NODE(MMatrix, MEulerRotation, RotationFromMatrix);
 GET_ROTATION_NODE(MQuaternion, MEulerRotation, RotationFromQuaternion);
 GET_ROTATION_NODE(MMatrix, MQuaternion, QuaternionFromMatrix);
 GET_ROTATION_NODE(MEulerRotation, MQuaternion, QuaternionFromRotation);
-GET_ROTATION_NODE(MMatrix, MEulerRotation, MatrixFromRotation);
-GET_ROTATION_NODE(MMatrix, MQuaternion, MatrixFromQuaternion);
+GET_ROTATION_NODE(MEulerRotation, MMatrix, MatrixFromRotation);
+GET_ROTATION_NODE(MQuaternion, MMatrix, MatrixFromQuaternion);
 
 
 inline MVector getTranslationFromMatrix(const MMatrix& matrix)

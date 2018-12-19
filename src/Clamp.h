@@ -205,3 +205,54 @@ Attribute RemapNode<TAttrType, TClass, TTypeName>::outputAttr_;
 REMAP_NODE(double, Remap);
 REMAP_NODE(int, RemapInt);
 REMAP_NODE(MAngle, RemapAngle);
+
+
+TEMPLATE_PARAMETER_LINKAGE char smoothstepNodeName[] = "Smoothstep";
+class Smoothstep : public BaseNode<Smoothstep, smoothstepNodeName>
+{
+public:
+    static MStatus initialize()
+    {
+        createAttribute(inputAttr_, "input", 0.0);
+        createAttribute(outputAttr_, "output", 0.0, false);
+        
+        MPxNode::addAttribute(inputAttr_);
+        MPxNode::addAttribute(outputAttr_);
+        
+        MPxNode::attributeAffects(inputAttr_, outputAttr_);
+        
+        return MS::kSuccess;
+    }
+    
+    MStatus compute(const MPlug& plug, MDataBlock& dataBlock) override
+    {
+        if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
+        {
+            auto inputValue = getAttribute<double>(dataBlock, inputAttr_);
+            inputValue = std::max(0.0, std::min(inputValue, 1.0));
+            
+            setAttribute(dataBlock, outputAttr_, inputValue * inputValue * (3 - 2 * inputValue));
+            
+            return MS::kSuccess;
+        }
+        
+        return MS::kUnknownParameter;
+    }
+    
+    MPlug passThroughToOne(const MPlug& plug) const override
+    {
+        if (plug == inputAttr_)
+        {
+            return MPlug(this->thisMObject(), outputAttr_);
+        }
+        
+        return MPlug();
+    }
+
+private:
+    static Attribute inputAttr_;
+    static Attribute outputAttr_;
+};
+
+Attribute Smoothstep::inputAttr_;
+Attribute Smoothstep::outputAttr_;

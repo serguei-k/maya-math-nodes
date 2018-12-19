@@ -66,7 +66,8 @@ Cast Functions
 Several functions that output complex data types can take constant values as input.
 
 mat
-  :code:`mat(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)` can be used to specify constant matrix value
+  :code:`mat(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)` can be used to specify constant matrix value,
+  :code:`mat()` also maps to several math nodes and can take other arguments, ex: :code:`mat(node.rotate, 0)`
 
 rot
   :code:`rot(0, 1, 0)` can be used to specify constant rotation value, :code:`rot()` also maps to several
@@ -84,7 +85,7 @@ vec
    | See :ref:`Node Reference <nodeReference>` section for details.
 
 .. note::
-   Default and keyword arguments are currently not supported!
+   Function calls require at least one argument to be specified!
 
 Evaluation Order
 ----------------
@@ -141,7 +142,7 @@ Examples
   from maya_math_nodes import eval_expression
 
   # get twist value for roll joint
-  eval_expression('twist(ctrl.worldMatrix[0], 0, 0) * 0.5', 'roll')
+  eval_expression('twist(ctrl.worldMatrix[0]) * 0.5', 'roll')
 
   # get toe pivot value for foot roll
   eval_expression('ctrl.roll > ctrl.break ? ctrl.roll - ctrl.break : 0', 'toeroll')

@@ -757,6 +757,16 @@ MAngle operator-(const MAngle& a)
     return MAngle(-a.asRadians());
 }
 
+bool operator<(const MAngle& a, const MAngle& b)
+{
+    return a.asRadians() < b.asRadians();
+}
+
+bool operator>(const MAngle& a, const MAngle& b)
+{
+    return a.asRadians() > b.asRadians();
+}
+
 MQuaternion operator*(const MQuaternion& a, double b)
 {
     return MQuaternion(a.x * b, a.y * b, a.z * b, a.w * b);
