@@ -168,7 +168,13 @@ class ExpressionBuilder(object):
             attr_obj = node_class.attribute(attr_name)
             if om.MFnTypedAttribute(attr_obj).attrType() == om.MFnData.kMatrix:
                 attr_type = 'matrix'
-
+            elif om.MFnTypedAttribute(attr_obj).attrType() == om.MFnData.kMesh:
+                attr_type = 'mesh'
+            elif om.MFnTypedAttribute(attr_obj).attrType() == om.MFnData.kNurbsCurve:
+                attr_type = 'nurbsCurve'
+            elif om.MFnTypedAttribute(attr_obj).attrType() == om.MFnData.kNurbsSurface:
+                attr_type = 'nurbsSurface'
+        
         return attr_type
     
     @staticmethod

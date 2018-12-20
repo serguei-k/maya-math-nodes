@@ -18,6 +18,7 @@
 #include <maya/MFnEnumAttribute.h>
 #include <maya/MFnMatrixAttribute.h>
 #include <maya/MFnNumericAttribute.h>
+#include <maya/MFnTypedAttribute.h>
 #include <maya/MFnUnitAttribute.h>
 #include <maya/MPxNode.h>
 #include <maya/MVector.h>
@@ -262,6 +263,17 @@ inline void createAttribute(Attribute& attr, const char* name, const MEulerRotat
     uAttrFn.setWritable(isInput);
     
     attr.attr = attrFn.create(name, name, attr.attrX, attr.attrY, attr.attrZ);
+    attrFn.setKeyable(isInput);
+    attrFn.setStorable(isInput);
+    attrFn.setWritable(isInput);
+    attrFn.setArray(isArray);
+    attrFn.setUsesArrayDataBuilder(isArray);
+}
+
+inline void createAttribute(Attribute& attr, const char* name, MFnData::Type type, bool isInput = true, bool isArray = false)
+{
+    MFnTypedAttribute attrFn;
+    attr.attr = attrFn.create(name, name, type);
     attrFn.setKeyable(isInput);
     attrFn.setStorable(isInput);
     attrFn.setWritable(isInput);
@@ -633,6 +645,23 @@ inline std::vector<MQuaternion> getAttribute(MDataBlock& dataBlock, const Attrib
     }
     
     return out;
+}
+
+inline MObject getAttribute(MDataBlock& dataBlock, const Attribute& attribute, MFnData::Type type)
+{
+    MDataHandle handle = dataBlock.inputValue(attribute);
+    
+    switch (type)
+    {
+        case MFnData::kMesh:
+            return handle.asMesh();
+        case MFnData::kNurbsCurve:
+            return handle.asNurbsCurve();
+        case MFnData::kNurbsSurface:
+            return handle.asNurbsSurface();
+        default:
+            return MObject();
+    }
 }
 
 

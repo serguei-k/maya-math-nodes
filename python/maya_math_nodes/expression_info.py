@@ -11,7 +11,10 @@ TYPE_SUFFIX_PER_TYPE = {
     'doubleAngle': 'Angle',
     'doubleLinear': '',
     'int': 'Int',
-    'matrix': 'Matrix'
+    'matrix': 'Matrix',
+    'mesh': 'Mesh',
+    'nurbsCurve': 'Curve',
+    'nurbsSurface': 'Surface'
 }
 
 OPERATORS = ['+', '/', '%', '*', '-']
@@ -267,7 +270,8 @@ FUNCTIONS = {
     'select': {
         'name': 'math_Select{0}',
         'attributes': ['input1', 'input2', 'condition'],
-        'types': ['double', 'double3', 'double3Angle', 'double4', 'doubleAngle', 'doubleLinear', 'int', 'matrix'],
+        'types': ['double', 'double3', 'double3Angle', 'double4', 'doubleAngle',
+                  'doubleLinear', 'int', 'matrix', 'mesh', 'nurbsCurve', 'nurbsSurface'],
         'mixed_types': {}
     },
     'sin': {

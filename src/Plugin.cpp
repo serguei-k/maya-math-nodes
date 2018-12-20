@@ -178,6 +178,9 @@ initializePlugin(MObject pluginObj)
     Remap::registerNode(pluginFn, typeId++);
     RemapAngle::registerNode(pluginFn, typeId++);
     RemapInt::registerNode(pluginFn, typeId++);
+    SelectCurve::registerNode(pluginFn, typeId++);
+    SelectMesh::registerNode(pluginFn, typeId++);
+    SelectSurface::registerNode(pluginFn, typeId++);
     Smoothstep::registerNode(pluginFn, typeId++);
     
     return MS::kSuccess;
@@ -332,6 +335,9 @@ uninitializePlugin(MObject pluginObj)
     Remap::deregisterNode(pluginFn);
     RemapAngle::deregisterNode(pluginFn);
     RemapInt::deregisterNode(pluginFn);
+    SelectCurve::deregisterNode(pluginFn);
+    SelectMesh::deregisterNode(pluginFn);
+    SelectSurface::deregisterNode(pluginFn);
     Smoothstep::deregisterNode(pluginFn);
     
     return MS::kSuccess;

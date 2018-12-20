@@ -32,6 +32,9 @@ string
 complex
    complex types such as vector, matrix, rotation, and quaternion are specified by using cast functions, ex: :code:`vec(0, 1, 0)`
 
+geometry
+   a small subset of functions also supports geometry types such as mesh, nurbsCurve, and nurbsSurface
+
 Operators
 ---------
 

@@ -267,8 +267,8 @@ ScaleFromMatrix
 Select
 ------
 :description: Toggles output
-:type variants: SelectAngle, SelectInt, SelectMatrix, SelectQuaternion, SelectRotation,
-   SelectVector
+:type variants: SelectAngle,SelectCurve, SelectInt, SelectMatrix, SelectMesh, SelectQuaternion, SelectRotation,
+   SelectSurface, SelectVector
 :expression: select(x, y, state)
 
 SelectArray
