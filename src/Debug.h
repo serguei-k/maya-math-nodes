@@ -2,8 +2,6 @@
 // Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 #pragma once
 
-#include <maya/MGlobal.h>
-
 #include "Utils.h"
 
 static inline void

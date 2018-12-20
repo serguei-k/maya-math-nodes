@@ -11,6 +11,7 @@
 #include <maya/MAngle.h>
 #include <maya/MArrayDataBuilder.h>
 #include <maya/MEulerRotation.h>
+#include <maya/MGlobal.h>
 #include <maya/MMatrix.h>
 #include <maya/MFnCompoundAttribute.h>
 #include <maya/MFnDependencyNode.h>
@@ -285,7 +286,7 @@ inline void createCompoundAttribute(Attribute& attr, const std::vector<Attribute
     cAttrFn.setUsesArrayDataBuilder(isArray);
 }
 
-void createRotationOrderAttribute(Attribute& attr)
+inline void createRotationOrderAttribute(Attribute& attr)
 {
     MFnEnumAttribute eAttrFn;
     attr.attr = eAttrFn.create("rotationOrder", "rotationOrder");
@@ -302,7 +303,8 @@ void createRotationOrderAttribute(Attribute& attr)
     eAttrFn.setChannelBox(true);
 }
 
-// Explicit specializations for getAttribute
+
+// Template specializations for getAttribute
 template <typename TType>
 inline TType getAttribute(MDataBlock& dataBlock, const Attribute& attribute);
 
@@ -633,23 +635,8 @@ inline std::vector<MQuaternion> getAttribute(MDataBlock& dataBlock, const Attrib
     return out;
 }
 
-template <typename TInputType, typename TOutputType>
-inline TOutputType getAttribute(MDataBlock& dataBlock, const Attribute& attribute);
 
-template <>
-inline double getAttribute<MAngle, double>(MDataBlock& dataBlock, const Attribute& attribute)
-{
-    MDataHandle handle = dataBlock.inputValue(attribute);
-    return handle.asAngle().asRadians();
-}
-
-template <>
-inline double getAttribute<double, double>(MDataBlock& dataBlock, const Attribute& attribute)
-{
-    MDataHandle handle = dataBlock.inputValue(attribute);
-    return handle.asDouble();
-}
-
+// Template specializations for setAttribute
 template <typename TType>
 inline void setAttribute(MDataBlock& dataBlock, const Attribute& attribute, TType value)
 {
@@ -772,6 +759,7 @@ MQuaternion operator*(const MQuaternion& a, double b)
     return MQuaternion(a.x * b, a.y * b, a.z * b, a.w * b);
 }
 
+
 // Base node type definition used for all math nodes in this library
 template<typename TClass, const char* TTypeName>
 class BaseNode : public MPxNode
@@ -780,7 +768,10 @@ public:
     static void registerNode(class MFnPlugin& pluginFn, int typeId)
     {
         kTypeId = typeId;
-        pluginFn.registerNode((std::string(NODE_NAME_PREFIX) + TTypeName).c_str(), typeId, []() -> void* { return new TClass(); }, TClass::initialize);
+        pluginFn.registerNode((std::string(NODE_NAME_PREFIX) + TTypeName).c_str(),
+                              typeId,
+                              []() -> void* { return new TClass(); },
+                              TClass::initialize);
     }
     
     static void deregisterNode(class MFnPlugin& pluginFn)
