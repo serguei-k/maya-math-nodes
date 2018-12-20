@@ -87,6 +87,7 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('dummy.tx == dummy.ty ? 1 : 0', 1)
         self.eval_expression('dummy.rx == dummy.ty ? 1 : 0', 1, exception=BuildingError)
         self.eval_expression('compare(dummy.rx, 2.0)', True, 'math_CompareAngle')
+        self.eval_expression('compare(2, 2.0)', True, 'math_CompareInt')
 
         # selector
         self.eval_expression('dummy.tx > 1.0 ? 2.0 + 2.0 : 2.0 - 2.0', 4.0, 'math_Select')
@@ -104,6 +105,7 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('abs(dummy.rx)', 2.0, 'math_AbsoluteAngle')
         self.eval_expression('abs(-1.0) * 2.0', 2.0, 'math_Multiply')
         self.eval_expression('abs(1.0 - 2.0)', 1.0, 'math_Absolute')
+        self.eval_expression('smoothstep(1)', 1.0, 'math_Smoothstep')
 
         # multi argument
         self.eval_expression('clamp(1.2, 0.0, 1.0)', 1.0, 'math_Clamp')
@@ -167,5 +169,5 @@ class TestExpression(ExpressionTestCase):
 
         # invalid function arguments
         self.eval_expression('abs()', 1, exception=ParsingError)
+        self.eval_expression('abs(1, 2)', 1, exception=ParsingError)
         self.eval_expression('min(1,)', 1, exception=ParsingError)
-        self.eval_expression('min(1)', 1, exception=BuildingError)

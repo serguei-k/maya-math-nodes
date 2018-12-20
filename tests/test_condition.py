@@ -26,6 +26,9 @@ class TestCondition(NodeTestCase):
     def test_compare_angle(self):
         self.create_node('CompareAngle', {'input1': 15.0, 'input2': 15.0}, True)
     
+    def test_compare_int(self):
+        self.create_node('CompareInt', {'input1': 15, 'input2': 15}, True)
+    
     def test_select(self):
         node = self.create_node('Select', {'input1': 1.0, 'input2': 2.0}, 1.0)
         
