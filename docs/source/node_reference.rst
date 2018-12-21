@@ -1,4 +1,4 @@
-.. _nodeReference:
+.. _node_reference:
 
 Node Reference
 ==============
@@ -283,12 +283,12 @@ SinAngle
 
 SlerpQuaternion
 ---------------
-:description: Comptues slerp interpolation between two quaternions
+:description: Computes slerp interpolation between two quaternions
 :expression: slerp(x, y)
 
 Smoothstep
 ----------
-:description: Comptues smoothstep interpolation of value within [0.0, 1.0] range
+:description: Computes smoothstep interpolation of value within [0.0, 1.0] range
 :expression: smoothstep(x)
 
 Subtract

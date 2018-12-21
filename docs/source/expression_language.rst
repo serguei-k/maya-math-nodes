@@ -1,4 +1,4 @@
-.. _expressionLanguage:
+.. _expression_language:
 
 Expression Language
 ===================
@@ -54,7 +54,7 @@ The language supports calling functions with arguments.
 These functions map directly to the node operators available in the plugin.
 
 For example :code:`Absolute` node is made available through the :code:`abs()` function call.
-Please see the :ref:`Node Reference <nodeReference>` for the mapping between node type and function name.
+Please see the :ref:`Node Reference <node_reference>` for the mapping between node type and function name.
 
 The function arguments correspond with node attributes. For example the :code:`Clamp` node has two input
 attributes, therefore the :code:`clamp(arg1, arg2)` function will take two arguments.
@@ -85,7 +85,7 @@ vec
 
 .. warning::
    | Currently, some nodes do not have expression bindings!
-   | See :ref:`Node Reference <nodeReference>` section for details.
+   | See :ref:`Node Reference <node_reference>` section for details.
 
 .. note::
    Function calls require at least one argument to be specified!
