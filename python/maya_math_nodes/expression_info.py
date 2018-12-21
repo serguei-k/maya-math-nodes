@@ -136,6 +136,12 @@ FUNCTIONS = {
         'types': ['double'],
         'mixed_types': {}
     },
+    'average': {
+        'name': 'math_Average{0}',
+        'attributes': ['input'],
+        'types': ['double', 'double3', 'double4', 'double3Angle', 'doubleAngle', 'int', 'matrix'],
+        'mixed_types': {}
+    },
     'axis': {
         'name': 'math_AxisFromMatrix',
         'attributes': ['input', 'axis'],
@@ -263,6 +269,12 @@ FUNCTIONS = {
         'types': ['double'],
         'mixed_types': {}
     },
+    'normalizeweights': {
+        'name': 'math_NormalizeWeightsArray',
+        'attributes': ['input'],
+        'types': ['double'],
+        'mixed_types': {}
+    },
     'pow': {
         'name': 'math_Power',
         'attributes': ['input', 'exponent'],
@@ -293,11 +305,23 @@ FUNCTIONS = {
         'types': ['double', 'doubleAngle'],
         'mixed_types': {}
     },
+    'scale': {
+        'name': 'math_ScaleFromMatrix',
+        'attributes': ['input'],
+        'types': ['matrix'],
+        'mixed_types': {}
+    },
     'select': {
         'name': 'math_Select{0}',
         'attributes': ['input1', 'input2', 'condition'],
         'types': ['double', 'double3', 'double3Angle', 'double4', 'doubleAngle',
                   'doubleLinear', 'int', 'matrix', 'mesh', 'nurbsCurve', 'nurbsSurface'],
+        'mixed_types': {}
+    },
+    'selectarray': {
+        'name': 'math_SelectArray{0}',
+        'attributes': ['input1', 'input2', 'condition'],
+        'types': ['double', 'double3', 'doubleAngle', 'int', 'matrix'],
         'mixed_types': {}
     },
     'sin': {
@@ -328,6 +352,18 @@ FUNCTIONS = {
         'name': 'math_SlerpQuaternion',
         'attributes': ['input1', 'input2', 'alpha', 'interpolationType'],
         'types': ['double4'],
+        'mixed_types': {}
+    },
+    'sum': {
+        'name': 'math_Sum{0}',
+        'attributes': ['input'],
+        'types': ['double', 'double3', 'doubleAngle', 'int'],
+        'mixed_types': {}
+    },
+    'translation': {
+        'name': 'math_TranslationFromMatrix',
+        'attributes': ['input'],
+        'types': ['matrix'],
         'mixed_types': {}
     },
     'twist': {

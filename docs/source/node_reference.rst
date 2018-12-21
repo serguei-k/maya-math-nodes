@@ -78,6 +78,7 @@ Average
 -------
 :description: Computes average value
 :type variants: AverageAngle, AverageInt, AverageMatrix, AverageQuaternion, AverageRotation, AverageVector
+:expression: average([x, y, ...])
 
 AxisFromMatrix
 --------------
@@ -177,7 +178,7 @@ MaxElement
 ----------
 :description: Gets the largest value in array
 :type variants: MaxAngleElement, MaxIntElement
-:expression: maxelement(x, y)
+:expression: maxelement([x, y, ...])
 
 Min
 ---
@@ -189,7 +190,7 @@ MinElement
 ----------
 :description: Gets the smallest value in array
 :type variants: MinAngleElement, MinIntElement
-:expression: minelement(x, y)
+:expression: minelement([x, y, ...])
 
 ModulusInt
 ----------
@@ -217,11 +218,12 @@ NormalizeVector
 NormalizeArray
 ---------------
 :description: Normalize array of values
-:expression: normalizearray(x)
+:expression: normalizearray([x, y, ...])
 
 NormalizeWeightsArray
 ---------------------
 :description: Normalize array of weight values
+:expression: normalizeweights([x, y, ...])
 
 NotBool
 -------
@@ -266,6 +268,7 @@ RotationFrom*
 ScaleFromMatrix
 ---------------
 :description: Gets scale from matrix
+:expression: scale(x)
 
 Select
 ------
@@ -278,6 +281,7 @@ SelectArray
 -----------
 :description: Toggles array output
 :type variants: SelectAngleArray, SelectIntArray, SelectMatrixArray, SelectVectorArray
+:expression: selectarray(x, y, state)
 
 SinAngle
 --------
@@ -304,6 +308,7 @@ Sum
 ---
 :description: Computes the the sum of values
 :type variants: SumAngle, SumInt, SumVector
+:expression: sum([x, y, ...])
 
 TanAngle
 --------
@@ -313,6 +318,7 @@ TanAngle
 TranslationFromMatrix
 ---------------------
 :description: Get translation from matrix
+:expression: translation(x)
 
 TwistFrom*
 ----------
