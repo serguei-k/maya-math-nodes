@@ -169,5 +169,5 @@ class TestExpression(ExpressionTestCase):
 
         # invalid function arguments
         self.eval_expression('abs()', 1, exception=ParsingError)
-        self.eval_expression('abs(1, 2)', 1, exception=ParsingError)
+        self.eval_expression('abs(1, 2)', 1, exception=BuildingError)
         self.eval_expression('min(1,)', 1, exception=ParsingError)
