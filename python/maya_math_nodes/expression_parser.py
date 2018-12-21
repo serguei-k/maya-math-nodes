@@ -25,6 +25,8 @@ class Number(object):
             else:
                 self.type = 'matrix'
             self.value = [float(v) for v in value]
+        elif isinstance(value, bool):
+            self.type = 'bool'
         else:
             self.type = 'double' if '.' in value else 'int'
             self.value = float(value) if self.type == 'double' else int(value)
@@ -174,7 +176,7 @@ class ExpressionParser(object):
             String: Returns String AST node
         """
         string = String(self.token.value)
-        self._data.next() # consumes string
+        self._data.next()  # consumes string
 
         # if the next token is a square bracket then assuming indexing
         if self.token and self.token.value == '[':
@@ -202,10 +204,17 @@ class ExpressionParser(object):
         if self.token.type == NumberToken:
             return self.parse_number()
         elif self.token.type == StringToken:
+            # special case for boolean values
+            if self.token.value == 'true' or self.token.value == 'false':
+                num = Number(True if self.token.value == 'true' else False)
+                self._data.next()  # consumes boolean
+                return num
+
             # special case for function calls
             next = self._data.peek()
             if next and next.type == BracketToken and next.value == '(':
                 return self.parse_function()
+
             return self.parse_string()
         elif self.token.type == FunctionToken:
             return self.parse_function()
@@ -222,6 +231,9 @@ class ExpressionParser(object):
                 return number
             else:
                 self._data.error('Expected a number after negate, got "{0}" instead'.format(self.token.value))
+        elif self.token.type == OperatorToken and self.token.value == '!':
+            # special case for not operator
+            return self.parse_function()
         else:
             self._data.error('Could not handle token "{0}"'.format(self.token))
 

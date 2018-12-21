@@ -52,6 +52,7 @@ AndBool
 -------
 :description: Gets logical *and* of two values
 :type variants: AndInt
+:expression: x & b
 
 AngleBetweenVectors
 -------------------
@@ -225,11 +226,13 @@ NormalizeWeightsArray
 NotBool
 -------
 :description: Logical *not*
+:expression: !x
 
 OrBool
 -------
 :description: Gets logical *or* of two values
 :type variants: OrInt
+:expression: x | y
 
 Power
 -----
@@ -337,3 +340,4 @@ XorBool
 -------
 :description: Gets logical *xor* of two values
 :type variants: XorInt
+:expression: x ^ b

@@ -25,9 +25,12 @@ The language supports the following data types:
 numeric
    float and int types are supported, ex: :code:`-1, 0, 1.0`
 
+boolean
+   boolean **true** and **false** values are supported and can cast to POD numeric types
+
 string
    string literals are used to reference Maya attributes, ex: :code:`node.attribute[0]`,
-   note that there are no quatation marks around the string literals!
+   note that there are no quotation marks around the string literals!
 
 complex
    complex types such as vector, matrix, rotation, and quaternion are specified by using cast functions, ex: :code:`vec(0, 1, 0)`
@@ -38,7 +41,7 @@ geometry
 Operators
 ---------
 
-The language supports a limited set of arithmetic operators: :code:`+, -, *, /, %,`
+The language supports a limited set of arithmetic and logical operators: :code:`+, -, *, /, %, &, |, ^, !`
 
 Conditionals
 ------------
@@ -95,19 +98,21 @@ Evaluation Order
 
 Expressions are evaluated left to right with the following operator precedence, listed from lowest to highest:
 
-+----------------------+-------------------------------------+
-| Operator             | Description                         |
-+----------------------+-------------------------------------+
-| +, -                 | Addition and subtraction            |
-+----------------------+-------------------------------------+
-| \*, /, %             | Multiplication, division, remainder |
-+----------------------+-------------------------------------+
-| <, <=, >, >=, !=, == | Comparisons                         |
-+----------------------+-------------------------------------+
-| func()               | Function call                       |
-+----------------------+-------------------------------------+
-| (...)                | Grouping                            |
-+----------------------+-------------------------------------+
++----------------------------+-------------------------------------+
+| Operator                   | Description                         |
++----------------------------+-------------------------------------+
+| <, <=, >, >=, !=, ==, ?, : | Comparisons and ternary             |
++----------------------------+-------------------------------------+
+| &, |, ^, !                 | Logical operators                   |
++----------------------------+-------------------------------------+
+| +, -                       | Addition and subtraction            |
++----------------------------+-------------------------------------+
+| \*, /, %                   | Multiplication, division, remainder |
++----------------------------+-------------------------------------+
+| func()                     | Function call                       |
++----------------------------+-------------------------------------+
+| (...)                      | Grouping                            |
++----------------------------+-------------------------------------+
 
 Type Resolution
 ---------------

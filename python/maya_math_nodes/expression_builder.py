@@ -128,7 +128,7 @@ class ExpressionBuilder(object):
         """
         if maya_type == 'doubleLinear':
             maya_type = 'double'
-        elif maya_type == 'long' or maya_type == 'short' or maya_type == 'enum' or maya_type == 'bool':
+        elif maya_type == 'long' or maya_type == 'short' or maya_type == 'enum':
             maya_type = 'int'
         elif maya_type == 'TdataCompound':
             maya_type = 'compound'
@@ -443,7 +443,8 @@ class ExpressionBuilder(object):
         self.set_node_values('{0}.input1'.format(operator_node_name), left)
         self.set_node_values('{0}.input2'.format(operator_node_name), right)
 
-        return Attribute(left_type, '{0}.output'.format(operator_node_name))
+        attr_type = self.get_attribute_type('output', operator_node_type)
+        return Attribute(attr_type, '{0}.output'.format(operator_node_name))
 
     def build(self):
         """Build Maya node network that represents the expression AST"""

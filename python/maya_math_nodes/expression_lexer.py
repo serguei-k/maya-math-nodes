@@ -43,24 +43,30 @@ class ExpressionStream(object):
         self._pos += 1
         return char
 
-    def peek(self):
+    def peek(self, offset=0):
         """Look ahead at next character in the stream without taking a step forward
+        
+        Args:
+            offset (int): Offset from current position
 
         Returns:
             str: Returns next character in string
         """
-        if self.end():
+        if self.end(offset):
             return None
 
-        return self._data[self._pos]
+        return self._data[self._pos + offset]
 
-    def end(self):
+    def end(self, offset=0):
         """Check for end of expression
+
+        Args:
+            offset (int): Offset from current position
 
         Returns:
             bool: Returns True if end of string has been reached
         """
-        return self._pos == len(self._data)
+        return self._pos + offset == len(self._data)
 
     def error(self, message):
         """Raise parsing error
@@ -86,7 +92,7 @@ class ExpressionLexer(object):
             raise ParsingError('Found odd number of curly braces in the expression!')
 
         if input_str.count('[') != input_str.count(']'):
-            raise ParsingError('Found odd number of square brakets in the expression!')
+            raise ParsingError('Found odd number of square brackets in the expression!')
 
         self._data = ExpressionStream(input_str)
         self._current = None
@@ -142,14 +148,16 @@ class ExpressionLexer(object):
             return None
 
         char = self._data.peek()
+        next_char = self._data.peek(1)
+
         if self.is_string(char):
             return self.read_string()
         if self.is_digit(char):
             return self.read_number()
+        if self.is_conditional(char, next_char):
+            return self.read_conditional()
         if self.is_operator(char):
             return self.read_operator()
-        if self.is_conditional(char):
-            return self.read_conditional()
         if self.is_ternary(char):
             return self.read_ternary()
         if self.is_bracket(char):
@@ -235,16 +243,21 @@ class ExpressionLexer(object):
         return Token(OperatorToken, self.read_while(self.is_operator))
 
     @staticmethod
-    def is_conditional(char):
+    def is_conditional(char, next_char=''):
         """Check for conditional character
 
         Args:
             char (str): Single character to check
+            next_char (str): Single character that follows immediately after
 
         Returns:
             bool: Returns True if char is a supported conditional operator
         """
-        return char in CONDITION
+        if char in CONDITION:
+            if next_char and char in CONDITION[-2:]:
+                return next_char in CONDITION
+            return True
+        return False
 
     def read_conditional(self):
         """Read conditional from stream

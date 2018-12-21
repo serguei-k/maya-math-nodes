@@ -1,9 +1,10 @@
 # Copyright (c) 2018 Serguei Kalentchouk et al. All rights reserved.
 # Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 
-NUMERIC_POD_TYPES = ['double', 'int', 'doubleAngle', 'doubleLinear']
+NUMERIC_POD_TYPES = ['bool', 'double', 'int', 'doubleAngle', 'doubleLinear']
 
 TYPE_SUFFIX_PER_TYPE = {
+    'bool': 'Bool',
     'double': '',
     'double3': 'Vector',
     'double3Angle': 'Rotation',
@@ -17,12 +18,13 @@ TYPE_SUFFIX_PER_TYPE = {
     'nurbsSurface': 'Surface'
 }
 
-OPERATORS = ['+', '/', '%', '*', '-']
+OPERATORS = ['+', '/', '%', '*', '-', '&', '|', '^', '!']
 CONDITION = ['<', '>', '=', '!']
 TERNARY = ['?', ':']
 
 PRECEDENCE = {
     '<': 10, '>': 10, '<=': 10, '>=': 10, '==': 10, '!=': 10,
+    '&': 15, '|': 15, '^': 15, '!': 15,
     '+': 20, '-': 20,
     '*': 30, '/': 30, '%': 30,
 }
@@ -64,6 +66,30 @@ FUNCTIONS = {
         'name': 'math_Subtract{0}',
         'attributes': ['input1', 'input2'],
         'types': ['double', 'double3', 'doubleAngle', 'doubleLinear', 'int'],
+        'mixed_types': {}
+    },
+    '&': {
+        'name': 'math_And{0}',
+        'attributes': ['input1', 'input2'],
+        'types': ['bool', 'int'],
+        'mixed_types': {}
+    },
+    '|': {
+        'name': 'math_Or{0}',
+        'attributes': ['input1', 'input2'],
+        'types': ['bool', 'int'],
+        'mixed_types': {}
+    },
+    '^': {
+        'name': 'math_Xor{0}',
+        'attributes': ['input1', 'input2'],
+        'types': ['bool', 'int'],
+        'mixed_types': {}
+    },
+    '!': {
+        'name': 'math_NotBool',
+        'attributes': ['input'],
+        'types': ['bool'],
         'mixed_types': {}
     },
     '>': CompareOp,
