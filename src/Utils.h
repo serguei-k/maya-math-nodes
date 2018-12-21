@@ -298,17 +298,17 @@ inline void createCompoundAttribute(Attribute& attr, const std::vector<Attribute
     cAttrFn.setUsesArrayDataBuilder(isArray);
 }
 
-inline void createRotationOrderAttribute(Attribute& attr)
+inline void createRotationOrderAttribute(Attribute& attr, short start=0)
 {
     MFnEnumAttribute eAttrFn;
-    attr.attr = eAttrFn.create("rotationOrder", "rotationOrder");
+    attr.attr = eAttrFn.create("rotationOrder", "rotationOrder", 1);
     
-    eAttrFn.addField("xyz", 0);
-    eAttrFn.addField("yzx", 1);
-    eAttrFn.addField("zxy", 2);
-    eAttrFn.addField("xzy", 3);
-    eAttrFn.addField("yxz", 4);
-    eAttrFn.addField("zyx", 5);
+    eAttrFn.addField("xyz", start++);
+    eAttrFn.addField("yzx", start++);
+    eAttrFn.addField("zxy", start++);
+    eAttrFn.addField("xzy", start++);
+    eAttrFn.addField("yxz", start++);
+    eAttrFn.addField("zyx", start++);
     
     eAttrFn.setStorable(true);
     eAttrFn.setWritable(true);

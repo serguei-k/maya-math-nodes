@@ -32,7 +32,7 @@ inline TOutType average(const std::vector<TInType>& values, const std::vector<do
     if (values.empty() || weights.empty()) return DefaultValue<TOutType>();
     
     const double weightSum = std::accumulate(weights.begin(), weights.end(), 0.0);
-    if (weightSum == 0.0) return DefaultValue<TOutType>();
+    if (almostEquals(weightSum, 0.0)) return DefaultValue<TOutType>();
     
     auto sum = DefaultValue<TInType>();
     for (unsigned i = 0u; i < values.size(); ++i)
@@ -58,7 +58,7 @@ inline double average(const std::vector<int>& values, const std::vector<double>&
     if (values.empty() || weights.empty()) return 0.0;
     
     const double weightSum = std::accumulate(weights.begin(), weights.end(), 0.0);
-    if (weightSum == 0.0) return 0.0;
+    if (almostEquals(weightSum, 0.0)) return 0.0;
     
     double sum = 0.0;
     for (unsigned i = 0u; i < values.size(); ++i)
@@ -92,7 +92,7 @@ inline MEulerRotation average(const std::vector<MEulerRotation>& values, const s
     if (values.empty() || weights.empty()) return MEulerRotation::identity;
     
     const double weightSum = std::accumulate(weights.begin(), weights.end(), 0.0);
-    if (weightSum == 0.0) return MEulerRotation::identity;
+    if (almostEquals(weightSum, 0.0)) return MEulerRotation::identity;
     
     MQuaternion sum;
     for (unsigned i = 0u; i < values.size(); ++i)
@@ -128,7 +128,7 @@ inline MQuaternion average(const std::vector<MQuaternion>& values, const std::ve
     if (values.empty() || weights.empty()) return MQuaternion::identity;
     
     const double weightSum = std::accumulate(weights.begin(), weights.end(), 0.0);
-    if (weightSum == 0.0) return MQuaternion::identity;
+    if (almostEquals(weightSum, 0.0)) return MQuaternion::identity;
     
     MQuaternion sum;
     for (unsigned i = 0u; i < values.size(); ++i)
@@ -238,7 +238,7 @@ inline MMatrix average(const std::vector<MMatrix>& values, const std::vector<dou
     if (values.empty() || weights.empty()) return MMatrix::identity;
     
     const double weightSum = std::accumulate(weights.begin(), weights.end(), 0.0);
-    if (weightSum == 0.0) return MMatrix::identity;
+    if (almostEquals(weightSum, 0.0)) return MMatrix::identity;
     
     MQuaternion rotation;
     MVector position, scale, shear;
@@ -308,7 +308,7 @@ inline std::vector<double> normalize(const std::vector<double>& values)
     if (values.empty()) return out;
     
     const double s = sum(values);
-    if (s == 0.0) return values;
+    if (almostEquals(s, 0.0)) return values;
     
     out.reserve(values.size());
     for (const auto& value : values)
@@ -341,9 +341,9 @@ inline std::vector<double> normalizeWeights(const std::vector<double>& values)
     const double s = sum(out);
     if (s < 1.0) return out;
     
-    for (unsigned i = 0; i < out.size(); ++i)
+    for (auto& item : out)
     {
-        out[i] /= s;
+        item /= s;
     }
     
     return out;
@@ -364,7 +364,7 @@ MAngle min_array_element(const std::vector<MAngle>& values)
     std::vector<double> angleValues;
     angleValues.reserve(values.size());
     
-    for (const auto value : values)
+    for (const auto& value : values)
     {
         angleValues.push_back(value.asRadians());
     }
@@ -387,7 +387,7 @@ MAngle max_array_element(const std::vector<MAngle>& values)
     std::vector<double> angleValues;
     angleValues.reserve(values.size());
     
-    for (const auto value : values)
+    for (const auto& value : values)
     {
         angleValues.push_back(value.asRadians());
     }

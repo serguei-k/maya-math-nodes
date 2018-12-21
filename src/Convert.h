@@ -194,7 +194,7 @@ public:
         createAttribute(scaleAttr_, "scale", DefaultValue<MVector>(1.0, 1.0, 1.0));
         createAttribute(outputAttr_, "output", DefaultValue<MMatrix>(), false);
         
-        createRotationOrderAttribute(rotationOrderAttr_);
+        createRotationOrderAttribute(rotationOrderAttr_, 1);
         
         MPxNode::addAttribute(translationAttr_);
         MPxNode::addAttribute(rotationAttr_);
