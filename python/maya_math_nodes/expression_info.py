@@ -1,7 +1,7 @@
 # Copyright (c) 2018 Serguei Kalentchouk et al. All rights reserved.
 # Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 
-NUMERIC_POD_TYPES = ['bool', 'double', 'int', 'doubleAngle', 'doubleLinear']
+NUMERIC_POD_TYPES = ['bool', 'double', 'int', 'doubleAngle']
 
 TYPE_SUFFIX_PER_TYPE = {
     'bool': 'Bool',
@@ -10,7 +10,6 @@ TYPE_SUFFIX_PER_TYPE = {
     'double3Angle': 'Rotation',
     'double4': 'Quaternion',
     'doubleAngle': 'Angle',
-    'doubleLinear': '',
     'int': 'Int',
     'matrix': 'Matrix',
     'mesh': 'Mesh',
@@ -41,13 +40,13 @@ FUNCTIONS = {
     '+': {
         'name': 'math_Add{0}',
         'attributes': ['input1', 'input2'],
-        'types': ['double', 'double3', 'doubleAngle', 'doubleLinear', 'int'],
+        'types': ['double', 'double3', 'doubleAngle', 'int'],
         'mixed_types': {}
     },
     '/': {
         'name': 'math_Divide{0}',
         'attributes': ['input1', 'input2'],
-        'types': ['double', 'doubleAngle', 'doubleLinear'],
+        'types': ['double', 'doubleAngle'],
         'mixed_types': {'double': ['int'], 'doubleAngle': ['int']}
     },
     '%': {
@@ -59,13 +58,13 @@ FUNCTIONS = {
     '*': {
         'name': 'math_Multiply{0}',
         'attributes': ['input1', 'input2'],
-        'types': ['double', 'double3', 'double4', 'doubleAngle', 'doubleLinear', 'int', 'matrix'],
-        'mixed_types': {'double': ['int'], 'double3': ['double', 'matrix'], 'doubleAngle': ['int'], 'doubleLinear': ['int']}
+        'types': ['double', 'double3', 'double4', 'doubleAngle', 'int', 'matrix'],
+        'mixed_types': {'double': ['int'], 'double3': ['double', 'matrix'], 'doubleAngle': ['int']}
     },
     '-': {
         'name': 'math_Subtract{0}',
         'attributes': ['input1', 'input2'],
-        'types': ['double', 'double3', 'doubleAngle', 'doubleLinear', 'int'],
+        'types': ['double', 'double3', 'doubleAngle', 'int'],
         'mixed_types': {}
     },
     '&': {
@@ -103,7 +102,7 @@ FUNCTIONS = {
     'abs': {
         'name': 'math_Absolute{0}',
         'attributes': ['input'],
-        'types': ['double', 'doubleAngle', 'doubleLinear', 'int'],
+        'types': ['double', 'doubleAngle', 'int'],
         'mixed_types': {}
     },
     'acos': {
@@ -157,7 +156,7 @@ FUNCTIONS = {
     'clamp': {
         'name': 'math_Clamp{0}',
         'attributes': ['input', 'inputMin', 'inputMax'],
-        'types': ['double', 'doubleAngle', 'doubleLinear', 'int'],
+        'types': ['double', 'doubleAngle', 'int'],
         'mixed_types': {}
     },
     'compare': CompareOp,
@@ -315,7 +314,7 @@ FUNCTIONS = {
         'name': 'math_Select{0}',
         'attributes': ['input1', 'input2', 'condition'],
         'types': ['double', 'double3', 'double3Angle', 'double4', 'doubleAngle',
-                  'doubleLinear', 'int', 'matrix', 'mesh', 'nurbsCurve', 'nurbsSurface'],
+                  'int', 'matrix', 'mesh', 'nurbsCurve', 'nurbsSurface'],
         'mixed_types': {}
     },
     'selectarray': {
