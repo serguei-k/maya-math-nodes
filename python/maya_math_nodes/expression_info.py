@@ -1,25 +1,29 @@
 # Copyright (c) 2018 Serguei Kalentchouk et al. All rights reserved.
 # Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 
-NUMERIC_POD_TYPES = ['double', 'int', 'doubleAngle', 'doubleLinear']
+NUMERIC_POD_TYPES = ['bool', 'double', 'int', 'doubleAngle']
 
 TYPE_SUFFIX_PER_TYPE = {
+    'bool': 'Bool',
     'double': '',
     'double3': 'Vector',
     'double3Angle': 'Rotation',
     'double4': 'Quaternion',
     'doubleAngle': 'Angle',
-    'doubleLinear': '',
     'int': 'Int',
-    'matrix': 'Matrix'
+    'matrix': 'Matrix',
+    'mesh': 'Mesh',
+    'nurbsCurve': 'Curve',
+    'nurbsSurface': 'Surface'
 }
 
-OPERATORS = ['+', '/', '%', '*', '-']
+OPERATORS = ['+', '/', '%', '*', '-', '&', '|', '^', '!']
 CONDITION = ['<', '>', '=', '!']
 TERNARY = ['?', ':']
 
 PRECEDENCE = {
     '<': 10, '>': 10, '<=': 10, '>=': 10, '==': 10, '!=': 10,
+    '&': 15, '|': 15, '^': 15, '!': 15,
     '+': 20, '-': 20,
     '*': 30, '/': 30, '%': 30,
 }
@@ -27,7 +31,7 @@ PRECEDENCE = {
 CompareOp = {
     'name': 'math_Compare{0}',
     'attributes': ['input1', 'input2'],
-    'types': ['double', 'doubleAngle'],
+    'types': ['double', 'doubleAngle', 'int'],
     'mixed_types': {}
 }
 
@@ -36,13 +40,13 @@ FUNCTIONS = {
     '+': {
         'name': 'math_Add{0}',
         'attributes': ['input1', 'input2'],
-        'types': ['double', 'double3', 'doubleAngle', 'doubleLinear', 'int'],
+        'types': ['double', 'double3', 'doubleAngle', 'int'],
         'mixed_types': {}
     },
     '/': {
         'name': 'math_Divide{0}',
         'attributes': ['input1', 'input2'],
-        'types': ['double', 'doubleAngle', 'doubleLinear'],
+        'types': ['double', 'doubleAngle'],
         'mixed_types': {'double': ['int'], 'doubleAngle': ['int']}
     },
     '%': {
@@ -54,13 +58,37 @@ FUNCTIONS = {
     '*': {
         'name': 'math_Multiply{0}',
         'attributes': ['input1', 'input2'],
-        'types': ['double', 'double3', 'double4', 'doubleAngle', 'doubleLinear', 'int', 'matrix'],
-        'mixed_types': {'double': ['int'], 'double3': ['double', 'matrix'], 'doubleAngle': ['int'], 'doubleLinear': ['int']}
+        'types': ['double', 'double3', 'double4', 'doubleAngle', 'int', 'matrix'],
+        'mixed_types': {'double': ['int'], 'double3': ['double', 'matrix'], 'doubleAngle': ['int']}
     },
     '-': {
         'name': 'math_Subtract{0}',
         'attributes': ['input1', 'input2'],
-        'types': ['double', 'double3', 'doubleAngle', 'doubleLinear', 'int'],
+        'types': ['double', 'double3', 'doubleAngle', 'int'],
+        'mixed_types': {}
+    },
+    '&': {
+        'name': 'math_And{0}',
+        'attributes': ['input1', 'input2'],
+        'types': ['bool', 'int'],
+        'mixed_types': {}
+    },
+    '|': {
+        'name': 'math_Or{0}',
+        'attributes': ['input1', 'input2'],
+        'types': ['bool', 'int'],
+        'mixed_types': {}
+    },
+    '^': {
+        'name': 'math_Xor{0}',
+        'attributes': ['input1', 'input2'],
+        'types': ['bool', 'int'],
+        'mixed_types': {}
+    },
+    '!': {
+        'name': 'math_NotBool',
+        'attributes': ['input'],
+        'types': ['bool'],
         'mixed_types': {}
     },
     '>': CompareOp,
@@ -74,7 +102,7 @@ FUNCTIONS = {
     'abs': {
         'name': 'math_Absolute{0}',
         'attributes': ['input'],
-        'types': ['double', 'doubleAngle', 'doubleLinear', 'int'],
+        'types': ['double', 'doubleAngle', 'int'],
         'mixed_types': {}
     },
     'acos': {
@@ -107,6 +135,12 @@ FUNCTIONS = {
         'types': ['double'],
         'mixed_types': {}
     },
+    'average': {
+        'name': 'math_Average{0}',
+        'attributes': ['input'],
+        'types': ['double', 'double3', 'double4', 'double3Angle', 'doubleAngle', 'int', 'matrix'],
+        'mixed_types': {}
+    },
     'axis': {
         'name': 'math_AxisFromMatrix',
         'attributes': ['input', 'axis'],
@@ -122,7 +156,7 @@ FUNCTIONS = {
     'clamp': {
         'name': 'math_Clamp{0}',
         'attributes': ['input', 'inputMin', 'inputMax'],
-        'types': ['double', 'doubleAngle', 'doubleLinear', 'int'],
+        'types': ['double', 'doubleAngle', 'int'],
         'mixed_types': {}
     },
     'compare': CompareOp,
@@ -135,6 +169,12 @@ FUNCTIONS = {
     'cross': {
         'name': 'math_CrossProduct',
         'attributes': ['input1', 'input2'],
+        'types': ['double3'],
+        'mixed_types': {}
+    },
+    'direction': {
+        'name': 'math_MatrixFromDirection',
+        'attributes': ['direction', 'up', 'alignment'],
         'types': ['double3'],
         'mixed_types': {}
     },
@@ -180,6 +220,12 @@ FUNCTIONS = {
         'types': ['double3'],
         'mixed_types': {}
     },
+    'mat': {
+        'name': 'math_MatrixFrom{0}',
+        'attributes': ['input', 'rotationOrder'],
+        'types': ['double3Angle', 'double4'],
+        'mixed_types': {}
+    },
     'max': {
         'name': 'math_Max{0}',
         'attributes': ['input1', 'input2'],
@@ -222,6 +268,12 @@ FUNCTIONS = {
         'types': ['double'],
         'mixed_types': {}
     },
+    'normalizeweights': {
+        'name': 'math_NormalizeWeightsArray',
+        'attributes': ['input'],
+        'types': ['double'],
+        'mixed_types': {}
+    },
     'pow': {
         'name': 'math_Power',
         'attributes': ['input', 'exponent'],
@@ -232,6 +284,12 @@ FUNCTIONS = {
         'name': 'math_QuaternionFrom{0}',
         'attributes': ['input', 'rotationOrder'],
         'types': ['matrix', 'double3Angle'],
+        'mixed_types': {}
+    },
+    'remap': {
+        'name': 'math_Remap{0}',
+        'attributes': ['input', 'low1', 'high1', 'low2', 'high2'],
+        'types': ['double', 'doubleAngle', 'int'],
         'mixed_types': {}
     },
     'rot': {
@@ -246,10 +304,23 @@ FUNCTIONS = {
         'types': ['double', 'doubleAngle'],
         'mixed_types': {}
     },
+    'scale': {
+        'name': 'math_ScaleFromMatrix',
+        'attributes': ['input'],
+        'types': ['matrix'],
+        'mixed_types': {}
+    },
     'select': {
         'name': 'math_Select{0}',
         'attributes': ['input1', 'input2', 'condition'],
-        'types': ['double', 'double3', 'double3Angle', 'double4', 'doubleAngle', 'doubleLinear', 'int', 'matrix'],
+        'types': ['double', 'double3', 'double3Angle', 'double4', 'doubleAngle',
+                  'int', 'matrix', 'mesh', 'nurbsCurve', 'nurbsSurface'],
+        'mixed_types': {}
+    },
+    'selectarray': {
+        'name': 'math_SelectArray{0}',
+        'attributes': ['input1', 'input2', 'condition'],
+        'types': ['double', 'double3', 'doubleAngle', 'int', 'matrix'],
         'mixed_types': {}
     },
     'sin': {
@@ -258,16 +329,40 @@ FUNCTIONS = {
         'types': ['doubleAngle'],
         'mixed_types': {}
     },
+    'smoothstep': {
+        'name': 'math_Smoothstep',
+        'attributes': ['input'],
+        'types': ['double'],
+        'mixed_types': {}
+    },
     'tan': {
         'name': 'math_TanAngle',
         'attributes': ['input'],
         'types': ['doubleAngle'],
         'mixed_types': {}
     },
+    'trs': {
+        'name': 'math_MatrixFromTRS',
+        'attributes': ['translation', 'rotation', 'scale', 'rotationOrder'],
+        'types': ['double3'],
+        'mixed_types': {}
+    },
     'slerp': {
         'name': 'math_SlerpQuaternion',
         'attributes': ['input1', 'input2', 'alpha', 'interpolationType'],
         'types': ['double4'],
+        'mixed_types': {}
+    },
+    'sum': {
+        'name': 'math_Sum{0}',
+        'attributes': ['input'],
+        'types': ['double', 'double3', 'doubleAngle', 'int'],
+        'mixed_types': {}
+    },
+    'translation': {
+        'name': 'math_TranslationFromMatrix',
+        'attributes': ['input'],
+        'types': ['matrix'],
         'mixed_types': {}
     },
     'twist': {

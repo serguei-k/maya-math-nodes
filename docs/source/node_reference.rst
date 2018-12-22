@@ -1,4 +1,4 @@
-.. _nodeReference:
+.. _node_reference:
 
 Node Reference
 ==============
@@ -52,6 +52,7 @@ AndBool
 -------
 :description: Gets logical *and* of two values
 :type variants: AndInt
+:expression: x & b
 
 AngleBetweenVectors
 -------------------
@@ -77,6 +78,7 @@ Average
 -------
 :description: Computes average value
 :type variants: AverageAngle, AverageInt, AverageMatrix, AverageQuaternion, AverageRotation, AverageVector
+:expression: average([x, y, ...])
 
 AxisFromMatrix
 --------------
@@ -98,7 +100,7 @@ Clamp
 Compare
 -------
 :description: Compute how the two values compare to each other
-:type variants: CompareAngle
+:type variants: CompareAngle, CompareInt
 :expression: compare(x, y)
 
 CosAngle
@@ -110,6 +112,11 @@ CrossProduct
 ------------
 :description: Computes the cross product of two vectors
 :expression: cross(x, y)
+
+DebugLog
+--------
+:description: Pass-through node that will log the value to Maya Script Editor
+:type variants: DebugLogAngle, DebugLogInt, DebugLogMatrix, DebugLogQuaternion, DebugLogVector
 
 Divide
 ------
@@ -133,10 +140,10 @@ Floor
 :description: Computes the largest integer value less than or equal to input
 :expression: floor(x)
 
-InverseMatrix
--------------
+Inverse*
+--------
 :description: Computes the inverse of value
-:type variants: InverseQuaternion, InverseRotation
+:type variants: InverseMatrix, InverseQuaternion, InverseRotation
 :expression: inverse(x)
 
 Lerp
@@ -145,9 +152,21 @@ Lerp
 :type variants: LerpAngle, LerpMatrix, LerpVector
 :expression: lerp(x, y, alpha)
 
+MatrixFrom*
+-----------
+:description: Computes a rotation matrix from input
+:type variants: MatrixFromRotation, MatrixFromQuaternion
+:expression: mat(x, rot_order)
+
+MatrixFromDirection
+-------------------
+:description: Computes a rotation matrix from direction and up vector
+:expression: direction(dir_vec, up_vec)
+
 MatrixFromTRS
 -------------
 :description: Computes a matrix from translation, rotation and scale
+:expression: trs(translation, rotation, scale)
 
 Max
 ---
@@ -159,7 +178,7 @@ MaxElement
 ----------
 :description: Gets the largest value in array
 :type variants: MaxAngleElement, MaxIntElement
-:expression: maxelement(x, y)
+:expression: maxelement([x, y, ...])
 
 Min
 ---
@@ -171,7 +190,7 @@ MinElement
 ----------
 :description: Gets the smallest value in array
 :type variants: MinAngleElement, MinIntElement
-:expression: minelement(x, y)
+:expression: minelement([x, y, ...])
 
 ModulusInt
 ----------
@@ -199,27 +218,40 @@ NormalizeVector
 NormalizeArray
 ---------------
 :description: Normalize array of values
-:expression: normalizearray(x)
+:expression: normalizearray([x, y, ...])
 
 NormalizeWeightsArray
 ---------------------
 :description: Normalize array of weight values
+:expression: normalizeweights([x, y, ...])
+
+NotBool
+-------
+:description: Logical *not*
+:expression: !x
 
 OrBool
 -------
 :description: Gets logical *or* of two values
 :type variants: OrInt
+:expression: x | y
 
 Power
 -----
 :description: Computes the value raised to power of the exponent
 :expression: power(x, exp)
 
-QuaternionFromMatrix
---------------------
+QuaternionFrom*
+---------------
 :description: Gets quaternion from matrix or rotation
-:type variants: QuaternionFromRotation
+:type variants: QuaternionFromMatrix, QuaternionFromRotation
 :expression: quat(x, rot_order)
+
+Remap
+-----
+:description: Remap value from old range to new range
+:type variants: RemapAngle, RemapInt
+:expression: remap(x, low1, high1, low2, high2)
 
 Round
 -----
@@ -227,27 +259,29 @@ Round
 :type variants: RoundAngle
 :expression: round(x)
 
-RotationFromMatrix
-------------------
+RotationFrom*
+-------------
 :description: Gets rotation from matrix or quaternion
-:type variants: RotationFromQuaternion
+:type variants: RotationFromMatrix, RotationFromQuaternion
 :expression: rot(x, rot_order)
 
 ScaleFromMatrix
 ---------------
 :description: Gets scale from matrix
+:expression: scale(x)
 
 Select
 ------
 :description: Toggles output
-:type variants: SelectAngle, SelectInt, SelectMatrix, SelectQuaternion, SelectRotation,
-   SelectVector
+:type variants: SelectAngle, SelectCurve, SelectInt, SelectMatrix, SelectMesh, SelectQuaternion, SelectRotation,
+   SelectSurface, SelectVector
 :expression: select(x, y, state)
 
 SelectArray
 -----------
 :description: Toggles array output
 :type variants: SelectAngleArray, SelectIntArray, SelectMatrixArray, SelectVectorArray
+:expression: selectarray(x, y, state)
 
 SinAngle
 --------
@@ -256,8 +290,13 @@ SinAngle
 
 SlerpQuaternion
 ---------------
-:description: Comptues slerp interpolation between two quaternions
+:description: Computes slerp interpolation between two quaternions
 :expression: slerp(x, y)
+
+Smoothstep
+----------
+:description: Computes smoothstep interpolation of value within [0.0, 1.0] range
+:expression: smoothstep(x)
 
 Subtract
 --------
@@ -269,6 +308,7 @@ Sum
 ---
 :description: Computes the the sum of values
 :type variants: SumAngle, SumInt, SumVector
+:expression: sum([x, y, ...])
 
 TanAngle
 --------
@@ -278,11 +318,12 @@ TanAngle
 TranslationFromMatrix
 ---------------------
 :description: Get translation from matrix
+:expression: translation(x)
 
-TwistFromMatrix
----------------
+TwistFrom*
+----------
 :description: Computes twist around axis from matrix or rotation
-:type variants: TwistFromRotaiton
+:type variants: TwistFromMatrix, TwistFromRotaiton
 :expression: twist(x, axis, rot_order)
 
 VectorLength
@@ -305,3 +346,4 @@ XorBool
 -------
 :description: Gets logical *xor* of two values
 :type variants: XorInt
+:expression: x ^ b

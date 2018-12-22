@@ -1,4 +1,4 @@
-.. _expressionLanguage:
+.. _expression_language:
 
 Expression Language
 ===================
@@ -25,17 +25,23 @@ The language supports the following data types:
 numeric
    float and int types are supported, ex: :code:`-1, 0, 1.0`
 
+boolean
+   boolean **true** and **false** values are supported and can cast to POD numeric types
+
 string
    string literals are used to reference Maya attributes, ex: :code:`node.attribute[0]`,
-   note that there are no quatation marks around the string literals!
+   note that there are no quotation marks around the string literals!
 
 complex
    complex types such as vector, matrix, rotation, and quaternion are specified by using cast functions, ex: :code:`vec(0, 1, 0)`
 
+geometry
+   a small subset of functions also supports geometry types such as mesh, nurbsCurve, and nurbsSurface
+
 Operators
 ---------
 
-The language supports a limited set of arithmetic operators: :code:`+, -, *, /, %,`
+The language supports a limited set of arithmetic and logical operators: :code:`+, -, *, /, %, &, |, ^, !`
 
 Conditionals
 ------------
@@ -51,7 +57,7 @@ The language supports calling functions with arguments.
 These functions map directly to the node operators available in the plugin.
 
 For example :code:`Absolute` node is made available through the :code:`abs()` function call.
-Please see the :ref:`Node Reference <nodeReference>` for the mapping between node type and function name.
+Please see the :ref:`Node Reference <node_reference>` for the mapping between node type and function name.
 
 The function arguments correspond with node attributes. For example the :code:`Clamp` node has two input
 attributes, therefore the :code:`clamp(arg1, arg2)` function will take two arguments.
@@ -66,7 +72,8 @@ Cast Functions
 Several functions that output complex data types can take constant values as input.
 
 mat
-  :code:`mat(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)` can be used to specify constat matrix value
+  :code:`mat(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)` can be used to specify constant matrix value,
+  :code:`mat()` also maps to several math nodes and can take other arguments, ex: :code:`mat(node.rotate, 0)`
 
 rot
   :code:`rot(0, 1, 0)` can be used to specify constant rotation value, :code:`rot()` also maps to several
@@ -81,29 +88,31 @@ vec
 
 .. warning::
    | Currently, some nodes do not have expression bindings!
-   | See :ref:`Node Reference <nodeReference>` section for details.
+   | See :ref:`Node Reference <node_reference>` section for details.
 
 .. note::
-   Default and keyword arguments are currently not supported!
+   Function calls require at least one argument to be specified!
 
 Evaluation Order
 ----------------
 
 Expressions are evaluated left to right with the following operator precedence, listed from lowest to highest:
 
-+----------------------+-------------------------------------+
-| Operator             | Description                         |
-+----------------------+-------------------------------------+
-| +, -                 | Addition and subtraction            |
-+----------------------+-------------------------------------+
-| \*, /, %             | Multiplication, division, remainder |
-+----------------------+-------------------------------------+
-| <, <=, >, >=, !=, == | Comparisons                         |
-+----------------------+-------------------------------------+
-| func()               | Function call                       |
-+----------------------+-------------------------------------+
-| (...)                | Grouping                            |
-+----------------------+-------------------------------------+
++----------------------------+-------------------------------------+
+| Operator                   | Description                         |
++----------------------------+-------------------------------------+
+| <, <=, >, >=, !=, ==, ?, : | Comparisons and ternary             |
++----------------------------+-------------------------------------+
+| &, |, ^, !                 | Logical operators                   |
++----------------------------+-------------------------------------+
+| +, -                       | Addition and subtraction            |
++----------------------------+-------------------------------------+
+| \*, /, %                   | Multiplication, division, remainder |
++----------------------------+-------------------------------------+
+| func()                     | Function call                       |
++----------------------------+-------------------------------------+
+| (...)                      | Grouping                            |
++----------------------------+-------------------------------------+
 
 Type Resolution
 ---------------
@@ -141,7 +150,7 @@ Examples
   from maya_math_nodes import eval_expression
 
   # get twist value for roll joint
-  eval_expression('twist(ctrl.worldMatrix[0], 0, 0) * 0.5', 'roll')
+  eval_expression('twist(ctrl.worldMatrix[0]) * 0.5', 'roll')
 
   # get toe pivot value for foot roll
   eval_expression('ctrl.roll > ctrl.break ? ctrl.roll - ctrl.break : 0', 'toeroll')

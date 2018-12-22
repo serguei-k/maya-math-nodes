@@ -3,6 +3,7 @@
 #pragma once
 
 #include <cmath>
+#include <limits>
 #include <string>
 #include <type_traits>
 #include <vector>
@@ -10,11 +11,14 @@
 #include <maya/MAngle.h>
 #include <maya/MArrayDataBuilder.h>
 #include <maya/MEulerRotation.h>
+#include <maya/MGlobal.h>
 #include <maya/MMatrix.h>
 #include <maya/MFnCompoundAttribute.h>
 #include <maya/MFnDependencyNode.h>
+#include <maya/MFnEnumAttribute.h>
 #include <maya/MFnMatrixAttribute.h>
 #include <maya/MFnNumericAttribute.h>
+#include <maya/MFnTypedAttribute.h>
 #include <maya/MFnUnitAttribute.h>
 #include <maya/MPxNode.h>
 #include <maya/MVector.h>
@@ -84,6 +88,28 @@ inline MEulerRotation DefaultValue(double x, double y, double z)
 {
     return MEulerRotation(x, y, z);
 }
+
+
+// Math helper functions
+template <typename TType>
+inline bool almostEquals(TType a, TType b)
+{
+    return std::abs(a - b) <= std::numeric_limits<TType>::epsilon() * std::max(TType(1.0), std::abs(a + b));
+}
+
+template <>
+inline bool almostEquals(int a, int b)
+{
+    return a == b;
+}
+
+template <>
+inline bool almostEquals(MAngle a, MAngle b)
+{
+    return std::abs(a.asRadians() - b.asRadians()) <= std::numeric_limits<double>::epsilon() *
+           std::max(1.0, std::abs(a.asRadians() + b.asRadians()));
+}
+
 
 // Overloads for createAttribute
 inline void createAttribute(Attribute& attr, const char* name, double value, bool isInput = true, bool isArray = false)
@@ -244,6 +270,17 @@ inline void createAttribute(Attribute& attr, const char* name, const MEulerRotat
     attrFn.setUsesArrayDataBuilder(isArray);
 }
 
+inline void createAttribute(Attribute& attr, const char* name, MFnData::Type type, bool isInput = true, bool isArray = false)
+{
+    MFnTypedAttribute attrFn;
+    attr.attr = attrFn.create(name, name, type);
+    attrFn.setKeyable(isInput);
+    attrFn.setStorable(isInput);
+    attrFn.setWritable(isInput);
+    attrFn.setArray(isArray);
+    attrFn.setUsesArrayDataBuilder(isArray);
+}
+
 inline void createCompoundAttribute(Attribute& attr, const std::vector<Attribute>& children, const char* name, bool isInput = true, bool isArray = false)
 {
     MFnCompoundAttribute cAttrFn;
@@ -261,7 +298,25 @@ inline void createCompoundAttribute(Attribute& attr, const std::vector<Attribute
     cAttrFn.setUsesArrayDataBuilder(isArray);
 }
 
-// Explicit specializations for getAttribute
+inline void createRotationOrderAttribute(Attribute& attr, short start=0)
+{
+    MFnEnumAttribute eAttrFn;
+    attr.attr = eAttrFn.create("rotationOrder", "rotationOrder", 1);
+    
+    eAttrFn.addField("xyz", start++);
+    eAttrFn.addField("yzx", start++);
+    eAttrFn.addField("zxy", start++);
+    eAttrFn.addField("xzy", start++);
+    eAttrFn.addField("yxz", start++);
+    eAttrFn.addField("zyx", start++);
+    
+    eAttrFn.setStorable(true);
+    eAttrFn.setWritable(true);
+    eAttrFn.setChannelBox(true);
+}
+
+
+// Template specializations for getAttribute
 template <typename TType>
 inline TType getAttribute(MDataBlock& dataBlock, const Attribute& attribute);
 
@@ -592,23 +647,25 @@ inline std::vector<MQuaternion> getAttribute(MDataBlock& dataBlock, const Attrib
     return out;
 }
 
-template <typename TInputType, typename TOutputType>
-inline TOutputType getAttribute(MDataBlock& dataBlock, const Attribute& attribute);
-
-template <>
-inline double getAttribute<MAngle, double>(MDataBlock& dataBlock, const Attribute& attribute)
+inline MObject getAttribute(MDataBlock& dataBlock, const Attribute& attribute, MFnData::Type type)
 {
     MDataHandle handle = dataBlock.inputValue(attribute);
-    return handle.asAngle().asRadians();
+    
+    switch (type)
+    {
+        case MFnData::kMesh:
+            return handle.asMesh();
+        case MFnData::kNurbsCurve:
+            return handle.asNurbsCurve();
+        case MFnData::kNurbsSurface:
+            return handle.asNurbsSurface();
+        default:
+            return MObject();
+    }
 }
 
-template <>
-inline double getAttribute<double, double>(MDataBlock& dataBlock, const Attribute& attribute)
-{
-    MDataHandle handle = dataBlock.inputValue(attribute);
-    return handle.asDouble();
-}
 
+// Template specializations for setAttribute
 template <typename TType>
 inline void setAttribute(MDataBlock& dataBlock, const Attribute& attribute, TType value)
 {
@@ -670,7 +727,7 @@ inline void setAttribute(MDataBlock& dataBlock, const Attribute& attribute, cons
 }
 
 
-// MAngle operator overloads
+// Maya types operator overloads
 MAngle operator+(const MAngle& a, const MAngle& b)
 {
     return MAngle(a.asRadians() + b.asRadians());
@@ -679,6 +736,11 @@ MAngle operator+(const MAngle& a, const MAngle& b)
 MAngle operator-(const MAngle& a, const MAngle& b)
 {
     return MAngle(a.asRadians() - b.asRadians());
+}
+
+MAngle operator*(const MAngle& a, const MAngle& b)
+{
+    return MAngle(a.asRadians() * b.asRadians());
 }
 
 MAngle operator*(const MAngle& a, double b)
@@ -701,15 +763,31 @@ MAngle operator/(const MAngle& a, int b)
     return MAngle(a.asRadians() / b);
 }
 
+MAngle operator/(const MAngle& a, const MAngle& b)
+{
+    return MAngle(a.asRadians() / b.asRadians());
+}
+
 MAngle operator-(const MAngle& a)
 {
     return MAngle(-a.asRadians());
+}
+
+bool operator<(const MAngle& a, const MAngle& b)
+{
+    return a.asRadians() < b.asRadians();
+}
+
+bool operator>(const MAngle& a, const MAngle& b)
+{
+    return a.asRadians() > b.asRadians();
 }
 
 MQuaternion operator*(const MQuaternion& a, double b)
 {
     return MQuaternion(a.x * b, a.y * b, a.z * b, a.w * b);
 }
+
 
 // Base node type definition used for all math nodes in this library
 template<typename TClass, const char* TTypeName>
@@ -719,7 +797,10 @@ public:
     static void registerNode(class MFnPlugin& pluginFn, int typeId)
     {
         kTypeId = typeId;
-        pluginFn.registerNode((std::string(NODE_NAME_PREFIX) + TTypeName).c_str(), typeId, []() -> void* { return new TClass(); }, TClass::initialize);
+        pluginFn.registerNode((std::string(NODE_NAME_PREFIX) + TTypeName).c_str(),
+                              typeId,
+                              []() -> void* { return new TClass(); },
+                              TClass::initialize);
     }
     
     static void deregisterNode(class MFnPlugin& pluginFn)

@@ -10,15 +10,15 @@ Welcome to Maya Math Nodes Documentation
    :maxdepth: 1
    :caption: User Documentation
 
-   nodeReference
-   expressionLanguage
+   node_reference
+   expression_language
 
 Maya Math Nodes is a plugin for Autodesk Maya that provides a set of atomic nodes to perform various common math operations.
 The purpose of these nodes is to streamline the creation of complex and highly performant rigging systems.
 
-To see the list of nodes made available by the plugin, please refer to the :ref:`Node Reference <nodeReference>` section.
+To see the list of nodes made available by the plugin, please refer to the :ref:`Node Reference <node_reference>` section.
 
-Additionaly, this plugin provides a simple expression language that can be used to describe a series of mathematical operations inline, which can then be interpreted to generate a math node network for you, see :ref:`Expression Language <expressionLanguage>` section for details.
+Additionally, this plugin provides a simple expression language that can be used to describe a series of mathematical operations inline, which can then be interpreted to generate a math node network for you, see :ref:`Expression Language <expression_language>` section for details.
 
 .. note::
    At this time there are no distributable binaries available for download.

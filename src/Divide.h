@@ -2,8 +2,6 @@
 // Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 #pragma once
 
-#include <maya/MGlobal.h>
-
 #include "Utils.h"
 
 template<typename TPrimary, typename TSecondary>
@@ -66,6 +64,16 @@ public:
         }
         
         return MS::kUnknownParameter;
+    }
+    
+    MPlug passThroughToOne(const MPlug& plug) const override
+    {
+        if (plug == input1Attr_)
+        {
+            return MPlug(this->thisMObject(), outputAttr_);
+        }
+        
+        return MPlug();
     }
 
 private:

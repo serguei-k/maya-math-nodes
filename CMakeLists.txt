@@ -3,7 +3,7 @@
 
 # Define project
 cmake_minimum_required(VERSION 3.3)
-project(maya-math-nodes VERSION 1.4.0)
+project(maya-math-nodes VERSION 1.5.0)
 
 # Set project version macro
 add_definitions(-DPROJECT_VERSION="${PROJECT_VERSION}")
@@ -37,6 +37,7 @@ add_library(mayaMathNodes SHARED
     src/Array.h
     src/Condition.h
     src/Clamp.h
+    src/Debug.h
     src/Distance.h
     src/Divide.h
     src/Convert.h

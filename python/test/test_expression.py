@@ -55,6 +55,15 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('2.0 * dummy.rx', 0.0, exception=BuildingError)
         self.eval_expression('dummy.rx * dummy.tx', 0.0, exception=BuildingError)
 
+        # logical
+        self.eval_expression('1 & 1', True, 'math_AndInt')
+        self.eval_expression('true & false', False, 'math_AndBool')
+        self.eval_expression('1 | 1', True, 'math_OrInt')
+        self.eval_expression('false | false', False, 'math_OrBool')
+        self.eval_expression('0 ^ 0', False, 'math_XorInt')
+        self.eval_expression('false ^ true', True, 'math_XorBool')
+        self.eval_expression('!(true)', False, 'math_NotBool')
+
         # multiply complex types
         self.eval_expression('{1, 0, 0} * 2', [2.0, 0.0, 0.0], 'math_MultiplyVector')
         self.eval_expression('{1, 0, 0} * 2.0', [2.0, 0.0, 0.0], 'math_MultiplyVector')
@@ -77,16 +86,18 @@ class TestExpression(ExpressionTestCase):
     def test_precedence(self):
         self.eval_expression('2.0 + 2.0 * 2.0 / 2.0 - 1.0', 3.0)
         self.eval_expression('(2.0 + 2.0) * (2.0 / (2.0 - 1.0))', 8.0)
+        self.eval_expression('-1 + 2 & 2 - 1 | 0', True, 'math_OrBool')
 
     def test_conditional(self):
         # compare
-        self.eval_expression('2 == 2 ? 1 : 0', 1)
-        self.eval_expression('2.0 == 2.0 ? 1 : 0', 1)
-        self.eval_expression('2.0 == 2 ? 1 : 0', 1)
+        self.eval_expression('2 != 2 ? 1 : 0', 0)
+        self.eval_expression('2.0 >= 2.0 ? 1 : 0', 1)
+        self.eval_expression('2.0 <= 2 ? 1 : 0', 1)
         self.eval_expression('2 == 2.0 ? 1 : 0', 1)
         self.eval_expression('dummy.tx == dummy.ty ? 1 : 0', 1)
         self.eval_expression('dummy.rx == dummy.ty ? 1 : 0', 1, exception=BuildingError)
         self.eval_expression('compare(dummy.rx, 2.0)', True, 'math_CompareAngle')
+        self.eval_expression('compare(2, 2.0)', True, 'math_CompareInt')
 
         # selector
         self.eval_expression('dummy.tx > 1.0 ? 2.0 + 2.0 : 2.0 - 2.0', 4.0, 'math_Select')
@@ -95,6 +106,7 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('dummy.tx > 1.0 ? 2 + 2 : 2.0', 4, 'math_SelectInt')
         self.eval_expression('dummy.tx > 1.0 ? 2.0 + 2.0 : 2 - 2', 0.0, exception=BuildingError)
         self.eval_expression('select(0, 1, 1)', 1, 'math_SelectInt')
+        self.eval_expression('select(0, 1, true)', 1, 'math_SelectInt')
         self.eval_expression('(2.0 + 2.0 == 4.0 ? 1 : 0) + 1', 2, 'math_AddInt')
 
     def test_functions(self):
@@ -104,6 +116,7 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('abs(dummy.rx)', 2.0, 'math_AbsoluteAngle')
         self.eval_expression('abs(-1.0) * 2.0', 2.0, 'math_Multiply')
         self.eval_expression('abs(1.0 - 2.0)', 1.0, 'math_Absolute')
+        self.eval_expression('smoothstep(1)', 1.0, 'math_Smoothstep')
 
         # multi argument
         self.eval_expression('clamp(1.2, 0.0, 1.0)', 1.0, 'math_Clamp')
@@ -167,5 +180,5 @@ class TestExpression(ExpressionTestCase):
 
         # invalid function arguments
         self.eval_expression('abs()', 1, exception=ParsingError)
+        self.eval_expression('abs(1, 2)', 1, exception=BuildingError)
         self.eval_expression('min(1,)', 1, exception=ParsingError)
-        self.eval_expression('min(1)', 1, exception=BuildingError)

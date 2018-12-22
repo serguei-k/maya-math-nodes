@@ -23,13 +23,7 @@ public:
         attrFn.addField("y", 1);
         attrFn.addField("z", 2);
         
-        rotationOrderAttr_ = attrFn.create("rotationOrder", "rotationOrder");
-        attrFn.addField("xyz", 0);
-        attrFn.addField("yzx", 1);
-        attrFn.addField("zxy", 2);
-        attrFn.addField("xzy", 3);
-        attrFn.addField("yxz", 4);
-        attrFn.addField("zyx", 5);
+        createRotationOrderAttribute(rotationOrderAttr_);
         
         MPxNode::addAttribute(inputAttr_);
         MPxNode::addAttribute(axisAttr_);
