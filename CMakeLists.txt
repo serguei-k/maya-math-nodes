@@ -3,7 +3,7 @@
 
 # Define project
 cmake_minimum_required(VERSION 3.3)
-project(maya-math-nodes VERSION 1.5.0)
+project(maya-math-nodes VERSION 1.5.1)
 
 # Set project version macro
 add_definitions(-DPROJECT_VERSION="${PROJECT_VERSION}")
