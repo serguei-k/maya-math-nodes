@@ -1,4 +1,4 @@
-// Copyright (c) 2018 Serguei Kalentchouk et al. All rights reserved.
+// Copyright (c) 2018-2019 Serguei Kalentchouk et al. All rights reserved.
 // Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 #include <maya/MFnPlugin.h>
 
@@ -185,6 +185,9 @@ initializePlugin(MObject pluginObj)
     
     // 1.6.0
     QuatenrionFromAxisAngle::registerNode(pluginFn, typeId++);
+    RotateVectorByMatrix::registerNode(pluginFn, typeId++);
+    RotateVectorByQuaternion::registerNode(pluginFn, typeId++);
+    RotateVectorByRotation::registerNode(pluginFn, typeId++);
     
     return MS::kSuccess;
 }
@@ -344,6 +347,9 @@ uninitializePlugin(MObject pluginObj)
     Smoothstep::deregisterNode(pluginFn);
     
     QuatenrionFromAxisAngle::deregisterNode(pluginFn);
+    RotateVectorByMatrix::deregisterNode(pluginFn);
+    RotateVectorByQuaternion::deregisterNode(pluginFn);
+    RotateVectorByRotation::deregisterNode(pluginFn);
     
     return MS::kSuccess;
 }
