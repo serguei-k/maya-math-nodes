@@ -299,17 +299,17 @@ inline void createCompoundAttribute(Attribute& attr, const std::vector<Attribute
     cAttrFn.setUsesArrayDataBuilder(isArray);
 }
 
-inline void createRotationOrderAttribute(Attribute& attr, short start=0)
+inline void createRotationOrderAttribute(Attribute& attr)
 {
     MFnEnumAttribute eAttrFn;
-    attr.attr = eAttrFn.create("rotationOrder", "rotationOrder", 1);
+    attr.attr = eAttrFn.create("rotationOrder", "rotationOrder", 0);
     
-    eAttrFn.addField("xyz", start++);
-    eAttrFn.addField("yzx", start++);
-    eAttrFn.addField("zxy", start++);
-    eAttrFn.addField("xzy", start++);
-    eAttrFn.addField("yxz", start++);
-    eAttrFn.addField("zyx", start++);
+    eAttrFn.addField("xyz", 0);
+    eAttrFn.addField("yzx", 1);
+    eAttrFn.addField("zxy", 2);
+    eAttrFn.addField("xzy", 3);
+    eAttrFn.addField("yxz", 4);
+    eAttrFn.addField("zyx", 5);
     
     eAttrFn.setStorable(true);
     eAttrFn.setWritable(true);
@@ -663,6 +663,20 @@ inline MObject getAttribute(MDataBlock& dataBlock, const Attribute& attribute, M
         default:
             return MObject();
     }
+}
+
+template <>
+inline MTransformationMatrix::RotationOrder getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
+{
+    MDataHandle handle = dataBlock.inputValue(attribute);
+    return MTransformationMatrix::RotationOrder(handle.asShort() + 1);
+}
+
+template <>
+inline MEulerRotation::RotationOrder getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
+{
+    MDataHandle handle = dataBlock.inputValue(attribute);
+    return MEulerRotation::RotationOrder(handle.asShort());
 }
 
 

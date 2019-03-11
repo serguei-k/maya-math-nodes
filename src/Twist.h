@@ -42,9 +42,7 @@ public:
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
             const auto inputValue = getAttribute<TInAttrType>(dataBlock, inputAttr_);
-            
-            MDataHandle rotOrderHandle = dataBlock.inputValue(rotationOrderAttr_);
-            const auto rotationOrder = MEulerRotation::RotationOrder(rotOrderHandle.asShort());
+            const auto rotationOrder = getAttribute<MEulerRotation::RotationOrder>(dataBlock, rotationOrderAttr_);
             
             MDataHandle axisHandle = dataBlock.inputValue(axisAttr_);
             const auto axis = axisHandle.asShort();

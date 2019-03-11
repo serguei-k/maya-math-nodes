@@ -183,6 +183,9 @@ initializePlugin(MObject pluginObj)
     SelectSurface::registerNode(pluginFn, typeId++);
     Smoothstep::registerNode(pluginFn, typeId++);
     
+    // 1.6.0
+    QuatenrionFromAxisAngle::registerNode(pluginFn, typeId++);
+    
     return MS::kSuccess;
 }
 
@@ -339,6 +342,8 @@ uninitializePlugin(MObject pluginObj)
     SelectMesh::deregisterNode(pluginFn);
     SelectSurface::deregisterNode(pluginFn);
     Smoothstep::deregisterNode(pluginFn);
+    
+    QuatenrionFromAxisAngle::deregisterNode(pluginFn);
     
     return MS::kSuccess;
 }
