@@ -187,6 +187,11 @@ inline void createAttribute(Attribute& attr, const char* name, const MVector& va
     attrFn.setUsesArrayDataBuilder(isArray);
 }
 
+inline void createAttribute(Attribute& attr, const char* name, const MPoint& value, bool isInput = true, bool isArray = false)
+{
+    createAttribute(attr, name, MVector(value), isInput, isArray);
+}
+
 inline void createAttribute(Attribute& attr, const char* name, const MMatrix& value, bool isInput = true, bool isArray = false)
 {
     MFnMatrixAttribute attrFn;
@@ -459,6 +464,13 @@ inline MVector getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
 }
 
 template <>
+inline MPoint getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
+{
+    MDataHandle handle = dataBlock.inputValue(attribute);
+    return MPoint(handle.asVector());
+}
+
+template <>
 inline std::vector<MVector> getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
 {
     std::vector<MVector> out;
@@ -686,6 +698,14 @@ inline void setAttribute(MDataBlock& dataBlock, const Attribute& attribute, TTyp
 {
     MDataHandle handle = dataBlock.outputValue(attribute);
     handle.set(value);
+    handle.setClean();
+}
+
+template <>
+inline void setAttribute(MDataBlock& dataBlock, const Attribute& attribute, MPoint value)
+{
+    MDataHandle handle = dataBlock.outputValue(attribute);
+    handle.set(MVector(value));
     handle.setClean();
 }
 
