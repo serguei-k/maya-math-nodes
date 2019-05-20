@@ -8,11 +8,6 @@
 
 #include "Utils.h"
 
-inline bool equals(double a, double b)
-{
-    return std::abs(a - b) <= std::numeric_limits<double>::epsilon() * std::max(1.0, std::abs(a + b));
-}
-
 template<typename TAttrType, typename TClass, const char* TTypeName>
 class ConditionNode : public BaseNode<TClass, TTypeName>
 {
@@ -48,8 +43,8 @@ public:
     {
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
-            const auto input1Value = getAttribute<TAttrType, double>(dataBlock, input1Attr_);
-            const auto input2Value = getAttribute<TAttrType, double>(dataBlock, input2Attr_);
+            const auto input1Value = getAttribute<TAttrType>(dataBlock, input1Attr_);
+            const auto input2Value = getAttribute<TAttrType>(dataBlock, input2Attr_);
 
             MDataHandle operationHandle = dataBlock.inputValue(operationAttr_);
             const auto operation = operationHandle.asShort();
@@ -60,7 +55,7 @@ public:
                 default:
                 case 0:
                 {
-                    status = equals(input1Value, input2Value);
+                    status = almostEquals(input1Value, input2Value);
                 }
                 break;
                 case 1:
@@ -75,17 +70,17 @@ public:
                 break;
                 case 3:
                 {
-                    status = !equals(input1Value, input2Value);
+                    status = !almostEquals(input1Value, input2Value);
                 }
                 break;
                 case 4:
                 {
-                    status = input1Value < input2Value || equals(input1Value, input2Value);
+                    status = input1Value < input2Value || almostEquals(input1Value, input2Value);
                 }
                 break;
                 case 5:
                 {
-                    status = input1Value > input2Value || equals(input1Value, input2Value);
+                    status = input1Value > input2Value || almostEquals(input1Value, input2Value);
                 }
             }
 
@@ -122,6 +117,7 @@ Attribute ConditionNode<TAttrType, TClass, TTypeName>::outputAttr_;
 
 CONDITION_NODE(double, Compare);
 CONDITION_NODE(MAngle, CompareAngle);
+CONDITION_NODE(int, CompareInt);
 
 
 template<typename TAttrType, typename TClass, const char* TTypeName>
@@ -343,3 +339,68 @@ LOGICAL_NODE(bool, XorBool, &logical_xor);
 LOGICAL_NODE(int, AndInt, &logical_and);
 LOGICAL_NODE(int, OrInt, &logical_or);
 LOGICAL_NODE(int, XorInt, &logical_xor);
+
+
+#define SELECT_GEOM_NODE_TEMPLATE template<typename TClass, const char* TTypeName, MFnData::Type TGeomType>
+
+#define  SELECT_GEOM_NODE_ATTRIBUTE SELECT_GEOM_NODE_TEMPLATE \
+    Attribute SelectGeometryNode<TClass, TTypeName, TGeomType>
+
+#define SELECT_GEOM_NODE(NodeName, GeomType) \
+    TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
+    class NodeName : public SelectGeometryNode<NodeName, name##NodeName, GeomType> {};
+
+SELECT_GEOM_NODE_TEMPLATE
+class SelectGeometryNode : public BaseNode<TClass, TTypeName>
+{
+public:
+    static MStatus initialize()
+    {
+        createAttribute(input1Attr_, "input1", TGeomType);
+        createAttribute(input2Attr_, "input2", TGeomType);
+        createAttribute(condition_, "condition", false);
+        createAttribute(outputAttr_, "output", TGeomType, false);
+        
+        MPxNode::addAttribute(input1Attr_);
+        MPxNode::addAttribute(input2Attr_);
+        MPxNode::addAttribute(condition_);
+        MPxNode::addAttribute(outputAttr_);
+        
+        MPxNode::attributeAffects(input1Attr_, outputAttr_);
+        MPxNode::attributeAffects(input2Attr_, outputAttr_);
+        MPxNode::attributeAffects(condition_, outputAttr_);
+        
+        return MS::kSuccess;
+    }
+    
+    MStatus compute(const MPlug& plug, MDataBlock& dataBlock) override
+    {
+        if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
+        {
+            const auto input1Value = getAttribute(dataBlock, input1Attr_, TGeomType);
+            const auto input2Value = getAttribute(dataBlock, input2Attr_, TGeomType);
+            const auto conditionValue = getAttribute<bool>(dataBlock, condition_);
+            
+            setAttribute(dataBlock, outputAttr_, conditionValue ? input2Value : input1Value);
+            
+            return MS::kSuccess;
+        }
+        
+        return MS::kUnknownParameter;
+    }
+
+private:
+    static Attribute input1Attr_;
+    static Attribute input2Attr_;
+    static Attribute condition_;
+    static Attribute outputAttr_;
+};
+
+SELECT_GEOM_NODE_ATTRIBUTE::input1Attr_;
+SELECT_GEOM_NODE_ATTRIBUTE::input2Attr_;
+SELECT_GEOM_NODE_ATTRIBUTE::condition_;
+SELECT_GEOM_NODE_ATTRIBUTE::outputAttr_;
+
+SELECT_GEOM_NODE(SelectCurve, MFnData::kNurbsCurve);
+SELECT_GEOM_NODE(SelectMesh, MFnData::kMesh);
+SELECT_GEOM_NODE(SelectSurface, MFnData::kNurbsSurface);

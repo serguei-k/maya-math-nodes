@@ -10,8 +10,8 @@ language: cpp
 compiler: gcc
 
 install:
-  - wget https://autodesk.box.com/shared/static/gloudjq6zljbg7br7o35vi82t158qcsd
-  - tar -xvzf gloudjq6zljbg7br7o35vi82t158qcsd
+  - wget https://s3-us-west-2.amazonaws.com/autodesk-adn-transfer/ADN+Extranet/M%26E/Maya/devkit+2018/Maya2018u4_DEVKIT_Linux.tgz
+  - tar -xvzf Maya2018u4_DEVKIT_Linux.tgz
   - mkdir maya2018
   - mv devkitBase/include maya2018/.
   - mv devkitBase/lib maya2018/.

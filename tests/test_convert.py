@@ -34,6 +34,31 @@ class TestConvert(NodeTestCase):
         
         self.create_node('TranslationFromMatrix', {'input': matrix}, [1.0, 2.0, 3.0])
     
+    def test_matrix_from_rotation(self):
+        matrix = [0.0, 0.0, -1.0, 0.0,
+                  0.0, 1.0, 0.0, 0.0,
+                  1.0, 0.0, 0.0, 0.0,
+                  0.0, 0.0, 0.0, 1.0]
+        
+        self.create_node('MatrixFromRotation', {'input': [0.0, 90.0, 0.0]}, matrix)
+    
+    def test_matrix_from_quaternion(self):
+        matrix = [1.0, 0.0, 0.0, 0.0,
+                  0.0, 0.0, 1.0, 0.0,
+                  0.0, -1.0, 0.0, 0.0,
+                  0.0, 0.0, 0.0, 1.0]
+        
+        self.create_node('MatrixFromQuaternion', {'input': [0.7071, 0.0, 0.0, 0.7071]}, matrix)
+    
+    def test_matrix_from_direction(self):
+        matrix = [0.0, 0.0, 1.0, 0.0,
+                  1.0, 0.0, 0.0, 0.0,
+                  0.0, 1.0, 0.0, 0.0,
+                  0.0, 0.0, 0.0, 1.0]
+        
+        self.create_node('MatrixFromDirection',
+                         {'direction': [1.0, 0.0, 0.0], 'up': [0.0, 0.0, 1.0], 'alignment': 2}, matrix)
+    
     def test_scale_from_matrix(self):
         matrix = [0.5, 0.0, 0.0, 0.0,
                   0.0, 0.5, 0.0, 0.0,
@@ -51,7 +76,7 @@ class TestConvert(NodeTestCase):
         self.create_node('MatrixFromTRS',
                          {'translation': [1.0, 2.0, 3.0], 'rotation': [0.0, 90.0, 0.0]},
                          result)
-        
+    
     def test_axis_from_matrix(self):
         matrix = [0.5, 0.0, 0.0, 0.0,
                   0.0, 0.5, 0.0, 0.0,

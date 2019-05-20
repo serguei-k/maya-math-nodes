@@ -3,7 +3,10 @@
 
 # Define project
 cmake_minimum_required(VERSION 3.3)
-project(maya-math-nodes)
+project(maya-math-nodes VERSION 1.5.1)
+
+# Set project version macro
+add_definitions(-DPROJECT_VERSION="${PROJECT_VERSION}")
 
 # Set default Maya version
 if(NOT DEFINED MAYA_VERSION)
@@ -34,6 +37,7 @@ add_library(mayaMathNodes SHARED
     src/Array.h
     src/Condition.h
     src/Clamp.h
+    src/Debug.h
     src/Distance.h
     src/Divide.h
     src/Convert.h
@@ -63,3 +67,19 @@ set_target_properties(mayaMathNodes PROPERTIES
 if(WIN32)
     set_target_properties(mayaMathNodes PROPERTIES LINK_FLAGS "/export:initializePlugin /export:uninitializePlugin")
 endif()
+
+# Set installation directory
+if(NOT DEFINED INSTALL_DIR)
+    set(INSTALL_DIR ${CMAKE_SOURCE_DIR}/dist)
+endif()
+
+configure_file(MayaMathNodes.mod.in MayaMathNodes.mod)
+
+install(TARGETS mayaMathNodes
+    LIBRARY DESTINATION ${INSTALL_DIR}/MayaMathNodes/plug-ins/${MAYA_VERSION}
+    RUNTIME DESTINATION ${INSTALL_DIR}/MayaMathNodes/plug-ins/${MAYA_VERSION})
+install(DIRECTORY python/maya_math_nodes
+    DESTINATION ${INSTALL_DIR}/MayaMathNodes/scripts
+    PATTERN "*.pyc" EXCLUDE
+    PATTERN ".*" EXCLUDE)
+install(FILES ${CMAKE_BINARY_DIR}/MayaMathNodes.mod DESTINATION ${INSTALL_DIR})

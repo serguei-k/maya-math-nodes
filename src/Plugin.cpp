@@ -8,6 +8,7 @@
 #include "Clamp.h"
 #include "Condition.h"
 #include "Convert.h"
+#include "Debug.h"
 #include "Distance.h"
 #include "Divide.h"
 #include "Inverse.h"
@@ -24,7 +25,7 @@
 MStatus
 initializePlugin(MObject pluginObj)
 {
-    MFnPlugin pluginFn(pluginObj, "Serguei Kalentchouk, et al.", "1.2.0", "Any");
+    MFnPlugin pluginFn(pluginObj, "Serguei Kalentchouk, et al.", PROJECT_VERSION, "Any");
     
     int typeId = 0x0012c340;
     
@@ -160,6 +161,27 @@ initializePlugin(MObject pluginObj)
     SelectIntArray::registerNode(pluginFn, typeId++);
     SelectMatrixArray::registerNode(pluginFn, typeId++);
     SelectVectorArray::registerNode(pluginFn, typeId++);
+    
+    // 1.5.0
+    DebugLog::registerNode(pluginFn, typeId++);
+    DebugLogAngle::registerNode(pluginFn, typeId++);
+    DebugLogInt::registerNode(pluginFn, typeId++);
+    DebugLogVector::registerNode(pluginFn, typeId++);
+    DebugLogRotation::registerNode(pluginFn, typeId++);
+    DebugLogQuaternion::registerNode(pluginFn, typeId++);
+    DebugLogMatrix::registerNode(pluginFn, typeId++);
+    CompareInt::registerNode(pluginFn, typeId++);
+    MatrixFromDirection::registerNode(pluginFn, typeId++);
+    MatrixFromQuaternion::registerNode(pluginFn, typeId++);
+    MatrixFromRotation::registerNode(pluginFn, typeId++);
+    NotBool::registerNode(pluginFn, typeId++);
+    Remap::registerNode(pluginFn, typeId++);
+    RemapAngle::registerNode(pluginFn, typeId++);
+    RemapInt::registerNode(pluginFn, typeId++);
+    SelectCurve::registerNode(pluginFn, typeId++);
+    SelectMesh::registerNode(pluginFn, typeId++);
+    SelectSurface::registerNode(pluginFn, typeId++);
+    Smoothstep::registerNode(pluginFn, typeId++);
     
     return MS::kSuccess;
 }
@@ -297,6 +319,26 @@ uninitializePlugin(MObject pluginObj)
     SelectIntArray::deregisterNode(pluginFn);
     SelectMatrixArray::deregisterNode(pluginFn);
     SelectVectorArray::deregisterNode(pluginFn);
+    
+    DebugLog::deregisterNode(pluginFn);
+    DebugLogAngle::deregisterNode(pluginFn);
+    DebugLogInt::deregisterNode(pluginFn);
+    DebugLogVector::deregisterNode(pluginFn);
+    DebugLogRotation::deregisterNode(pluginFn);
+    DebugLogQuaternion::deregisterNode(pluginFn);
+    DebugLogMatrix::deregisterNode(pluginFn);
+    CompareInt::deregisterNode(pluginFn);
+    MatrixFromDirection::deregisterNode(pluginFn);
+    MatrixFromQuaternion::deregisterNode(pluginFn);
+    MatrixFromRotation::deregisterNode(pluginFn);
+    NotBool::deregisterNode(pluginFn);
+    Remap::deregisterNode(pluginFn);
+    RemapAngle::deregisterNode(pluginFn);
+    RemapInt::deregisterNode(pluginFn);
+    SelectCurve::deregisterNode(pluginFn);
+    SelectMesh::deregisterNode(pluginFn);
+    SelectSurface::deregisterNode(pluginFn);
+    Smoothstep::deregisterNode(pluginFn);
     
     return MS::kSuccess;
 }

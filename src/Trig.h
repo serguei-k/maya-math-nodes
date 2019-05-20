@@ -2,14 +2,38 @@
 // Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 #pragma once
 
-#include <maya/MGlobal.h>
-
 #include "Utils.h"
 
-typedef double (*TrigFuncPtr)(double);
+inline double cosAngle(MAngle a)
+{
+    return std::cos(a.asRadians());
+}
 
-template<typename TInputAttrType, typename TOutputAttrType, typename TClass,
-         const char* TTypeName, bool TSetLimits, TrigFuncPtr TTrigFuncPtr>
+inline double sinAngle(MAngle a)
+{
+    return std::sin(a.asRadians());
+}
+
+inline double tanAngle(MAngle a)
+{
+    return std::tan(a.asRadians());
+}
+
+#define TRIG_NODE_TEMPLATE template<typename TInputAttrType, \
+    typename TOutputAttrType, \
+    typename TClass, \
+    const char* TTypeName, \
+    bool TSetLimits, \
+    double (*TTrigFuncPtr)(TInputAttrType)>
+
+#define TRIG_NODE_ATTRIBUTE TRIG_NODE_TEMPLATE \
+    Attribute TrigNode<TInputAttrType, TOutputAttrType, TClass, TTypeName, TSetLimits, TTrigFuncPtr>
+
+#define TRIG_NODE(InputAttrType, OutputAttrType, NodeName, SetLimits, TrigFuncPtr) \
+    TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
+    class NodeName : public TrigNode<InputAttrType, OutputAttrType, NodeName, name##NodeName, SetLimits, TrigFuncPtr> {};
+
+TRIG_NODE_TEMPLATE
 class TrigNode : public BaseNode<TClass, TTypeName>
 {
 public:
@@ -37,9 +61,9 @@ public:
     {
         if (plug == outputAttr_)
         {
-            const auto inputValue = getAttribute<TInputAttrType, double>(dataBlock, inputAttr_);
+            const auto inputValue = getAttribute<TInputAttrType>(dataBlock, inputAttr_);
             
-            setAttribute(dataBlock, outputAttr_, TOutputAttrType(TTrigFuncPtr(inputValue)));
+            setAttribute(dataBlock, outputAttr_, TTrigFuncPtr(inputValue));
             
             return MS::kSuccess;
         }
@@ -52,31 +76,19 @@ private:
     static Attribute outputAttr_;
 };
 
-template<typename TInputAttrType, typename TOutputAttrType, typename TClass,
-         const char* TTypeName, bool TSetLimits, TrigFuncPtr TTrigFuncPtr>
-Attribute TrigNode<TInputAttrType, TOutputAttrType, TClass, TTypeName, TSetLimits, TTrigFuncPtr>::inputAttr_;
+TRIG_NODE_ATTRIBUTE::inputAttr_;
+TRIG_NODE_ATTRIBUTE::outputAttr_;
 
-template<typename TInputAttrType, typename TOutputAttrType, typename TClass,
-         const char* TTypeName, bool TSetLimits, TrigFuncPtr TTrigFuncPtr>
-Attribute TrigNode<TInputAttrType, TOutputAttrType, TClass, TTypeName, TSetLimits, TTrigFuncPtr>::outputAttr_;
-
-#define TRIG_NODE(InputAttrType, OutputAttrType, NodeName, SetLimits, TrigFuncPtr) \
-    TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
-    class NodeName : public TrigNode<InputAttrType, OutputAttrType, NodeName, name##NodeName, SetLimits, TrigFuncPtr> {};
-
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "TemplateArgumentsIssues"
 TRIG_NODE(double, MAngle, Acos, true, &std::acos);
 TRIG_NODE(double, MAngle, Asin, true, &std::asin);
 TRIG_NODE(double, MAngle, Atan, false, &std::atan);
-TRIG_NODE(MAngle, double, CosAngle, false, &std::cos);
-TRIG_NODE(MAngle, double, SinAngle, false, &std::sin);
-TRIG_NODE(MAngle, double, TanAngle, false, &std::tan);
-#pragma clang diagnostic pop
+TRIG_NODE(MAngle, double, CosAngle, false, &cosAngle);
+TRIG_NODE(MAngle, double, SinAngle, false, &sinAngle);
+TRIG_NODE(MAngle, double, TanAngle, false, &tanAngle);
 
 
-template<typename TClass, const char* TTypeName>
-class Atan2TrigNode : public BaseNode<TClass, TTypeName>
+TEMPLATE_PARAMETER_LINKAGE char Atan2NodeName[] = "Atan2";
+class Atan2 : public BaseNode<Atan2, Atan2NodeName>
 {
 public:
     static MStatus initialize()
@@ -122,17 +134,6 @@ private:
     static Attribute outputAttr_;
 };
 
-template<typename TClass, const char* TTypeName>
-Attribute Atan2TrigNode<TClass, TTypeName>::input1Attr_;
-
-template<typename TClass, const char* TTypeName>
-Attribute Atan2TrigNode<TClass, TTypeName>::input2Attr_;
-
-template<typename TClass, const char* TTypeName>
-Attribute Atan2TrigNode<TClass, TTypeName>::outputAttr_;
-
-#define ATAN2_TRIG_NODE(NodeName) \
-    TEMPLATE_PARAMETER_LINKAGE char name##NodeName[] = #NodeName; \
-    class NodeName : public Atan2TrigNode<NodeName, name##NodeName> {};
-
-ATAN2_TRIG_NODE(Atan2);
+Attribute Atan2::input1Attr_;
+Attribute Atan2::input2Attr_;
+Attribute Atan2::outputAttr_;

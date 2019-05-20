@@ -38,6 +38,16 @@ public:
         
         return MS::kUnknownParameter;
     }
+    
+    MPlug passThroughToOne(const MPlug& plug) const override
+    {
+        if (plug == inputAttr_)
+        {
+            return MPlug(this->thisMObject(), outputAttr_);
+        }
+        
+        return MPlug();
+    }
 
 private:
     static Attribute inputAttr_;
@@ -90,6 +100,16 @@ public:
         }
         
         return MS::kUnknownParameter;
+    }
+    
+    MPlug passThroughToOne(const MPlug& plug) const override
+    {
+        if (plug == inputAttr_)
+        {
+            return MPlug(this->thisMObject(), outputAttr_);
+        }
+        
+        return MPlug();
     }
 
 private:
