@@ -19,3 +19,6 @@ build/
 # Other
 .vscode/
 dist/
+
+# Visual Studio Code CMAKE Plugin
+./build/
