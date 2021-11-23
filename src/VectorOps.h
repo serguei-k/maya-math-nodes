@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2019 Serguei Kalentchouk et al. All rights reserved.
+// Copyright (c) 2018-2021 Serguei Kalentchouk et al. All rights reserved.
 // Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 #pragma once
 
@@ -17,7 +17,7 @@ public:
     using MVector::rotateBy;
     MVector rotateBy(const MMatrix& matrix) const
     {
-        return transformAsNormal(matrix);
+        return (*this) * matrix;
     }
 };
 
