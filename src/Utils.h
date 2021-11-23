@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2019 Serguei Kalentchouk et al. All rights reserved.
+// Copyright (c) 2018-2021 Serguei Kalentchouk et al. All rights reserved.
 // Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 #pragma once
 
@@ -749,7 +749,7 @@ template <typename TType>
 inline void setAttribute(MDataBlock& dataBlock, const Attribute& attribute, const std::vector<TType>& values)
 {
     MArrayDataHandle handle = dataBlock.outputArrayValue(attribute);
-    MArrayDataBuilder builder(attribute, unsigned(values.size()));
+    MArrayDataBuilder builder(&dataBlock, attribute, unsigned(values.size()));
     
     for (const auto& value : values)
     {

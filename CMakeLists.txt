@@ -1,16 +1,16 @@
-# Copyright (c) 2018 Serguei Kalentchouk et al. All rights reserved.
+# Copyright (c) 2018-2021 Serguei Kalentchouk et al. All rights reserved.
 # Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 
 # Define project
 cmake_minimum_required(VERSION 3.3)
-project(maya-math-nodes VERSION 1.5.1)
+project(maya-math-nodes VERSION 1.6.0)
 
 # Set project version macro
 add_definitions(-DPROJECT_VERSION="${PROJECT_VERSION}")
 
 # Set default Maya version
 if(NOT DEFINED MAYA_VERSION)
-    set(MAYA_VERSION 2018)
+    set(MAYA_VERSION 2022)
 endif()
 
 # Set node name prefix macro
