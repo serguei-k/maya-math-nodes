@@ -20,7 +20,7 @@
 # -- Project information -----------------------------------------------------
 
 project = u'Maya Math Nodes'
-copyright = u'2018, Serguei Kalentchouk'
+copyright = u'2018-2021, Serguei Kalentchouk'
 author = u'Serguei Kalentchouk'
 
 # The short X.Y version
