@@ -298,6 +298,12 @@ FUNCTIONS = {
         'types': ['matrix', 'double4'],
         'mixed_types': {}
     },
+    'rotate': {
+        'name': 'math_RotateVector',
+        'attributes': ['input1', 'input2', 'rotationOrder'],
+        'types': ['double3'],
+        'mixed_types': {'double3': ['double3Angle', 'matrix', 'double4']}
+    },
     'round': {
         'name': 'math_Round',
         'attributes': ['input'],

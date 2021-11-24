@@ -368,6 +368,13 @@ class ExpressionBuilder(object):
                         operator_node_type = operator_node_base_type
                     else:
                         operator_node_type = operator_node_base_type.format(TYPE_SUFFIX_PER_TYPE[arg_type])
+
+                    # mixed types considers the second argument only
+                    if FUNCTIONS[ast.value]['mixed_types'] and len(ast.args) > 1:
+                        next_arg_type = self.get_value_type(ast.args[1])
+                        if next_arg_type != arg_type:
+                            operator_node_type += 'By{0}'.format(TYPE_SUFFIX_PER_TYPE[next_arg_type])
+
                     operator_node_type = self.validate_node_type(operator_node_type, 'function "{0}"'.format(ast.value))
                     self._nodes.append((operator_node_type, operator_node_name))
 

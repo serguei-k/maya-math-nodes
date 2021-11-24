@@ -140,8 +140,8 @@ Floor
 :description: Computes the largest integer value less than or equal to input
 :expression: floor(x)
 
-Inverse*
---------
+Inverse
+-------
 :description: Computes the inverse of value
 :type variants: InverseMatrix, InverseQuaternion, InverseRotation
 :expression: inverse(x)
@@ -152,8 +152,8 @@ Lerp
 :type variants: LerpAngle, LerpMatrix, LerpVector
 :expression: lerp(x, y, alpha)
 
-MatrixFrom*
------------
+MatrixFrom
+----------
 :description: Computes a rotation matrix from input
 :type variants: MatrixFromRotation, MatrixFromQuaternion
 :expression: mat(x, rot_order)
@@ -241,8 +241,8 @@ Power
 :description: Computes the value raised to power of the exponent
 :expression: power(x, exp)
 
-QuaternionFrom*
----------------
+QuaternionFrom
+--------------
 :description: Gets quaternion from matrix or rotation
 :type variants: QuaternionFromMatrix, QuaternionFromRotation
 :expression: quat(x, rot_order)
@@ -259,8 +259,14 @@ Round
 :type variants: RoundAngle
 :expression: round(x)
 
-RotationFrom*
--------------
+RotateVectorBy
+--------------
+:description: Rotate vector
+:type variants: RotateVectorByRotation, RotateVectorByMatrix, RotateVectorByQuaternion
+:expression: rotate(x, y, *rot_order*)
+
+RotationFrom
+------------
 :description: Gets rotation from matrix or quaternion
 :type variants: RotationFromMatrix, RotationFromQuaternion
 :expression: rot(x, rot_order)
@@ -320,8 +326,8 @@ TranslationFromMatrix
 :description: Get translation from matrix
 :expression: translation(x)
 
-TwistFrom*
-----------
+TwistFrom
+---------
 :description: Computes twist around axis from matrix or rotation
 :type variants: TwistFromMatrix, TwistFromRotaiton
 :expression: twist(x, axis, rot_order)

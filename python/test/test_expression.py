@@ -149,6 +149,11 @@ class TestExpression(ExpressionTestCase):
         self.eval_expression('distance({0, 0, 0}, {1, 0, 0})', 1.0, 'math_DistancePoints')
         self.eval_expression('distance(dummy.worldMatrix[0], dummy.matrix)', 0.0, 'math_DistanceTransforms')
 
+        # mixed type function
+        matrix = '{0.0, 0.0, -1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0}'
+        self.eval_expression('rotate(vec(1, 0, 0), {0})'.format(matrix), [0.0, 0.0, -1.0], 'math_RotateVectorByMatrix')
+        self.eval_expression('rotate(vec(1, 0, 0), rot(0, 90, 0), 0)', [0.0, 0.0, -1.0], 'math_RotateVectorByRotation')
+
     def test_errors(self):
         # invalid expression
         self.eval_expression('1', 1, exception=BuildingError)
