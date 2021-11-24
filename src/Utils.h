@@ -1,4 +1,4 @@
-// Copyright (c) 2018 Serguei Kalentchouk et al. All rights reserved.
+// Copyright (c) 2018-2021 Serguei Kalentchouk et al. All rights reserved.
 // Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 #pragma once
 
@@ -187,6 +187,11 @@ inline void createAttribute(Attribute& attr, const char* name, const MVector& va
     attrFn.setUsesArrayDataBuilder(isArray);
 }
 
+inline void createAttribute(Attribute& attr, const char* name, const MPoint& value, bool isInput = true, bool isArray = false)
+{
+    createAttribute(attr, name, MVector(value), isInput, isArray);
+}
+
 inline void createAttribute(Attribute& attr, const char* name, const MMatrix& value, bool isInput = true, bool isArray = false)
 {
     MFnMatrixAttribute attrFn;
@@ -299,17 +304,17 @@ inline void createCompoundAttribute(Attribute& attr, const std::vector<Attribute
     cAttrFn.setUsesArrayDataBuilder(isArray);
 }
 
-inline void createRotationOrderAttribute(Attribute& attr, short start=0)
+inline void createRotationOrderAttribute(Attribute& attr)
 {
     MFnEnumAttribute eAttrFn;
-    attr.attr = eAttrFn.create("rotationOrder", "rotationOrder", 1);
+    attr.attr = eAttrFn.create("rotationOrder", "rotationOrder", 0);
     
-    eAttrFn.addField("xyz", start++);
-    eAttrFn.addField("yzx", start++);
-    eAttrFn.addField("zxy", start++);
-    eAttrFn.addField("xzy", start++);
-    eAttrFn.addField("yxz", start++);
-    eAttrFn.addField("zyx", start++);
+    eAttrFn.addField("xyz", 0);
+    eAttrFn.addField("yzx", 1);
+    eAttrFn.addField("zxy", 2);
+    eAttrFn.addField("xzy", 3);
+    eAttrFn.addField("yxz", 4);
+    eAttrFn.addField("zyx", 5);
     
     eAttrFn.setStorable(true);
     eAttrFn.setWritable(true);
@@ -456,6 +461,13 @@ inline MVector getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
 {
     MDataHandle handle = dataBlock.inputValue(attribute);
     return handle.asVector();
+}
+
+template <>
+inline MPoint getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
+{
+    MDataHandle handle = dataBlock.inputValue(attribute);
+    return MPoint(handle.asVector());
 }
 
 template <>
@@ -665,6 +677,20 @@ inline MObject getAttribute(MDataBlock& dataBlock, const Attribute& attribute, M
     }
 }
 
+template <>
+inline MTransformationMatrix::RotationOrder getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
+{
+    MDataHandle handle = dataBlock.inputValue(attribute);
+    return MTransformationMatrix::RotationOrder(handle.asShort() + 1);
+}
+
+template <>
+inline MEulerRotation::RotationOrder getAttribute(MDataBlock& dataBlock, const Attribute& attribute)
+{
+    MDataHandle handle = dataBlock.inputValue(attribute);
+    return MEulerRotation::RotationOrder(handle.asShort());
+}
+
 
 // Template specializations for setAttribute
 template <typename TType>
@@ -672,6 +698,14 @@ inline void setAttribute(MDataBlock& dataBlock, const Attribute& attribute, TTyp
 {
     MDataHandle handle = dataBlock.outputValue(attribute);
     handle.set(value);
+    handle.setClean();
+}
+
+template <>
+inline void setAttribute(MDataBlock& dataBlock, const Attribute& attribute, MPoint value)
+{
+    MDataHandle handle = dataBlock.outputValue(attribute);
+    handle.set(MVector(value));
     handle.setClean();
 }
 
@@ -715,7 +749,7 @@ template <typename TType>
 inline void setAttribute(MDataBlock& dataBlock, const Attribute& attribute, const std::vector<TType>& values)
 {
     MArrayDataHandle handle = dataBlock.outputArrayValue(attribute);
-    MArrayDataBuilder builder(attribute, unsigned(values.size()));
+    MArrayDataBuilder builder(&dataBlock, attribute, unsigned(values.size()));
     
     for (const auto& value : values)
     {

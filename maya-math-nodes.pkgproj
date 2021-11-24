@@ -537,6 +537,8 @@
 				</dict>
 				<key>PAYLOAD_TYPE</key>
 				<integer>0</integer>
+				<key>PRESERVE_EXTENDED_ATTRIBUTES</key>
+				<false/>
 				<key>SHOW_INVISIBLE</key>
 				<false/>
 				<key>SPLIT_FORKS</key>
@@ -551,7 +553,7 @@
 				<key>POSTINSTALL_PATH</key>
 				<dict>
 					<key>PATH</key>
-					<string>/Users/sergueik/projects/maya-math-nodes/post_install.sh</string>
+					<string>post_install.sh</string>
 					<key>PATH_TYPE</key>
 					<integer>1</integer>
 				</dict>
@@ -607,7 +609,17 @@
 		<key>PROJECT_PRESENTATION</key>
 		<dict>
 			<key>BACKGROUND</key>
-			<dict/>
+			<dict>
+				<key>APPAREANCES</key>
+				<dict>
+					<key>DARK_AQUA</key>
+					<dict/>
+					<key>LIGHT_AQUA</key>
+					<dict/>
+				</dict>
+				<key>SHARED_SETTINGS_FOR_ALL_APPAREANCES</key>
+				<true/>
+			</dict>
 			<key>INSTALLATION TYPE</key>
 			<dict>
 				<key>HIERARCHIES</key>
@@ -716,7 +728,7 @@
 					<key>COPYRIGHT HOLDERS</key>
 					<string>Serguei Kalentchouk</string>
 					<key>YEAR</key>
-					<string>2018</string>
+					<string>2018-2021</string>
 				</dict>
 				<key>LOCALIZATIONS</key>
 				<array>

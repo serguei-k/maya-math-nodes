@@ -1,0 +1,30 @@
+name: Build
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download
+        run: |
+          wget https://autodesk-adn-transfer.s3-us-west-2.amazonaws.com/ADN+Extranet/M%26E/Maya/devkit+2022/Autodesk_Maya_2022_2_Update_DEVKIT_Linux.tgz
+          tar -xvzf Autodesk_Maya_2022_2_Update_DEVKIT_Linux.tgz
+          mkdir maya2022
+          mv devkitBase/include maya2022/.
+          mv devkitBase/lib maya2022/.
+      - name: Build
+        run: |
+          mkdir build
+          cd build
+          cmake ../. -G "CodeBlocks - Unix Makefiles" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DMAYA_LOCATION=$(pwd)/..
+          make

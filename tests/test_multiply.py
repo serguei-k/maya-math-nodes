@@ -1,4 +1,4 @@
-# Copyright (c) 2018 Serguei Kalentchouk et al. All rights reserved.
+# Copyright (c) 2018-2021 Serguei Kalentchouk et al. All rights reserved.
 # Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 from node_test_case import NodeTestCase
 
@@ -44,9 +44,9 @@ class TestMultiply(NodeTestCase):
         matrix = [0.0, 0.0, -1.0, 0.0,
                   0.0, 1.0, 0.0, 0.0,
                   1.0, 0.0, 0.0, 0.0,
-                  0.0, 0.0, 0.0, 1.0]
+                  1.0, 0.0, 0.0, 1.0]
         
-        self.create_node('MultiplyVectorByMatrix', {'input1': [1.0, 0.0, 0.0], 'input2': matrix}, [0.0, 0.0, -1.0])
+        self.create_node('MultiplyVectorByMatrix', {'input1': [1.0, 0.0, 0.0], 'input2': matrix}, [1.0, 0.0, -1.0])
     
     def test_multiply_quaternion(self):
         self.create_node('MultiplyQuaternion',

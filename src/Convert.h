@@ -1,4 +1,4 @@
-// Copyright (c) 2018 Serguei Kalentchouk et al. All rights reserved.
+// Copyright (c) 2018-2019 Serguei Kalentchouk et al. All rights reserved.
 // Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 #pragma once
 
@@ -78,9 +78,7 @@ public:
         if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
         {
             const auto inputValue = getAttribute<TInAttrType>(dataBlock, inputAttr_);
-            
-            MDataHandle rotOrderHandle = dataBlock.inputValue(rotationOrderAttr_);
-            const auto rotationOrder = MEulerRotation::RotationOrder(rotOrderHandle.asShort());
+            const auto rotationOrder = getAttribute<MEulerRotation::RotationOrder>(dataBlock, rotationOrderAttr_);
             
             const auto rotation = getRotation<TInAttrType, TOutAttrType>(inputValue, rotationOrder);
             setAttribute(dataBlock, outputAttr_, rotation);
@@ -194,7 +192,7 @@ public:
         createAttribute(scaleAttr_, "scale", DefaultValue<MVector>(1.0, 1.0, 1.0));
         createAttribute(outputAttr_, "output", DefaultValue<MMatrix>(), false);
         
-        createRotationOrderAttribute(rotationOrderAttr_, 1);
+        createRotationOrderAttribute(rotationOrderAttr_);
         
         MPxNode::addAttribute(translationAttr_);
         MPxNode::addAttribute(rotationAttr_);
@@ -217,9 +215,7 @@ public:
             const auto translationValue = getAttribute<MVector>(dataBlock, translationAttr_);
             auto rotationValue = getAttribute<MEulerRotation>(dataBlock, rotationAttr_);
             const auto scaleValue = getAttribute<MVector>(dataBlock, scaleAttr_);
-            
-            MDataHandle rotOrderHandle = dataBlock.inputValue(rotationOrderAttr_);
-            const auto rotationOrder = MTransformationMatrix::RotationOrder(rotOrderHandle.asShort());
+            const auto rotationOrder = getAttribute<MTransformationMatrix::RotationOrder>(dataBlock, rotationOrderAttr_);
             
             MTransformationMatrix xform;
             xform.setTranslation(translationValue, MSpace::kTransform);
@@ -438,3 +434,49 @@ Attribute MatrixFromDirection::directionAttr_;
 Attribute MatrixFromDirection::upAttr_;
 Attribute MatrixFromDirection::alignmentAttr_;
 Attribute MatrixFromDirection::outputAttr_;
+
+
+TEMPLATE_PARAMETER_LINKAGE char QuaternionFromAxisAngleName[] = "QuaternionFromAxisAngle";
+class QuatenrionFromAxisAngle : public BaseNode<QuatenrionFromAxisAngle, QuaternionFromAxisAngleName>
+{
+public:
+    static MStatus initialize()
+    {
+        createAttribute(angleAttr_, "angle", DefaultValue<MAngle>());
+        createAttribute(axisAttr_, "axis", DefaultValue<MVector>(1.0, 0.0, 0.0));
+        createAttribute(outputAttr_, "output", DefaultValue<MQuaternion>(), false);
+        
+        MPxNode::addAttribute(angleAttr_);
+        MPxNode::addAttribute(axisAttr_);
+        MPxNode::addAttribute(outputAttr_);
+        
+        MPxNode::attributeAffects(angleAttr_, outputAttr_);
+        MPxNode::attributeAffects(axisAttr_, outputAttr_);
+        
+        return MS::kSuccess;
+    }
+    
+    MStatus compute(const MPlug& plug, MDataBlock& dataBlock) override
+    {
+        if (plug == outputAttr_ || (plug.isChild() && plug.parent() == outputAttr_))
+        {
+            const auto angleValue = getAttribute<MAngle>(dataBlock, angleAttr_);
+            const auto axisValue = getAttribute<MVector>(dataBlock, axisAttr_).normal();
+            
+            setAttribute(dataBlock, outputAttr_, MQuaternion(angleValue.value(), axisValue));
+            
+            return MS::kSuccess;
+        }
+        
+        return MS::kUnknownParameter;
+    }
+
+private:
+    static Attribute angleAttr_;
+    static Attribute axisAttr_;
+    static Attribute outputAttr_;
+};
+
+Attribute QuatenrionFromAxisAngle::angleAttr_;
+Attribute QuatenrionFromAxisAngle::axisAttr_;
+Attribute QuatenrionFromAxisAngle::outputAttr_;

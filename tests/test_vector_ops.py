@@ -1,4 +1,4 @@
-# Copyright (c) 2018 Serguei Kalentchouk et al. All rights reserved.
+# Copyright (c) 2018-2021 Serguei Kalentchouk et al. All rights reserved.
 # Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 from node_test_case import NodeTestCase
 
@@ -21,3 +21,19 @@ class TestVectorOps(NodeTestCase):
     
     def test_normalize_vector(self):
         self.create_node('NormalizeVector', {'input': [1.0, 1.0, 1.0]}, [0.5774, 0.5774, 0.5774])
+
+    def test_rotate_by_matrix(self):
+        matrix = [0.0, 0.0, -1.0, 0.0,
+                  0.0, 1.0, 0.0, 0.0,
+                  1.0, 0.0, 0.0, 0.0,
+                  1.0, 0.0, 0.0, 1.0]
+
+        self.create_node('RotateVectorByMatrix', {'input1': [1.0, 0.0, 0.0], 'input2': matrix}, [0.0, 0.0, -1.0])
+
+    def test_rotate_by_quaternion(self):
+        self.create_node('RotateVectorByQuaternion',
+                         {'input1': [0.0, 0.0, 1.0], 'input2': [0.7071, 0.0, 0.0, 0.7071]}, [0.0, -1.0, 0.0])
+
+    def test_rotate_by_rotation(self):
+        self.create_node('RotateVectorByRotation',
+                         {'input1': [0.0, 0.0, 1.0], 'input2': [90.0, 0.0, 0.0]}, [0.0, -1.0, 0.0])

@@ -1,8 +1,8 @@
-+ MAYAVERSION:2016 MayaMathNodes ${PROJECT_VERSION} ./MayaMathNodes
-plug-ins: plug-ins/2016
++ MAYAVERSION:2019 MayaMathNodes ${PROJECT_VERSION} ./MayaMathNodes
+plug-ins: plug-ins/2019
 
-+ MAYAVERSION:2017 MayaMathNodes ${PROJECT_VERSION} ./MayaMathNodes
-plug-ins: plug-ins/2017
++ MAYAVERSION:2020 MayaMathNodes ${PROJECT_VERSION} ./MayaMathNodes
+plug-ins: plug-ins/2020
 
-+ MAYAVERSION:2018 MayaMathNodes ${PROJECT_VERSION} ./MayaMathNodes
-plug-ins: plug-ins/2018
++ MAYAVERSION:2022 MayaMathNodes ${PROJECT_VERSION} ./MayaMathNodes
+plug-ins: plug-ins/2022

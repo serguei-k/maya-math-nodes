@@ -1,12 +1,12 @@
-# Copyright (c) 2018 Serguei Kalentchouk et al. All rights reserved.
+# Copyright (c) 2018-2021 Serguei Kalentchouk et al. All rights reserved.
 # Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 import collections
 
 import maya.api.OpenMaya as om
 import maya.cmds as cmds
 
-from expression_info import *
-from expression_parser import *
+from maya_math_nodes.expression_info import *
+from maya_math_nodes.expression_parser import *
 
 Attribute = collections.namedtuple('Attribute', ['type', 'value'])
 
@@ -109,6 +109,9 @@ class ExpressionBuilder(object):
             attr (str): Attribute to set the value for, in form node.attribute
             value (object): Value data to set the attribute to
         """
+        if not hasattr(__builtins__, "basestring"):
+            basestring = (str, bytes)
+
         if isinstance(value, Number):
             self._values.append((attr, value.value))
         elif isinstance(value, String) or isinstance(value, Attribute):
@@ -189,6 +192,9 @@ class ExpressionBuilder(object):
         """
         if isinstance(value, Number) or isinstance(value, Attribute):
             return value.type
+
+        if not hasattr(__builtins__, "basestring"):
+            basestring = (str, bytes)
 
         if isinstance(value, String):
             attr_name = value.value
@@ -362,6 +368,13 @@ class ExpressionBuilder(object):
                         operator_node_type = operator_node_base_type
                     else:
                         operator_node_type = operator_node_base_type.format(TYPE_SUFFIX_PER_TYPE[arg_type])
+
+                    # mixed types considers the second argument only
+                    if FUNCTIONS[ast.value]['mixed_types'] and len(ast.args) > 1:
+                        next_arg_type = self.get_value_type(ast.args[1])
+                        if next_arg_type != arg_type:
+                            operator_node_type += 'By{0}'.format(TYPE_SUFFIX_PER_TYPE[next_arg_type])
+
                     operator_node_type = self.validate_node_type(operator_node_type, 'function "{0}"'.format(ast.value))
                     self._nodes.append((operator_node_type, operator_node_name))
 

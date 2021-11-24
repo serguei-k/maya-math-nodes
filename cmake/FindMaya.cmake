@@ -48,4 +48,4 @@ foreach(MAYA_LIB ${_MAYA_LIBRARIES})
 endforeach()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(MAYA DEFAULT_MSG MAYA_LOCATION MAYA_INCLUDE_DIR MAYA_LIBRARIES)
+find_package_handle_standard_args(Maya DEFAULT_MSG MAYA_LOCATION MAYA_INCLUDE_DIR MAYA_LIBRARIES)

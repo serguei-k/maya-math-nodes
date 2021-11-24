@@ -1,4 +1,4 @@
-// Copyright (c) 2018 Serguei Kalentchouk et al. All rights reserved.
+// Copyright (c) 2018-2019 Serguei Kalentchouk et al. All rights reserved.
 // Use of this source code is governed by an MIT license that can be found in the LICENSE file.
 #pragma once
 
@@ -75,6 +75,6 @@ MULTIPLY_NODE(MAngle, double, MultiplyAngle);
 MULTIPLY_NODE(MAngle, int, MultiplyAngleByInt);
 MULTIPLY_NODE(MMatrix, MMatrix, MultiplyMatrix);
 MULTIPLY_NODE(MVector, double, MultiplyVector);
-MULTIPLY_NODE(MVector, MMatrix, MultiplyVectorByMatrix);
+MULTIPLY_NODE(MPoint, MMatrix, MultiplyVectorByMatrix);
 MULTIPLY_NODE(MQuaternion, MQuaternion, MultiplyQuaternion);
 MULTIPLY_NODE(MEulerRotation, double, MultiplyRotation);

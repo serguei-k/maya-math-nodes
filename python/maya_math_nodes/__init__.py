@@ -1,7 +1,7 @@
-# Copyright (c) 2018 Serguei Kalentchouk et al. All rights reserved.
+# Copyright (c) 2018-2021 Serguei Kalentchouk et al. All rights reserved.
 # Use of this source code is governed by an MIT license that can be found in the LICENSE file.
-import expression_builder
-import expression_parser
+import maya_math_nodes.expression_builder as expression_builder
+import maya_math_nodes.expression_parser as expression_parser
 
 NodeNameGenerator = expression_builder.NodeNameGenerator
 
