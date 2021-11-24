@@ -19,3 +19,4 @@ build/
 # Other
 .vscode/
 dist/
+.DS_Store
