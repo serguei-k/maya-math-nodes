@@ -2,7 +2,7 @@
 Collection of math nodes for Autodesk Maya
 
 #### Building
-![Build Status](https://github.com/serguei-k/maya-math-nodes/actions/workflows/build.yml/badge.svg)
+[![Build](https://github.com/serguei-k/maya-math-nodes/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/serguei-k/maya-math-nodes/actions/workflows/build.yml)
 [![Documentation Status](https://readthedocs.org/projects/maya-math-nodes/badge/?version=latest)](https://maya-math-nodes.readthedocs.io/en/latest/?badge=latest)
 
 To build the library on Windows, clone the repository and navigate to the cloned directory,
@@ -11,7 +11,7 @@ then run the following commands:
 ```
 mkdir build
 cd build
-cmake ../. -G "Visual Studio 15 2017 Win64"
+cmake ../. -G "Visual Studio 16 2019 Win64"
 ```
 
 This will generate a Visual Studio solution you can use to build.
@@ -31,11 +31,13 @@ The build looks for Maya in the default installation directory for each platform
 -DMAYA_LOCATION=/apps/autodesk/
 ```
 
-Likewise, the build defaults to Maya version 2018, this can be changed as follows:
+Likewise, the build defaults to Maya version 2022, this can be changed as follows:
 
 ```
--DMAYA_VERSION=2017
+-DMAYA_VERSION=2020
 ```
+
+Please note that the lowest supported version is 2019.
 
 #### Installation
 To install the library on OSX or Linux run the following command:
