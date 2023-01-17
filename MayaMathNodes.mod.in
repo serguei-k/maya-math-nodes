@@ -6,3 +6,6 @@ plug-ins: plug-ins/2020
 
 + MAYAVERSION:2022 MayaMathNodes ${PROJECT_VERSION} ./MayaMathNodes
 plug-ins: plug-ins/2022
+
++ MAYAVERSION:2023 MayaMathNodes ${PROJECT_VERSION} ./MayaMathNodes
+plug-ins: plug-ins/2023
