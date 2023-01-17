@@ -17,14 +17,14 @@ jobs:
       - uses: actions/checkout@v2
       - name: Download
         run: |
-          wget https://autodesk-adn-transfer.s3-us-west-2.amazonaws.com/ADN+Extranet/M%26E/Maya/devkit+2022/Autodesk_Maya_2022_2_Update_DEVKIT_Linux.tgz
-          tar -xvzf Autodesk_Maya_2022_2_Update_DEVKIT_Linux.tgz
-          mkdir maya2022
-          mv devkitBase/include maya2022/.
-          mv devkitBase/lib maya2022/.
+          wget https://autodesk-adn-transfer.s3-us-west-2.amazonaws.com/ADN+Extranet/M%26E/Maya/devkit+2023/Autodesk_Maya_2023_3_Update_DEVKIT_Linux.tgz
+          tar -xvzf Autodesk_Maya_2023_3_Update_DEVKIT_Linux.tgz
+          mkdir maya2023
+          mv devkitBase/include maya2023/.
+          mv devkitBase/lib maya2023/.
       - name: Build
         run: |
           mkdir build
           cd build
           cmake ../. -G "CodeBlocks - Unix Makefiles" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DMAYA_LOCATION=$(pwd)/..
-          make
+          cmake --build .
